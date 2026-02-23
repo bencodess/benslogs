@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio | bencodess</title>
+    <meta
+      name="description"
+      content="Portfolio of bencodess (stilleswasser93) - beginner friendly frontend projects and learning journey."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="#home" aria-label="bencodess home">
+        <img src="/assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="/projects.html">Projects</a>
+        <a href="#about">About</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+      <a class="btn ghost" href="/contact.html">Say Hi</a>
+    </header>
+
+    <main id="home">
+      <section class="hero reveal">
+        <h1>
+          Hey, I'm <span>bencodess</span>
+          and I'm learning frontend
+          step by step.
+        </h1>
+        <p class="lead">
+          Also known as stilleswasser93. I build simple websites to practice HTML,
+          CSS, and JavaScript, and improve with every project.
+        </p>
+
+        <div class="hero-stats">
+          <article>
+            <p class="stat-number">2026</p>
+            <p class="stat-label">Learning Year</p>
+          </article>
+          <article>
+            <p class="stat-number">3+</p>
+            <p class="stat-label">Practice Projects</p>
+          </article>
+          <article>
+            <p class="stat-number">Daily</p>
+            <p class="stat-label">Coding Progress</p>
+          </article>
+        </div>
+
+        <div class="hero-actions">
+          <a class="btn" href="/projects.html">See My Work</a>
+          <a class="btn ghost" href="/contact.html">Contact Me</a>
+        </div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-head">
+          <p class="eyebrow">Profile</p>
+          <h2>About</h2>
+        </div>
+        <p class="body-copy">
+          I'm bencodess (stilleswasser93), a beginner frontend developer from Germany.
+          Right now I focus on strong fundamentals and learning by building projects.
+        </p>
+        <div class="pill-row">
+          <span>HTML Basics</span>
+          <span>CSS Layouts</span>
+          <span>JavaScript Basics</span>
+          <span>Responsive Design</span>
+          <span>Learning in Public</span>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <p>© <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
