@@ -128,8 +128,7 @@ function setupContentProtection() {
       (ctrlOrCmd && key === 's') ||
       (ctrlOrCmd && key === 'u') ||
       (ctrlOrCmd && key === 'p') ||
-      (ctrlOrCmd && event.shiftKey && (key === 'i' || key === 'j' || key === 'c')) ||
-      key === 'f12';
+      (ctrlOrCmd && event.shiftKey && (key === 'i' || key === 'j' || key === 'c'));
 
     if (blockedCombos) {
       event.preventDefault();
@@ -250,20 +249,75 @@ function setSpotify(spotifyData, isListeningToSpotify) {
   }
 
   const spotifyEnd = Number(spotifyData?.timestamps?.end || 0);
-  const isStaleSpotify = spotifyEnd > 0 && Date.now() > spotifyEnd + 15000;
+  const isStaleSpotify = spotifyEnd > 0 && Date.now() > spotifyEnd + 5 * 60 * 1000;
 
   if (!isListeningToSpotify || !spotifyData || isStaleSpotify) {
     spotifyNowEl.classList.add('hidden');
+    spotifySongEl.classList.remove('is-marquee');
+    spotifySongEl.textContent = '-';
+    spotifyArtistEl.textContent = '-';
     return;
   }
 
+  const songTitle = spotifyData.song || 'Unknown song';
   spotifyNowEl.classList.remove('hidden');
-  spotifySongEl.textContent = spotifyData.song || 'Unknown song';
+  setSongMarquee(songTitle);
   spotifyArtistEl.textContent = spotifyData.artist || 'Unknown artist';
 
   if (spotifyData.album_art_url) {
     spotifyArtworkEl.src = spotifyData.album_art_url;
   }
+}
+
+function setSongMarquee(songTitle) {
+  if (!spotifySongEl) {
+    return;
+  }
+
+  spotifySongEl.classList.remove('is-marquee');
+  spotifySongEl.style.removeProperty('--marquee-shift');
+  spotifySongEl.style.removeProperty('--marquee-duration');
+  spotifySongEl.textContent = songTitle;
+
+  window.requestAnimationFrame(() => {
+    if (!spotifySongEl || spotifyNowEl?.classList.contains('hidden')) {
+      return;
+    }
+
+    if (spotifySongEl.clientWidth <= 0) {
+      return;
+    }
+
+    const overflows = spotifySongEl.scrollWidth > spotifySongEl.clientWidth + 2;
+    if (!overflows) {
+      return;
+    }
+
+    const trackA = document.createElement('span');
+    trackA.className = 'marquee-track';
+    trackA.textContent = songTitle;
+
+    const gap = document.createElement('span');
+    gap.className = 'marquee-gap';
+    gap.textContent = '•';
+
+    const trackB = document.createElement('span');
+    trackB.className = 'marquee-track';
+    trackB.textContent = songTitle;
+
+    const inner = document.createElement('span');
+    inner.className = 'marquee-inner';
+    inner.append(trackA, gap, trackB);
+
+    spotifySongEl.textContent = '';
+    spotifySongEl.appendChild(inner);
+    spotifySongEl.classList.add('is-marquee');
+
+    const shift = Math.max(80, trackA.offsetWidth + gap.offsetWidth);
+    const duration = Math.max(7, Math.min(14, shift / 32));
+    spotifySongEl.style.setProperty('--marquee-shift', `${shift}px`);
+    spotifySongEl.style.setProperty('--marquee-duration', `${duration}s`);
+  });
 }
 
 function getOutageStart() {

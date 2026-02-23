@@ -487,6 +487,32 @@ h1 span {
   max-width: none;
 }
 
+.spotify-song.is-marquee {
+  text-overflow: clip;
+}
+
+.spotify-song .marquee-inner {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  min-width: max-content;
+  animation: spotifyMarquee var(--marquee-duration, 9s) linear infinite;
+}
+
+.spotify-song .marquee-gap {
+  padding: 0 1rem;
+  opacity: 0.75;
+}
+
+@keyframes spotifyMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--marquee-shift, 120px)));
+  }
+}
+
 .spotify-artist {
   font-size: 0.82rem;
   color: #ceb6ef;
