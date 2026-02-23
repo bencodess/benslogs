@@ -1,4 +1,28 @@
-const CONTACT_PATH = '/contact.html';
+function normalizePath(pathname) {
+  if (!pathname) {
+    return '/';
+  }
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    return pathname.slice(0, -1);
+  }
+  return pathname;
+}
+
+function isContactPath(pathname) {
+  const path = normalizePath(pathname);
+  return /\/contact(?:\.html|\/index\.html)?$/.test(path);
+}
+
+function isProjectsIndexPath(pathname) {
+  const path = normalizePath(pathname);
+  return /\/projects(?:\.html|\/index\.html)?$/.test(path);
+}
+
+function isProjectDetailPath(pathname) {
+  const path = normalizePath(pathname);
+  return /\/projects\/[^/]+(?:\/index\.html)?$/.test(path) && !isProjectsIndexPath(path);
+}
+
 let hasFirstLanyardSuccess = false;
 let resolveFirstLanyardSuccess = null;
 const firstLanyardSuccessPromise = new Promise((resolve) => {
@@ -22,8 +46,9 @@ function setupPageLoader() {
     return;
   }
 
-  const isContactPage = window.location.pathname === CONTACT_PATH;
-  const isProjectDetailPage = /^\/[^/]+\/[^/]+\.html$/.test(window.location.pathname);
+  const path = window.location.pathname;
+  const isContactPage = isContactPath(path);
+  const isProjectDetailPage = isProjectDetailPath(path);
   const loaderText = isProjectDetailPage
     ? 'Loading project...'
     : isContactPage
@@ -322,7 +347,7 @@ async function loadDiscordStatus() {
 
 
 function setupAutoReload() {
-  if (window.location.pathname === '/contact.html') {
+  if (isContactPath(window.location.pathname)) {
     return;
   }
 
@@ -447,7 +472,7 @@ function setupProjectCards() {
     if (!slug) {
       return;
     }
-    window.location.href = `/${slug}/${slug}.html`;
+    window.location.href = `projects/${slug}/`;
   };
 
   cards.forEach((card) => {

@@ -336,24 +336,24 @@ h1 span {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("/assets/discord_state/offline_state.png");
+  background-image: url("assets/discord_state/offline_state.png");
   box-shadow: none;
 }
 
 .status-dot.online {
-  background-image: url("/assets/discord_state/online_state.png");
+  background-image: url("assets/discord_state/online_state.png");
 }
 
 .status-dot.idle {
-  background-image: url("/assets/discord_state/idle_state.png");
+  background-image: url("assets/discord_state/idle_state.png");
 }
 
 .status-dot.dnd {
-  background-image: url("/assets/discord_state/dnd_state.png");
+  background-image: url("assets/discord_state/dnd_state.png");
 }
 
 .status-dot.offline {
-  background-image: url("/assets/discord_state/offline_state.png");
+  background-image: url("assets/discord_state/offline_state.png");
 }
 
 .discord-kicker,
