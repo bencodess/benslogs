@@ -14,6 +14,16 @@
 
 * {
   box-sizing: border-box;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+}
+
+*::before,
+*::after {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
 }
 
 html {
@@ -30,6 +40,66 @@ body {
     linear-gradient(160deg, #07030f 0%, #120821 54%, #1a0d32 100%);
   line-height: 1.55;
   overflow-x: hidden;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none;
+}
+
+::selection {
+  background: transparent;
+  color: inherit;
+}
+
+img,
+a {
+  -webkit-user-drag: none;
+}
+
+.is-loading {
+  overflow: hidden;
+}
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 18% 14%, #4c1a85 0%, transparent 35%),
+    radial-gradient(circle at 84% 78%, #2f0f58 0%, transparent 33%),
+    linear-gradient(160deg, #07030f 0%, #120821 54%, #1a0d32 100%);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 350ms ease, visibility 350ms ease;
+}
+
+.page-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.page-loader__inner {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.page-loader__spinner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid rgba(210, 169, 255, 0.22);
+  border-top-color: #d2a9ff;
+  animation: loaderSpin 1s linear infinite;
+}
+
+.page-loader__text {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.04em;
+  color: #e8d4ff;
+  font-size: 0.95rem;
 }
 
 .bg-noise {
@@ -215,7 +285,24 @@ h1 span {
 
 .discord-panel {
   width: 100%;
+  align-items: flex-start;
+  gap: 0.9rem;
+  background: linear-gradient(135deg, #21113a, #351b5b);
+  border-color: rgba(198, 156, 255, 0.42);
+}
+
+.discord-content {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 0.32rem;
+}
+
+.discord-user-row {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 0.7rem;
 }
 
 .discord-avatar {
@@ -238,25 +325,26 @@ h1 span {
 .status-dot {
   width: 12px;
   height: 12px;
+  flex: 0 0 12px;
   border-radius: 50%;
   background: #7c5ea8;
   box-shadow: 0 0 0 4px rgba(170, 112, 255, 0.2);
 }
 
 .status-dot.online {
-  background: #cc9bff;
+  background: #23a55a;
 }
 
 .status-dot.idle {
-  background: #b47cff;
+  background: #f0b232;
 }
 
 .status-dot.dnd {
-  background: #8a4be0;
+  background: #f23f43;
 }
 
 .status-dot.offline {
-  background: #64478a;
+  background: #80848e;
 }
 
 .discord-kicker,
@@ -281,6 +369,69 @@ h1 span {
 .discord-subline {
   color: #cfb8ec;
   font-size: 0.92rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.spotify-now {
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.45rem;
+  border-radius: 12px;
+  background: rgba(24, 14, 43, 0.55);
+  border: 1px solid rgba(145, 108, 201, 0.38);
+}
+
+.spotify-artwork {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex: 0 0 48px;
+}
+
+.spotify-meta {
+  min-width: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.spotify-kicker,
+.spotify-song,
+.spotify-artist {
+  margin: 0;
+}
+
+.spotify-kicker {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #be9ef2;
+  font-weight: 700;
+}
+
+.spotify-song {
+  font-size: 0.9rem;
+  color: #f3ebff;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.spotify-artist {
+  font-size: 0.82rem;
+  color: #ceb6ef;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
 }
 
 .hero-actions {
@@ -460,6 +611,18 @@ footer {
   transform: translateY(0);
 }
 
+@keyframes loaderSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader__spinner {
+    animation: none;
+  }
+}
+
 @media (max-width: 940px) {
   .project-grid,
   .hero-stats,
@@ -467,17 +630,109 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  nav,
+  .site-header {
+    top: 8px;
+    width: min(94vw, 720px);
+    padding: 0.5rem;
+    border-radius: 20px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  nav {
+    order: 3;
+    width: 100%;
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.25rem;
+  }
+
+  nav a {
+    flex: 1;
+    text-align: center;
+    font-size: 0.82rem;
+    padding: 0.48rem 0.4rem;
+  }
+
   .site-header .ghost {
     display: none;
   }
 
-  .site-header {
-    width: min(94vw, 560px);
-    padding: 0.45rem;
+  main {
+    width: min(94vw, 720px);
+    padding-top: clamp(2.2rem, 8vw, 3.2rem);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 9vw, 3.3rem);
+    max-width: 100%;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    flex: 1;
+    text-align: center;
   }
 
   .discord-card {
     width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    width: 95vw;
+  }
+
+  nav {
+    padding: 0.2rem;
+  }
+
+  nav a {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.2rem;
+  }
+
+  .hero {
+    gap: 1rem;
+  }
+
+  .section {
+    margin-bottom: 2.2rem;
+  }
+
+  .project-card,
+  .discord-card {
+    padding: 1rem;
+  }
+
+  .discord-panel {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .status-dot {
+    margin-left: auto;
+  }
+
+  .contact-links {
+    width: 100%;
+  }
+
+  .icon-link {
+    flex: 1;
+    justify-content: center;
   }
 }

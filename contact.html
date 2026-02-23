@@ -88,13 +88,23 @@
 
           <article class="discord-card discord-panel" aria-live="polite">
             <img id="discordAvatar" class="discord-avatar" src="/assets/swasser.png" alt="Discord profile picture" />
-            <div>
+            <div class="discord-content">
               <p class="discord-kicker">Discord Presence</p>
-              <p class="discord-user" id="discordUsername">Loading user...</p>
+              <div class="discord-user-row">
+                <p class="discord-user" id="discordUsername">Loading user...</p>
+                <span class="status-dot" id="discordDot"></span>
+              </div>
               <p class="discord-line" id="discordStatusText">Loading status...</p>
               <p class="discord-subline" id="discordActivityText">Waiting for Lanyard</p>
+              <div class="spotify-now hidden" id="spotifyNow">
+                <img id="spotifyArtwork" class="spotify-artwork" src="" alt="Spotify artwork" />
+                <div class="spotify-meta">
+                  <p class="spotify-kicker">Listening on Spotify</p>
+                  <p class="spotify-song" id="spotifySong">-</p>
+                  <p class="spotify-artist" id="spotifyArtist">-</p>
+                </div>
+              </div>
             </div>
-            <div class="status-dot" id="discordDot"></div>
           </article>
         </div>
       </section>
