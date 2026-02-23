@@ -4,6 +4,9 @@ function setupPageLoader() {
     return;
   }
 
+  const isProjectDetailPage = /^\/[^/]+\/[^/]+\.html$/.test(window.location.pathname);
+  const loaderText = isProjectDetailPage ? 'Loading project...' : 'Loading assets...';
+
   document.body.classList.add('is-loading');
 
   const loader = document.createElement('div');
@@ -12,7 +15,7 @@ function setupPageLoader() {
   loader.innerHTML = `
     <div class="page-loader__inner">
       <div class="page-loader__spinner"></div>
-      <p class="page-loader__text">Loading assets...</p>
+      <p class="page-loader__text">${loaderText}</p>
     </div>
   `;
   document.body.appendChild(loader);
@@ -96,11 +99,15 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 const USER_ID = '1033745912071192688';
 const AUTO_RELOAD_MS = 60000;
+const LANYARD_STALE_MS = 5 * 1000;
+const OUTAGE_START_KEY = `lanyard_outage_start_${USER_ID}`;
 const statusTextEl = document.getElementById('discordStatusText');
 const activityTextEl = document.getElementById('discordActivityText');
 const dotEl = document.getElementById('discordDot');
 const usernameEl = document.getElementById('discordUsername');
 const avatarEl = document.getElementById('discordAvatar');
+const discordPanelEl = document.querySelector('.discord-panel');
+const discordWarningEl = document.getElementById('discordWarning');
 const spotifyNowEl = document.getElementById('spotifyNow');
 const spotifyArtworkEl = document.getElementById('spotifyArtwork');
 const spotifySongEl = document.getElementById('spotifySong');
@@ -169,7 +176,10 @@ function setSpotify(spotifyData, isListeningToSpotify) {
     return;
   }
 
-  if (!isListeningToSpotify || !spotifyData) {
+  const spotifyEnd = Number(spotifyData?.timestamps?.end || 0);
+  const isStaleSpotify = spotifyEnd > 0 && Date.now() > spotifyEnd + 15000;
+
+  if (!isListeningToSpotify || !spotifyData || isStaleSpotify) {
     spotifyNowEl.classList.add('hidden');
     return;
   }
@@ -183,10 +193,55 @@ function setSpotify(spotifyData, isListeningToSpotify) {
   }
 }
 
+function getOutageStart() {
+  try {
+    const value = Number(window.localStorage.getItem(OUTAGE_START_KEY));
+    return Number.isFinite(value) && value > 0 ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function setOutageStartIfMissing() {
+  try {
+    if (!window.localStorage.getItem(OUTAGE_START_KEY)) {
+      window.localStorage.setItem(OUTAGE_START_KEY, String(Date.now()));
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function clearOutageStart() {
+  try {
+    window.localStorage.removeItem(OUTAGE_START_KEY);
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function isLanyardStale() {
+  const outageStart = getOutageStart();
+  return Boolean(outageStart && Date.now() - outageStart >= LANYARD_STALE_MS);
+}
+
+function setLanyardWarningState(isStale) {
+  if (discordPanelEl) {
+    discordPanelEl.classList.toggle('data-stale', isStale);
+  }
+  if (discordWarningEl) {
+    discordWarningEl.classList.toggle('hidden', !isStale);
+  }
+}
+
 async function loadDiscordStatus() {
   try {
     const response = await fetch(`https://api.lanyard.rest/v1/users/${USER_ID}?t=${Date.now()}`, {
       cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
     });
     const payload = await response.json();
 
@@ -198,13 +253,33 @@ async function loadDiscordStatus() {
     setActivity(payload.data.activities);
     setDiscordUser(payload.data.discord_user);
     setSpotify(payload.data.spotify, payload.data.listening_to_spotify);
+    clearOutageStart();
+    setLanyardWarningState(false);
   } catch {
+    setOutageStartIfMissing();
+    const staleOutage = isLanyardStale();
+    setLanyardWarningState(staleOutage);
     setPresenceStatus('offline');
     if (activityTextEl) {
-      activityTextEl.textContent = 'Could not load status';
+      activityTextEl.textContent = staleOutage
+        ? 'Data unavailable for over 5 seconds'
+        : 'Could not load status';
     }
     setSpotify(null, false);
   }
+}
+
+
+
+function setupBackToTopButton() {
+  const backToTopBtn = document.getElementById('backToTopBtn');
+  if (!backToTopBtn) {
+    return;
+  }
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 function setupAutoReload() {
@@ -213,9 +288,42 @@ function setupAutoReload() {
   }, AUTO_RELOAD_MS);
 }
 
+function setupProjectCards() {
+  const cards = document.querySelectorAll('.project-card--interactive');
+  if (!cards.length) {
+    return;
+  }
+
+  const openProjectPage = (card) => {
+    const slug = card.getAttribute('data-project');
+    if (!slug) {
+      return;
+    }
+    window.location.href = `/${slug}/${slug}.html`;
+  };
+
+  cards.forEach((card) => {
+    card.addEventListener('click', (event) => {
+      if (event.target instanceof Element && event.target.closest('a')) {
+        return;
+      }
+      openProjectPage(card);
+    });
+
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openProjectPage(card);
+      }
+    });
+  });
+}
+
 if (statusTextEl && activityTextEl && dotEl) {
   loadDiscordStatus();
-  setInterval(loadDiscordStatus, 20000);
+  setInterval(loadDiscordStatus, 5000);
 }
 
 setupAutoReload();
+setupProjectCards();
+setupBackToTopButton();

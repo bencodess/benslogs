@@ -284,15 +284,20 @@ h1 span {
 }
 
 .discord-panel {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-areas:
+    "avatar content"
+    "spotify spotify";
   width: 100%;
-  align-items: flex-start;
+  align-items: start;
   gap: 0.9rem;
   background: linear-gradient(135deg, #21113a, #351b5b);
   border-color: rgba(198, 156, 255, 0.42);
 }
 
 .discord-content {
-  flex: 1;
+  grid-area: content;
   min-width: 0;
   display: grid;
   gap: 0.32rem;
@@ -306,6 +311,7 @@ h1 span {
 }
 
 .discord-avatar {
+  grid-area: avatar;
   width: 72px;
   height: 72px;
   border-radius: 50%;
@@ -323,28 +329,31 @@ h1 span {
 }
 
 .status-dot {
-  width: 12px;
-  height: 12px;
-  flex: 0 0 12px;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
   border-radius: 50%;
-  background: #7c5ea8;
-  box-shadow: 0 0 0 4px rgba(170, 112, 255, 0.2);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("/assets/discord_state/offline_state.png");
+  box-shadow: none;
 }
 
 .status-dot.online {
-  background: #23a55a;
+  background-image: url("/assets/discord_state/online_state.png");
 }
 
 .status-dot.idle {
-  background: #f0b232;
+  background-image: url("/assets/discord_state/idle_state.png");
 }
 
 .status-dot.dnd {
-  background: #f23f43;
+  background-image: url("/assets/discord_state/dnd_state.png");
 }
 
 .status-dot.offline {
-  background: #80848e;
+  background-image: url("/assets/discord_state/offline_state.png");
 }
 
 .discord-kicker,
@@ -371,16 +380,42 @@ h1 span {
   font-size: 0.92rem;
 }
 
+.discord-warning {
+  margin: 0;
+  padding: 0.28rem 0.45rem;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #ffd7d8;
+  background: rgba(180, 40, 48, 0.35);
+  border: 1px solid rgba(255, 121, 127, 0.5);
+}
+
+.discord-panel.data-stale {
+  background: linear-gradient(135deg, rgba(120, 21, 31, 0.84), rgba(159, 35, 44, 0.84));
+  border-color: rgba(255, 102, 112, 0.8);
+  box-shadow: 0 12px 32px rgba(122, 18, 27, 0.45);
+}
+
+.discord-panel.data-stale .discord-kicker,
+.discord-panel.data-stale .discord-line,
+.discord-panel.data-stale .discord-subline,
+.discord-panel.data-stale .discord-user {
+  color: #ffe8e9;
+}
+
 .hidden {
   display: none !important;
 }
 
 .spotify-now {
+  grid-area: spotify;
   margin-top: 0.45rem;
   display: flex;
   align-items: center;
   gap: 0.65rem;
   width: 100%;
+  align-self: stretch;
   padding: 0.45rem;
   border-radius: 12px;
   background: rgba(24, 14, 43, 0.55);
@@ -396,6 +431,8 @@ h1 span {
 }
 
 .spotify-meta {
+  flex: 1;
+  width: 100%;
   min-width: 0;
   display: grid;
   gap: 0.15rem;
@@ -408,11 +445,33 @@ h1 span {
 }
 
 .spotify-kicker {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.35rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 8px;
+  background: rgba(113, 71, 175, 0.28);
   font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #be9ef2;
   font-weight: 700;
+}
+
+.spotify-logo {
+  width: 10px;
+  height: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1db954;
+  flex: 0 0 10px;
+}
+
+.spotify-logo svg {
+  width: 10px;
+  height: 10px;
 }
 
 .spotify-song {
@@ -422,7 +481,7 @@ h1 span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
+  max-width: none;
 }
 
 .spotify-artist {
@@ -431,7 +490,7 @@ h1 span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
+  max-width: none;
 }
 
 .hero-actions {
@@ -500,6 +559,58 @@ h2 {
 .project-card:hover {
   transform: translateY(-6px);
   border-color: #b27df6;
+}
+
+.project-card--interactive {
+  cursor: pointer;
+}
+
+.project-card--interactive:focus-visible {
+  outline: 2px solid #d8b8ff;
+  outline-offset: 2px;
+}
+
+.card-hint {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  color: #b391df;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.project-details {
+  display: none;
+}
+
+.project-details-text {
+  margin: 0 0 0.55rem;
+  font-size: 0.93rem;
+  color: #ddcbf6;
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.project-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(191, 145, 251, 0.45);
+  background: rgba(106, 59, 170, 0.26);
+  color: #f4e9ff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.38rem 0.72rem;
+}
+
+.project-links a[aria-disabled="true"] {
+  opacity: 0.62;
 }
 
 .project-featured {
@@ -598,6 +709,102 @@ footer {
   color: #b59ad5;
   font-size: 0.91rem;
   padding: 0.5rem 0 2rem;
+}
+
+.back-top-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.back-top-btn {
+  width: 140px;
+  height: 56px;
+  overflow: hidden;
+  border: none;
+  color: #fff;
+  background: none;
+  position: relative;
+  padding-bottom: 2em;
+  cursor: pointer;
+}
+
+.back-top-btn > div,
+.back-top-btn > svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.back-top-btn::before {
+  content: "";
+  position: absolute;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  background: currentColor;
+  transition: transform 0.25s ease-out;
+}
+
+.back-top-btn:hover::before {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.back-top-btn .clone > *,
+.back-top-btn .text > * {
+  opacity: 1;
+  font-size: 1.3rem;
+  transition: 0.2s;
+  margin-left: 4px;
+}
+
+.back-top-btn .clone > * {
+  transform: translateY(60px);
+}
+
+.back-top-btn:hover .clone > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
+}
+
+.back-top-btn:hover .text > * {
+  opacity: 1;
+  transform: translateY(-60px);
+  transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
+}
+
+.back-top-btn:hover .clone > :nth-child(1) {
+  transition-delay: 0.15s;
+}
+
+.back-top-btn:hover .clone > :nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.back-top-btn:hover .clone > :nth-child(3) {
+  transition-delay: 0.25s;
+}
+
+.back-top-btn:hover .clone > :nth-child(4) {
+  transition-delay: 0.3s;
+}
+
+.back-top-btn svg {
+  width: 20px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(-50deg);
+  transition: 0.2s ease-out;
+}
+
+.back-top-btn:hover svg {
+  transform: translateY(-50%) rotate(-90deg);
 }
 
 .reveal {
@@ -718,8 +925,10 @@ footer {
   }
 
   .discord-panel {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    grid-template-columns: 60px minmax(0, 1fr);
+    grid-template-areas:
+      "avatar content"
+      "spotify spotify";
     gap: 0.7rem;
   }
 
@@ -734,5 +943,15 @@ footer {
   .icon-link {
     flex: 1;
     justify-content: center;
+  }
+
+  .back-top-btn {
+    width: 132px;
+    height: 52px;
+  }
+
+  .back-top-btn .clone > *,
+  .back-top-btn .text > * {
+    font-size: 1.15rem;
   }
 }
