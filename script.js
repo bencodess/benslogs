@@ -1,11 +1,34 @@
+const CONTACT_PATH = '/contact.html';
+let hasFirstLanyardSuccess = false;
+let resolveFirstLanyardSuccess = null;
+const firstLanyardSuccessPromise = new Promise((resolve) => {
+  resolveFirstLanyardSuccess = resolve;
+});
+
+function markFirstLanyardSuccess() {
+  if (hasFirstLanyardSuccess) {
+    return;
+  }
+
+  hasFirstLanyardSuccess = true;
+  if (typeof resolveFirstLanyardSuccess === 'function') {
+    resolveFirstLanyardSuccess();
+  }
+}
+
 function setupPageLoader() {
   const existingLoader = document.querySelector('.page-loader');
   if (existingLoader || !document.body) {
     return;
   }
 
+  const isContactPage = window.location.pathname === CONTACT_PATH;
   const isProjectDetailPage = /^\/[^/]+\/[^/]+\.html$/.test(window.location.pathname);
-  const loaderText = isProjectDetailPage ? 'Loading project...' : 'Loading assets...';
+  const loaderText = isProjectDetailPage
+    ? 'Loading project...'
+    : isContactPage
+      ? 'Loading Discord presence...'
+      : 'Loading assets...';
 
   document.body.classList.add('is-loading');
 
@@ -31,7 +54,22 @@ function setupPageLoader() {
     window.setTimeout(() => loader.remove(), 420);
   };
 
-  window.addEventListener('load', closeLoader, { once: true });
+  const pageLoadedPromise = new Promise((resolve) => {
+    if (document.readyState === 'complete') {
+      resolve();
+      return;
+    }
+
+    window.addEventListener('load', resolve, { once: true });
+  });
+
+  if (isContactPage) {
+    Promise.all([pageLoadedPromise, firstLanyardSuccessPromise]).then(closeLoader);
+    window.setTimeout(closeLoader, 15000);
+    return;
+  }
+
+  pageLoadedPromise.then(closeLoader);
   window.setTimeout(closeLoader, 10000);
 }
 
@@ -98,6 +136,16 @@ revealItems.forEach((item, index) => {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const USER_ID = '1033745912071192688';
+const FEEDBACK_WEBHOOK_URL =
+  'https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D';
+const FEEDBACK_BLOCKED_TERMS = [
+  'hitler',
+  'nigga',
+  'nigger',
+  'heil',
+  'nazis',
+  'nazi',
+];
 const AUTO_RELOAD_MS = 60000;
 const LANYARD_STALE_MS = 5 * 1000;
 const OUTAGE_START_KEY = `lanyard_outage_start_${USER_ID}`;
@@ -253,6 +301,7 @@ async function loadDiscordStatus() {
     setActivity(payload.data.activities);
     setDiscordUser(payload.data.discord_user);
     setSpotify(payload.data.spotify, payload.data.listening_to_spotify);
+    markFirstLanyardSuccess();
     clearOutageStart();
     setLanyardWarningState(false);
   } catch {
@@ -271,21 +320,120 @@ async function loadDiscordStatus() {
 
 
 
-function setupBackToTopButton() {
-  const backToTopBtn = document.getElementById('backToTopBtn');
-  if (!backToTopBtn) {
+
+function setupAutoReload() {
+  if (window.location.pathname === '/contact.html') {
     return;
   }
 
-  backToTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-}
-
-function setupAutoReload() {
   window.setInterval(() => {
     window.location.reload();
   }, AUTO_RELOAD_MS);
+}
+
+function setupFeedbackForm() {
+  const form = document.getElementById('feedbackForm');
+  const nameEl = document.getElementById('feedbackName');
+  const messageEl = document.getElementById('feedbackMessage');
+  const statusEl = document.getElementById('feedbackStatus');
+  const toggleBtn = document.getElementById('feedbackToggleBtn');
+  const panelEl = document.getElementById('feedbackPanel');
+
+  if (!form || !nameEl || !messageEl || !statusEl) {
+    return;
+  }
+
+  const syncTextareaHeight = () => {
+    const maxHeight = 300;
+    messageEl.style.height = 'auto';
+    const nextHeight = Math.min(messageEl.scrollHeight, maxHeight);
+    messageEl.style.height = `${nextHeight}px`;
+    messageEl.style.overflowY = messageEl.scrollHeight > maxHeight ? 'auto' : 'hidden';
+  };
+
+  syncTextareaHeight();
+  messageEl.addEventListener('input', syncTextareaHeight);
+
+  if (toggleBtn && panelEl) {
+    const setPanelState = (isOpen) => {
+      panelEl.classList.toggle('is-collapsed', !isOpen);
+      toggleBtn.textContent = isOpen ? 'Close' : 'Open';
+      toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+      if (isOpen) {
+        window.setTimeout(syncTextareaHeight, 120);
+      }
+    };
+
+    setPanelState(false);
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = panelEl.classList.contains('is-collapsed');
+      setPanelState(isOpen);
+    });
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const name = nameEl.value.trim();
+    const feedback = messageEl.value.trim();
+
+    if (!name || !feedback) {
+      statusEl.textContent = 'Please enter your name and feedback.';
+      statusEl.className = 'feedback-status err';
+      return;
+    }
+
+    const loweredName = name.toLowerCase();
+    const hasBlockedTerm = FEEDBACK_BLOCKED_TERMS.some((term) => loweredName.includes(term));
+    if (hasBlockedTerm) {
+      statusEl.textContent = 'Please use a different name.';
+      statusEl.className = 'feedback-status err';
+      return;
+    }
+
+    statusEl.textContent = 'Sending feedback...';
+    statusEl.className = 'feedback-status';
+
+    const safeName = name.slice(0, 256);
+    const safeFeedback = feedback.slice(0, 1000);
+    const payload = {
+      username: 'Website Feedback',
+      embeds: [
+        {
+          title: 'New feedback from contact page',
+          color: 10247679,
+          fields: [
+            { name: 'Name', value: safeName || '-', inline: false },
+            { name: 'Message', value: safeFeedback || '-', inline: false },
+          ],
+          timestamp: new Date().toISOString(),
+        },
+      ],
+    };
+
+    try {
+      const response = await fetch(FEEDBACK_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook failed (${response.status})`);
+      }
+
+      statusEl.textContent = 'Feedback sent. Thank you!';
+      statusEl.className = 'feedback-status ok';
+      form.reset();
+      syncTextareaHeight();
+    } catch {
+      statusEl.textContent = 'Could not send feedback. Please try again.';
+      statusEl.className = 'feedback-status err';
+    }
+  });
 }
 
 function setupProjectCards() {
@@ -326,4 +474,4 @@ if (statusTextEl && activityTextEl && dotEl) {
 
 setupAutoReload();
 setupProjectCards();
-setupBackToTopButton();
+setupFeedbackForm();

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact | bencodess</title>
+    <link rel="icon" type="image/png" href="/assets/swasser-round.png?v=2" />
     <meta
       name="description"
       content="Contact bencodess (stilleswasser93) and view live Discord presence via Lanyard."
@@ -27,10 +28,10 @@
       </a>
       <nav>
         <a href="/projects.html">Projects</a>
-        <a href="/#about">About</a>
+        <a href="/">Home</a>
         <a href="/contact.html">Contact</a>
       </nav>
-      <a class="btn ghost" href="https://github.com/bencodess" target="_blank" rel="noreferrer">GitHub</a>
+      <a class="btn ghost" href="/projects.html">Look at my Projects</a>
     </header>
 
     <main>
@@ -84,6 +85,7 @@
                 <span>GitHub</span>
               </a>
             </div>
+
           </article>
 
           <article class="discord-card discord-panel" aria-live="polite">
@@ -114,6 +116,47 @@
                 </p>
                 <p class="spotify-song" id="spotifySong">-</p>
                 <p class="spotify-artist" id="spotifyArtist">-</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card feedback-block">
+            <div class="feedback-box feedback-box--standalone">
+              <p class="card-tag">Feedback</p>
+              <div class="feedback-head">
+                <h3>Send feedback</h3>
+                <button
+                  id="feedbackToggleBtn"
+                  class="btn ghost feedback-toggle"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="feedbackPanel"
+                >
+                  Open
+                </button>
+              </div>
+              <div id="feedbackPanel" class="feedback-panel is-collapsed">
+                <form id="feedbackForm" class="feedback-form" novalidate>
+                  <input
+                    id="feedbackName"
+                    class="feedback-input"
+                    type="text"
+                    autocomplete="name"
+                    maxlength="60"
+                    placeholder="Your name"
+                    required
+                  />
+                  <textarea
+                    id="feedbackMessage"
+                    class="feedback-input feedback-textarea"
+                    rows="1"
+                    maxlength="1000"
+                    placeholder="Write your feedback..."
+                    required
+                  ></textarea>
+                  <button class="btn" type="submit">Send feedback</button>
+                </form>
+                <p id="feedbackStatus" class="feedback-status" aria-live="polite"></p>
               </div>
             </div>
           </article>
