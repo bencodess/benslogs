@@ -170,6 +170,9 @@ const FEEDBACK_BLOCKED_TERMS = [
   'nazis',
   'nazi',
 ];
+const DEFAULT_SITE_CONFIG = {
+  feedback: true,
+};
 const AUTO_RELOAD_MS = 60000;
 const LANYARD_STALE_MS = 5 * 1000;
 const OUTAGE_START_KEY = `lanyard_outage_start_${USER_ID}`;
@@ -178,6 +181,8 @@ const activityTextEl = document.getElementById('discordActivityText');
 const dotEl = document.getElementById('discordDot');
 const usernameEl = document.getElementById('discordUsername');
 const avatarEl = document.getElementById('discordAvatar');
+const guildTagEl = document.getElementById('discordGuildTag');
+const guildBadgeEl = document.getElementById('discordGuildBadge');
 const discordPanelEl = document.querySelector('.discord-panel');
 const discordWarningEl = document.getElementById('discordWarning');
 const spotifyNowEl = document.getElementById('spotifyNow');
@@ -229,7 +234,20 @@ function getDiscordAvatarUrl(discordUser) {
   return `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.${ext}?size=256`;
 }
 
-function setDiscordUser(discordUser) {
+function getPrimaryGuildBadgeUrl(primaryGuild) {
+  if (!primaryGuild || !primaryGuild.badge) {
+    return null;
+  }
+
+  const guildId = primaryGuild.identity_guild_id || primaryGuild.id;
+  if (!guildId) {
+    return null;
+  }
+
+  return `https://cdn.discordapp.com/guild-tag-badges/${guildId}/${primaryGuild.badge}.png?size=128`;
+}
+
+function setDiscordUser(discordUser, primaryGuild) {
   if (usernameEl) {
     const username = discordUser?.global_name || discordUser?.username || 'Unknown user';
     usernameEl.textContent = username;
@@ -239,6 +257,28 @@ function setDiscordUser(discordUser) {
     const avatarUrl = getDiscordAvatarUrl(discordUser);
     if (avatarUrl) {
       avatarEl.src = avatarUrl;
+    }
+  }
+
+  if (guildBadgeEl) {
+    const badgeUrl = getPrimaryGuildBadgeUrl(primaryGuild);
+    if (badgeUrl) {
+      guildBadgeEl.src = badgeUrl;
+      guildBadgeEl.classList.remove('hidden');
+    } else {
+      guildBadgeEl.removeAttribute('src');
+      guildBadgeEl.classList.add('hidden');
+    }
+  }
+
+  if (guildTagEl) {
+    const tag = primaryGuild?.tag;
+    if (tag) {
+      guildTagEl.textContent = `#${tag}`;
+      guildTagEl.classList.remove('hidden');
+    } else {
+      guildTagEl.textContent = '#---';
+      guildTagEl.classList.add('hidden');
     }
   }
 }
@@ -378,7 +418,8 @@ async function loadDiscordStatus() {
 
     setPresenceStatus(payload.data.discord_status);
     setActivity(payload.data.activities);
-    setDiscordUser(payload.data.discord_user);
+    const primaryGuild = payload.data.primary_guild || payload.data.discord_user?.primary_guild || null;
+    setDiscordUser(payload.data.discord_user, primaryGuild);
     setSpotify(payload.data.spotify, payload.data.listening_to_spotify);
     markFirstLanyardSuccess();
     clearOutageStart();
@@ -515,6 +556,41 @@ function setupFeedbackForm() {
   });
 }
 
+async function loadSiteConfig() {
+  const candidates = ['config.json', '../config.json', '../../config.json'];
+
+  for (const path of candidates) {
+    try {
+      const response = await fetch(path, { cache: 'no-store' });
+      if (!response.ok) {
+        continue;
+      }
+
+      const raw = await response.json();
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+        return { ...DEFAULT_SITE_CONFIG };
+      }
+
+      return { ...DEFAULT_SITE_CONFIG, ...raw };
+    } catch {
+      // try next path
+    }
+  }
+
+  return { ...DEFAULT_SITE_CONFIG };
+}
+
+function applySiteConfig(config) {
+  const feedbackBlockEl = document.getElementById('feedbackBlock');
+  if (feedbackBlockEl) {
+    if (config.feedback === false) {
+      feedbackBlockEl.classList.add('hidden');
+    } else {
+      feedbackBlockEl.classList.remove('hidden');
+    }
+  }
+}
+
 function setupProjectCards() {
   const cards = document.querySelectorAll('.project-card--interactive');
   if (!cards.length) {
@@ -553,4 +629,11 @@ if (statusTextEl && activityTextEl && dotEl) {
 
 setupAutoReload();
 setupProjectCards();
-setupFeedbackForm();
+
+void (async () => {
+  const config = await loadSiteConfig();
+  applySiteConfig(config);
+  if (config.feedback !== false) {
+    setupFeedbackForm();
+  }
+})();

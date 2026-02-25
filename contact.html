@@ -95,6 +95,8 @@
               <p class="discord-warning hidden" id="discordWarning">⚠ Discord data unavailable (5+ sec)</p>
               <div class="discord-user-row">
                 <p class="discord-user" id="discordUsername">Loading user...</p>
+                <img id="discordGuildBadge" class="discord-guild-badge hidden" src="" alt="Primary guild badge" />
+                <span id="discordGuildTag" class="discord-guild-tag hidden">#---</span>
                 <span class="status-dot" id="discordDot"></span>
               </div>
               <p class="discord-line" id="discordStatusText">Loading status...</p>
@@ -120,7 +122,7 @@
             </div>
           </article>
 
-          <article class="project-card feedback-block">
+          <article id="feedbackBlock" class="project-card feedback-block hidden">
             <div class="feedback-box feedback-box--standalone">
               <p class="card-tag">Feedback</p>
               <div class="feedback-head">
