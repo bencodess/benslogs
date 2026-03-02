@@ -328,14 +328,6 @@ h1 span {
   color: #f8efff;
 }
 
-.discord-guild-badge {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  flex: 0 0 18px;
-  border-radius: 4px;
-}
-
 .status-dot {
   width: 18px;
   height: 18px;

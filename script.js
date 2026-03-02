@@ -181,7 +181,6 @@ const activityTextEl = document.getElementById('discordActivityText');
 const dotEl = document.getElementById('discordDot');
 const usernameEl = document.getElementById('discordUsername');
 const avatarEl = document.getElementById('discordAvatar');
-const guildBadgeEl = document.getElementById('discordGuildBadge');
 const discordPanelEl = document.querySelector('.discord-panel');
 const discordWarningEl = document.getElementById('discordWarning');
 const spotifyNowEl = document.getElementById('spotifyNow');
@@ -233,20 +232,7 @@ function getDiscordAvatarUrl(discordUser) {
   return `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.${ext}?size=256`;
 }
 
-function getPrimaryGuildBadgeUrl(primaryGuild) {
-  if (!primaryGuild || !primaryGuild.badge) {
-    return null;
-  }
-
-  const guildId = primaryGuild.identity_guild_id || primaryGuild.id;
-  if (!guildId) {
-    return null;
-  }
-
-  return `https://cdn.discordapp.com/guild-tag-badges/${guildId}/${primaryGuild.badge}.png?size=128`;
-}
-
-function setDiscordUser(discordUser, primaryGuild) {
+function setDiscordUser(discordUser) {
   if (usernameEl) {
     const username = discordUser?.global_name || discordUser?.username || 'Unknown user';
     usernameEl.textContent = username;
@@ -256,17 +242,6 @@ function setDiscordUser(discordUser, primaryGuild) {
     const avatarUrl = getDiscordAvatarUrl(discordUser);
     if (avatarUrl) {
       avatarEl.src = avatarUrl;
-    }
-  }
-
-  if (guildBadgeEl) {
-    const badgeUrl = getPrimaryGuildBadgeUrl(primaryGuild);
-    if (badgeUrl) {
-      guildBadgeEl.src = badgeUrl;
-      guildBadgeEl.classList.remove('hidden');
-    } else {
-      guildBadgeEl.removeAttribute('src');
-      guildBadgeEl.classList.add('hidden');
     }
   }
 
@@ -407,8 +382,7 @@ async function loadDiscordStatus() {
 
     setPresenceStatus(payload.data.discord_status);
     setActivity(payload.data.activities);
-    const primaryGuild = payload.data.primary_guild || payload.data.discord_user?.primary_guild || null;
-    setDiscordUser(payload.data.discord_user, primaryGuild);
+    setDiscordUser(payload.data.discord_user);
     setSpotify(payload.data.spotify, payload.data.listening_to_spotify);
     markFirstLanyardSuccess();
     clearOutageStart();
