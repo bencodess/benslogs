@@ -336,19 +336,6 @@ h1 span {
   border-radius: 4px;
 }
 
-.discord-guild-tag {
-  display: inline-flex;
-  align-items: center;
-  height: 20px;
-  padding: 0 0.45rem;
-  border-radius: 999px;
-  border: 1px solid rgba(188, 145, 248, 0.45);
-  background: rgba(96, 58, 157, 0.24);
-  color: #e9d6ff;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
 .status-dot {
   width: 18px;
   height: 18px;

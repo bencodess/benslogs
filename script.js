@@ -181,7 +181,6 @@ const activityTextEl = document.getElementById('discordActivityText');
 const dotEl = document.getElementById('discordDot');
 const usernameEl = document.getElementById('discordUsername');
 const avatarEl = document.getElementById('discordAvatar');
-const guildTagEl = document.getElementById('discordGuildTag');
 const guildBadgeEl = document.getElementById('discordGuildBadge');
 const discordPanelEl = document.querySelector('.discord-panel');
 const discordWarningEl = document.getElementById('discordWarning');
@@ -271,16 +270,6 @@ function setDiscordUser(discordUser, primaryGuild) {
     }
   }
 
-  if (guildTagEl) {
-    const tag = primaryGuild?.tag;
-    if (tag) {
-      guildTagEl.textContent = `#${tag}`;
-      guildTagEl.classList.remove('hidden');
-    } else {
-      guildTagEl.textContent = '#---';
-      guildTagEl.classList.add('hidden');
-    }
-  }
 }
 
 function setSpotify(spotifyData, isListeningToSpotify) {
