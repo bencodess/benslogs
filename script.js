@@ -258,6 +258,7 @@ function setSpotify(spotifyData, isListeningToSpotify) {
   if (!isListeningToSpotify || !spotifyData || isStaleSpotify) {
     spotifyNowEl.classList.add('hidden');
     spotifySongEl.classList.remove('is-marquee');
+    spotifySongEl.removeAttribute('data-song-title');
     spotifySongEl.textContent = '-';
     spotifyArtistEl.textContent = '-';
     return;
@@ -278,6 +279,11 @@ function setSongMarquee(songTitle) {
     return;
   }
 
+  if (spotifySongEl.dataset.songTitle === songTitle) {
+    return;
+  }
+
+  spotifySongEl.dataset.songTitle = songTitle;
   spotifySongEl.classList.remove('is-marquee');
   spotifySongEl.style.removeProperty('--marquee-shift');
   spotifySongEl.style.removeProperty('--marquee-duration');
