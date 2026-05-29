@@ -238,13 +238,23 @@ function setDiscordUser(discordUser) {
     usernameEl.textContent = username;
   }
 
-  if (avatarEl) {
-    const avatarUrl = getDiscordAvatarUrl(discordUser);
-    if (avatarUrl) {
-      avatarEl.src = avatarUrl;
-    }
+  const avatarUrl = getDiscordAvatarUrl(discordUser);
+
+  if (avatarEl && avatarUrl) {
+    avatarEl.src = avatarUrl;
   }
 
+  const logoImgs = document.querySelectorAll('.logo img');
+  if (avatarUrl) {
+    logoImgs.forEach((img) => { img.src = avatarUrl; });
+  }
+
+  const favicon = document.querySelector('link[rel="icon"]');
+  if (favicon && avatarUrl) {
+    const isAnimated = avatarUrl.includes('.gif');
+    const ext = isAnimated ? 'gif' : 'png';
+    favicon.href = avatarUrl.replace(/\?size=\d+/, '?size=64');
+  }
 }
 
 function setSpotify(spotifyData, isListeningToSpotify) {

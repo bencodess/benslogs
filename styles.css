@@ -333,27 +333,29 @@ h1 span {
   height: 18px;
   flex: 0 0 18px;
   border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-image: url("assets/discord_state/offline_state.png");
-  box-shadow: none;
+  background: #80848e;
+  box-shadow: 0 0 6px rgba(128, 132, 142, 0.6);
+  transition: background 300ms ease, box-shadow 300ms ease;
 }
 
 .status-dot.online {
-  background-image: url("assets/discord_state/online_state.png");
+  background: #23a55a;
+  box-shadow: 0 0 8px rgba(35, 165, 90, 0.7);
 }
 
 .status-dot.idle {
-  background-image: url("assets/discord_state/idle_state.png");
+  background: #f0b232;
+  box-shadow: 0 0 8px rgba(240, 178, 50, 0.7);
 }
 
 .status-dot.dnd {
-  background-image: url("assets/discord_state/dnd_state.png");
+  background: #f23f43;
+  box-shadow: 0 0 8px rgba(242, 63, 67, 0.7);
 }
 
 .status-dot.offline {
-  background-image: url("assets/discord_state/offline_state.png");
+  background: #80848e;
+  box-shadow: 0 0 6px rgba(128, 132, 142, 0.6);
 }
 
 .discord-kicker,
