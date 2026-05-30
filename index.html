@@ -77,6 +77,7 @@
       <nav>
         <a href="projects.html">Projects</a>
         <a href="#home">Home</a>
+        <a href="socials/">Socials</a>
         <a href="contact.html">Contact</a>
       </nav>
       <a class="btn ghost" href="contact.html">Say Hi</a>
@@ -117,6 +118,64 @@
           <span>Linux & Git</span>
         </div>
       </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <p class="eyebrow">Network</p>
+          <h2>Friends</h2>
+        </div>
+        <div class="project-grid" id="friendsGrid">
+          <div class="project-card" style="grid-column: 1 / -1; text-align: center; color: var(--muted);">Loading friends...</div>
+        </div>
+      </section>
+
+      <script>
+      (async () => {
+        const friends = ['Planeteriumprovider', 'Z3p-z', 'insanexyz'];
+        const grid = document.getElementById('friendsGrid');
+
+        try {
+          const results = await Promise.allSettled(
+            friends.map(login =>
+              fetch(`https://api.github.com/users/${login}`, { cache: 'no-cache' })
+                .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+            )
+          );
+
+          const cards = results
+            .filter(r => r.status === 'fulfilled')
+            .map(r => r.value)
+            .map(user => {
+              const a = document.createElement('a');
+              a.href = user.html_url;
+              a.target = '_blank';
+              a.rel = 'noreferrer';
+              a.className = 'project-card';
+              a.style.textDecoration = 'none';
+
+              const img = document.createElement('img');
+              img.src = user.avatar_url;
+              img.alt = user.name || user.login;
+              img.style.cssText = 'width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #8d5fd0; margin-bottom: 0.5rem;';
+
+              const name = document.createElement('h3');
+              name.style.fontSize = '1rem';
+              name.textContent = user.name || user.login;
+
+              const handle = document.createElement('p');
+              handle.style.cssText = 'font-size: 0.85rem; color: var(--muted); margin: 0;';
+              handle.textContent = `@${user.login}`;
+
+              a.append(img, name, handle);
+              return a;
+            });
+
+          grid.replaceChildren(...cards);
+        } catch {
+          grid.innerHTML = '<div class="project-card" style="grid-column: 1 / -1; text-align: center; color: var(--muted);">Could not load friends.</div>';
+        }
+      })();
+      </script>
 
     </main>
 
