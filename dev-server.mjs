@@ -29,6 +29,21 @@ function toSafePath(urlPath) {
   return join(ROOT, normalized);
 }
 
+function hasDirectoryIndex(absPath) {
+  try {
+    if (existsSync(absPath)) {
+      const stats = statSync(absPath);
+      if (stats.isDirectory()) {
+        const indexFile = join(absPath, 'index.html');
+        return existsSync(indexFile) && statSync(indexFile).isFile();
+      }
+    }
+  } catch {
+    // fall through
+  }
+  return false;
+}
+
 function serveFile(res, absPath, status = 200) {
   const ext = extname(absPath).toLowerCase();
   const type = MIME[ext] || 'application/octet-stream';
@@ -37,7 +52,15 @@ function serveFile(res, absPath, status = 200) {
 }
 
 createServer((req, res) => {
+  const rawUrl = (req.url || '/').split('?')[0];
   const target = toSafePath(req.url || '/');
+
+  if (rawUrl.length > 1 && !rawUrl.endsWith('/') && hasDirectoryIndex(target)) {
+    const location = rawUrl + '/';
+    res.writeHead(301, { Location: location });
+    res.end();
+    return;
+  }
 
   try {
     if (existsSync(target)) {
