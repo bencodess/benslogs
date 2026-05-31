@@ -1,6 +1,13 @@
-name: Greetings
+name: greetings
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
 
-on: [pull_request_target, issues]
+concurrency:
+  group: greetings-${{ github.event.issue?.number || github.event.pull_request?.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   greeting:
@@ -9,8 +16,10 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-    - uses: actions/first-interaction@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Yo, Whats good man. Thanks for submitting your issue!"
-        pr-message: "Yo, thanks for submitting your pr. Ill have a look at it!"
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Thanks for opening your first issue! I'll take a look as soon as possible.
+          pr-message: |
+            Thanks for your first pull request! I'll review it shortly.

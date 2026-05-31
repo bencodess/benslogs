@@ -867,6 +867,35 @@ footer {
   font-size: 0.78rem;
 }
 
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.34rem 0.62rem;
+  font-size: 0.78rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: #b59ad5;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.download-link:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: rgba(176, 109, 255, 0.1);
+  box-shadow: 0 3px var(--accent);
+  transform: translateY(-3px);
+}
+
+.download-link:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(16px);
