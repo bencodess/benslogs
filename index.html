@@ -133,46 +133,86 @@
       (async () => {
         const friends = ['Planeteriumprovider', 'Z3p-z', 'insanexyz'];
         const grid = document.getElementById('friendsGrid');
+        const cacheKey = 'friends';
+        const cache = localStorage.getItem(cacheKey);
+        const now = Date.now();
+
+        const fallbackData = [
+          { login: 'Planeteriumprovider', name: 'Planeteriumprovider', html_url: 'https://github.com/Planeteriumprovider', avatar_url: 'https://avatars.githubusercontent.com/u/104488348?v=4' },
+          { login: 'Z3p-z', name: 'Z3p-z', html_url: 'https://github.com/Z3p-z', avatar_url: 'https://avatars.githubusercontent.com/u/65971479?v=4' },
+          { login: 'insanexyz', name: 'insanexyz', html_url: 'https://github.com/insanexyz', avatar_url: 'https://avatars.githubusercontent.com/u/75593601?v=4' },
+        ];
+
+        if (cache) {
+          try {
+            const { data, expiry } = JSON.parse(cache);
+            if (now < expiry) {
+              renderFriends(grid, data);
+              return;
+            }
+          } catch {
+            // ignore
+          }
+        }
 
         try {
           const results = await Promise.allSettled(
             friends.map(login =>
-              fetch(`https://api.github.com/users/${login}`, { cache: 'no-cache' })
+              fetch(`https://api.github.com/users/${login}`)
                 .then(r => { if (!r.ok) throw new Error(); return r.json(); })
             )
           );
 
-          const cards = results
-            .filter(r => r.status === 'fulfilled')
-            .map(r => r.value)
-            .map(user => {
-              const a = document.createElement('a');
-              a.href = user.html_url;
-              a.target = '_blank';
-              a.rel = 'noreferrer';
-              a.className = 'project-card';
-              a.style.textDecoration = 'none';
+          const data = results.filter(r => r.status === 'fulfilled').map(r => r.value);
 
-              const img = document.createElement('img');
-              img.src = user.avatar_url;
-              img.alt = user.name || user.login;
-              img.style.cssText = 'width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #8d5fd0; margin-bottom: 0.5rem;';
+          if (data.length) {
+            localStorage.setItem(cacheKey, JSON.stringify({ data, expiry: now + 3_600_000 }));
+            renderFriends(grid, data);
+          } else {
+            renderFallback(grid);
+          }
+        } catch {
+          renderFallback(grid);
+        }
 
-              const name = document.createElement('h3');
-              name.style.fontSize = '1rem';
-              name.textContent = user.name || user.login;
+        function renderFallback(grid) {
+          const stored = localStorage.getItem(cacheKey);
+          if (stored) {
+            try {
+              const { data } = JSON.parse(stored);
+              if (data.length) { renderFriends(grid, data); return; }
+            } catch {}
+          }
+          renderFriends(grid, fallbackData);
+        }
 
-              const handle = document.createElement('p');
-              handle.style.cssText = 'font-size: 0.85rem; color: var(--muted); margin: 0;';
-              handle.textContent = `@${user.login}`;
+        function renderFriends(grid, data) {
+          const cards = data.map(user => {
+            const a = document.createElement('a');
+            a.href = user.html_url;
+            a.target = '_blank';
+            a.rel = 'noreferrer';
+            a.className = 'project-card';
+            a.style.textDecoration = 'none';
 
-              a.append(img, name, handle);
-              return a;
-            });
+            const img = document.createElement('img');
+            img.src = user.avatar_url;
+            img.alt = user.name || user.login;
+            img.style.cssText = 'width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #8d5fd0; margin-bottom: 0.5rem;';
+
+            const name = document.createElement('h3');
+            name.style.fontSize = '1rem';
+            name.textContent = user.name || user.login;
+
+            const handle = document.createElement('p');
+            handle.style.cssText = 'font-size: 0.85rem; color: var(--muted); margin: 0;';
+            handle.textContent = `@${user.login}`;
+
+            a.append(img, name, handle);
+            return a;
+          });
 
           grid.replaceChildren(...cards);
-        } catch {
-          grid.innerHTML = '<div class="project-card" style="grid-column: 1 / -1; text-align: center; color: var(--muted);">Could not load friends.</div>';
         }
       })();
       </script>

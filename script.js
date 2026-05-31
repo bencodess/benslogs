@@ -120,20 +120,20 @@ function setupContentProtection() {
     img.setAttribute('draggable', 'false');
   });
 
-  document.addEventListener('keydown', (event) => {
-    const key = event.key.toLowerCase();
-    const ctrlOrCmd = event.ctrlKey || event.metaKey;
-
-    const blockedCombos =
-      (ctrlOrCmd && key === 's') ||
-      (ctrlOrCmd && key === 'u') ||
-      (ctrlOrCmd && key === 'p') ||
-      (ctrlOrCmd && event.shiftKey && (key === 'i' || key === 'j' || key === 'c'));
-
-    if (blockedCombos) {
-      event.preventDefault();
-    }
-  });
+  // document.addEventListener('keydown', (event) => {
+  //   const key = event.key.toLowerCase();
+  //   const ctrlOrCmd = event.ctrlKey || event.metaKey;
+  //
+  //   const blockedCombos =
+  //     (ctrlOrCmd && key === 's') ||
+  //     (ctrlOrCmd && key === 'u') ||
+  //     (ctrlOrCmd && key === 'p') ||
+  //     (ctrlOrCmd && event.shiftKey && (key === 'i' || key === 'j' || key === 'c'));
+  //
+  //   if (blockedCombos) {
+  //     event.preventDefault();
+  //   }
+  // });
 }
 
 setupContentProtection();
