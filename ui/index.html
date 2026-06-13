@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI Recipes | bencodess</title>
+    <meta name="description" content="UI recipe collection — CSS effects, components, and design patterns on benslogs.dev" />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href="https://benslogs.dev/ui/" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <meta property="og:title" content="UI Recipes | bencodess" />
+    <meta property="og:description" content="UI recipe collection — CSS effects, components, and design patterns" />
+    <meta property="og:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta property="og:url" content="https://benslogs.dev/ui/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BensLogs" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="UI Recipes | bencodess" />
+    <meta name="twitter:description" content="UI recipe collection — CSS effects, components, and design patterns" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .recipe-grid { display: grid; gap: 1rem; }
+
+      .recipe-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        background: linear-gradient(145deg, var(--surface), var(--surface-2));
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .recipe-card:hover {
+        transform: translateY(-4px);
+        border-color: #b27df6;
+        box-shadow: 0 24px 48px rgba(66, 18, 128, 0.55);
+      }
+
+      .recipe-card:focus-visible {
+        outline: 2px solid #d8b8ff;
+        outline-offset: 2px;
+      }
+
+      .recipe-card.disabled {
+        opacity: 0.45;
+        cursor: default;
+        pointer-events: none;
+        filter: grayscale(0.5);
+      }
+
+      .recipe-icon {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .recipe-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .recipe-icon.glass { background: rgba(176, 109, 255, 0.08); border: 1px solid rgba(176, 109, 255, 0.25); }
+      .recipe-icon.neon { background: rgba(176, 109, 255, 0.12); border: 1px solid rgba(176, 109, 255, 0.3); }
+      .recipe-icon.cardfx { background: rgba(176, 109, 255, 0.08); border: 1px solid rgba(176, 109, 255, 0.2); }
+      .recipe-icon.neumo { background: rgba(176, 109, 255, 0.08); border: 1px solid rgba(176, 109, 255, 0.2); }
+      .recipe-icon.neobrutal { background: #1a0d32; border: 2px solid #b06dff; border-radius: 8px; }
+      .recipe-icon.spinner { background: rgba(176, 109, 255, 0.08); border: 1px solid rgba(176, 109, 255, 0.2); }
+
+      .recipe-card.disabled .recipe-icon { filter: grayscale(0.6); opacity: 0.6; }
+
+      .recipe-meta { display: grid; gap: 0.1rem; min-width: 0; }
+
+      .recipe-meta h3 {
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+      }
+
+      .recipe-meta h3 .status {
+        display: inline-block;
+        font-size: 0.62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.12rem 0.45rem;
+        border-radius: 999px;
+        background: rgba(176, 109, 255, 0.2);
+        color: #d2a9ff;
+      }
+
+      .recipe-meta h3 .status.new { background: rgba(109, 213, 255, 0.2); color: #8dd5ff; }
+
+      .recipe-meta p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+
+      .recipe-meta .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-top: 0.2rem;
+      }
+
+      .recipe-meta .tag-row span {
+        display: inline-block;
+        font-size: 0.66rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.12rem 0.4rem;
+        border-radius: 999px;
+        background: rgba(176, 109, 255, 0.1);
+        color: #b897e0;
+      }
+
+      .recipe-card .arrow {
+        margin-left: auto;
+        flex: 0 0 24px;
+        width: 24px;
+        height: 24px;
+        color: var(--muted);
+        transition: transform 220ms ease, color 220ms ease;
+      }
+
+      .recipe-card:hover .arrow { transform: translateX(4px); color: #d2a9ff; }
+
+      @media (max-width: 640px) {
+        .recipe-card { padding: 1rem; }
+        .recipe-icon { width: 44px; height: 44px; flex: 0 0 44px; }
+        .recipe-icon svg { width: 24px; height: 24px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="../" aria-label="bencodess home">
+        <img src="../assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="../">Home</a>
+        <a href="./">UI</a>
+        <a href="../projects/">Projects</a>
+        <a href="../socials/">Socials</a>
+        <a href="../contact/">Contact</a>
+      </nav>
+      <a class="btn ghost" href="../contact/">Say Hi</a>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <p class="eyebrow">UI Recipes</p>
+        <h1>CSS <span>Recipes</span></h1>
+        <p class="lead">
+          A growing collection of UI patterns, effects, and components &mdash; live demos with code.
+        </p>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <h2>All Recipes</h2>
+        </div>
+        <div class="recipe-grid">
+
+          <a class="recipe-card" href="recipes/glassmorphism/">
+            <span class="recipe-icon glass">
+              <svg viewBox="0 0 28 28" fill="none">
+                <rect x="2" y="2" width="24" height="24" rx="4" fill="rgba(176,109,255,0.08)" stroke="rgba(176,109,255,0.3)" stroke-width="1"/>
+                <rect x="6" y="6" width="16" height="16" rx="3" fill="rgba(176,109,255,0.12)" stroke="rgba(176,109,255,0.25)" stroke-width="1"/>
+                <rect x="10" y="10" width="8" height="8" rx="2" fill="rgba(176,109,255,0.18)" stroke="rgba(176,109,255,0.35)" stroke-width="1"/>
+              </svg>
+            </span>
+            <div class="recipe-meta">
+              <h3>Glass Morphism</h3>
+              <p>Frosted glass effect with <code>backdrop-filter: blur()</code>. Light, default, and heavy blur variants with gradient borders and layered depth.</p>
+              <div class="tag-row">
+                <span>backdrop-filter</span>
+                <span>blur</span>
+                <span>translucent</span>
+              </div>
+            </div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+
+          <a class="recipe-card" href="recipes/neon-glow/">
+            <span class="recipe-icon neon">
+              <svg viewBox="0 0 28 28" fill="none">
+                <circle cx="14" cy="14" r="3" fill="#b06dff"/>
+                <circle cx="14" cy="14" r="6" stroke="rgba(176,109,255,0.3)" stroke-width="1.5"/>
+                <circle cx="14" cy="14" r="10" stroke="rgba(176,109,255,0.15)" stroke-width="1.5"/>
+                <line x1="14" y1="1" x2="14" y2="5" stroke="rgba(176,109,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="14" y1="23" x2="14" y2="27" stroke="rgba(176,109,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="1" y1="14" x2="5" y2="14" stroke="rgba(176,109,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="23" y1="14" x2="27" y2="14" stroke="rgba(176,109,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="recipe-meta">
+              <h3>Neon Glow</h3>
+              <p>CSS text and box glow using layered <code>text-shadow</code> and <code>box-shadow</code>. Includes animated pulse variant.</p>
+              <div class="tag-row">
+                <span>text-shadow</span>
+                <span>box-shadow</span>
+                <span>animation</span>
+              </div>
+            </div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+
+          <a class="recipe-card" href="recipes/card-effects/">
+            <span class="recipe-icon cardfx">
+              <svg viewBox="0 0 28 28" fill="none">
+                <rect x="3" y="7" width="20" height="16" rx="3" fill="rgba(176,109,255,0.06)" stroke="rgba(176,109,255,0.15)" stroke-width="1.2"/>
+                <rect x="5" y="5" width="20" height="16" rx="3" fill="rgba(176,109,255,0.1)" stroke="rgba(176,109,255,0.25)" stroke-width="1.2"/>
+                <rect x="7" y="3" width="20" height="16" rx="3" fill="rgba(176,109,255,0.16)" stroke="rgba(176,109,255,0.35)" stroke-width="1.2"/>
+              </svg>
+            </span>
+            <div class="recipe-meta">
+              <h3>Card Effects</h3>
+              <p>Interactive card hover effects using <code>transform</code>, <code>filter</code>, and pseudo-elements. Lift, scale, glow border, and shimmer.</p>
+              <div class="tag-row">
+                <span>hover</span>
+                <span>transform</span>
+                <span>transition</span>
+              </div>
+            </div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+
+          <a class="recipe-card" href="recipes/neumorphism/">
+            <span class="recipe-icon neumo">
+              <svg viewBox="0 0 28 28" fill="none">
+                <rect x="3" y="3" width="22" height="22" rx="5" fill="rgba(176,109,255,0.06)" stroke="rgba(176,109,255,0.15)" stroke-width="1"/>
+                <path d="M5 14 C5 7 8 5 14 5" stroke="rgba(255,255,255,0.15)" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M23 14 C23 21 20 23 14 23" stroke="rgba(0,0,0,0.35)" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="8" y="8" width="12" height="12" rx="3" fill="rgba(176,109,255,0.1)" stroke="rgba(176,109,255,0.2)" stroke-width="1"/>
+              </svg>
+            </span>
+            <div class="recipe-meta">
+              <h3>Neumorphism</h3>
+              <p>Soft UI effect with inset and outset shadows. Pressed and raised states for a subtle 3D look.</p>
+              <div class="tag-row">
+                <span>box-shadow</span>
+                <span>inset</span>
+                <span>soft</span>
+              </div>
+            </div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+
+          <a class="recipe-card" href="recipes/neobrutalism/">
+            <span class="recipe-icon neobrutal">
+              <svg viewBox="0 0 28 28" fill="none">
+                <rect x="2" y="6" width="22" height="18" rx="2" fill="#120821" stroke="#b06dff" stroke-width="2"/>
+                <rect x="6" y="2" width="22" height="18" rx="2" fill="#1a1030" stroke="#b06dff" stroke-width="2"/>
+              </svg>
+            </span>
+            <div class="recipe-meta">
+              <h3>Neobrutalism</h3>
+              <p>Bold borders, harsh box-shadows, high-contrast color blocks. Maximalist, in-your-face design.</p>
+              <div class="tag-row">
+                <span>borders</span>
+                <span>shadow</span>
+                <span>bold</span>
+              </div>
+            </div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+
+          <a class="recipe-card" href="recipes/loading-spinners/">
+            <span class="recipe-icon spinner">
+              <svg viewBox="0 0 28 28" fill="none">
+                <circle cx="14" cy="14" r="10" stroke="rgba(176,109,255,0.15)" stroke-width="2.5"/>
+                <path d="M14 4 A10 10 0 0 1 24 14" stroke="#b06dff" stroke-width="2.5" stroke-linecap="round">
+                  <animateTransform attributeName="transform" type="rotate" from="0 14 14" to="360 14 14" dur="1s" repeatCount="indefinite"/>
+                </path>
+              </svg>
+            </span>
+            <div class="recipe-meta">
+              <h3>Loading Spinners</h3>
+              <p>CSS-only loading animations. Dots, rings, pulsars, and progress bars — all with <code>@keyframes</code>.</p>
+              <div class="tag-row">
+                <span>animation</span>
+                <span>keyframes</span>
+                <span>loading</span>
+              </div>
+            </div>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+      </div>
+      <div class="footer-row">
+        <p>&copy; <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
+        <div class="footer-social">
+          <a class="icon-link" href="https://discord.com/users/1033745912071192688" target="_blank" rel="noreferrer" aria-label="Open Discord profile">
+            <span class="icon-wrap" aria-hidden="true"><svg viewBox="0 0 640 512" role="img"><path fill="currentColor" d="M524.5 69.8a1.5 1.5 0 0 0-.8-.7A485.1 485.1 0 0 0 404.1 32a1.8 1.8 0 0 0-1.9.9 337.5 337.5 0 0 0-14.9 30.6 447.8 447.8 0 0 0-134.4 0 309.5 309.5 0 0 0-15.1-30.6 1.9 1.9 0 0 0-1.9-.9 483.7 483.7 0 0 0-119.8 37.1 1.7 1.7 0 0 0-.8.7C39.1 183.2 18.2 293.5 28.4 402.5a2 2 0 0 0 .8 1.4A489.9 489.9 0 0 0 176.3 480a1.9 1.9 0 0 0 2.1-.7 348.2 348.2 0 0 0 30-48.8 1.9 1.9 0 0 0-1-2.6 321.2 321.2 0 0 1-45.9-21.9 1.9 1.9 0 0 1-.2-3.1c3.1-2.3 6.3-4.7 9.3-7.1a1.8 1.8 0 0 1 1.9-.3c96 43.8 200 43.8 294.8 0a1.8 1.8 0 0 1 1.9.3c3.1 2.5 6.2 4.9 9.3 7.1a1.9 1.9 0 0 1-.2 3.1 301.4 301.4 0 0 1-45.9 21.8 1.9 1.9 0 0 0-1 2.6 391.1 391.1 0 0 0 30 48.8 1.9 1.9 0 0 0 2.1.7 489.6 489.6 0 0 0 147.2-76.1 1.9 1.9 0 0 0 .8-1.4c12.2-126.7-20.1-236.2-85.7-332.7ZM222.3 337.6c-28.9 0-52.6-26.6-52.6-59.2s23.3-59.2 52.6-59.2c29.5 0 53 26.8 52.6 59.2 0 32.7-23.3 59.2-52.6 59.2Zm195.4 0c-28.9 0-52.6-26.6-52.6-59.2s23.3-59.2 52.6-59.2c29.5 0 53 26.8 52.6 59.2 0 32.7-23.1 59.2-52.6 59.2Z"/></svg></span>
+            <span>Discord</span>
+          </a>
+          <a class="icon-link" href="https://github.com/bencodess" target="_blank" rel="noreferrer" aria-label="Open GitHub profile">
+            <span class="icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
+            <span>GitHub</span>
+          </a>
+          <a class="icon-link" href="https://www.instagram.com/_ben.oderso/" target="_blank" rel="noreferrer" aria-label="Open Instagram profile">
+            <span class="icon-wrap" aria-hidden="true"><svg viewBox="0 0 448 512" role="img"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></span>
+            <span>Instagram</span>
+          </a>
+          <a class="icon-link hide-mobile" href="https://www.snapchat.com/add/ben.lovestecca" target="_blank" rel="noreferrer" aria-label="Open Snapchat profile">
+            <span class="icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><path fill="currentColor" d="M12.206.793c.99 0 4.347.276 5.93 3.821c.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51c.075.045.203.09.401.09c.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104c.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z"/></svg></span>
+            <span>Snapchat</span>
+          </a>
+          <a class="icon-link hide-mobile" href="https://open.spotify.com/user/ie4svme4dk1skreap08buyw9z" target="_blank" rel="noreferrer" aria-label="Open Spotify profile">
+            <span class="icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><path fill="currentColor" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></span>
+            <span>Spotify</span>
+          </a>
+          <a class="icon-link hide-mobile" href="https://steamcommunity.com/profiles/76561199203104671/" target="_blank" rel="noreferrer" aria-label="Open Steam profile">
+            <span class="icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><path fill="currentColor" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/></svg></span>
+            <span>Steam</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../assets/metallic-paint.js"></script>
+    <script src="../script.js"></script>
+  </body>
+</html>

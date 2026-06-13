@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glass Morphism — UI Recipes | bencodess</title>
+    <meta name="description" content="Glass morphism UI recipe — frosted glass effects with CSS backdrop-filter on benslogs.dev" />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href="https://benslogs.dev/ui/recipes/glassmorphism/" />
+    <link rel="icon" type="image/png" href="../../../assets/swasser-round.png?v=2" />
+    <meta property="og:title" content="Glass Morphism — UI Recipes | bencodess" />
+    <meta property="og:description" content="Glass morphism UI recipe — frosted glass effects with CSS" />
+    <meta property="og:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta property="og:url" content="https://benslogs.dev/ui/recipes/glassmorphism/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BensLogs" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Glass Morphism — UI Recipes | bencodess" />
+    <meta name="twitter:description" content="Glass morphism UI recipe — frosted glass effects with CSS" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../../styles.css" />
+    <style>
+      .glass-demo {
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .glass-demo h3 {
+        font-size: 1.1rem;
+      }
+
+      .glass-demo p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+
+      .glass-demo code {
+        font-family: "Space Grotesk", monospace;
+        font-size: 0.82rem;
+        background: rgba(0,0,0,0.35);
+        padding: 0.2rem 0.45rem;
+        border-radius: 6px;
+        color: #d6baff;
+      }
+
+      .glass-demo pre {
+        margin: 0;
+        font-family: "Space Grotesk", monospace;
+        font-size: 0.78rem;
+        background: rgba(0,0,0,0.45);
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        overflow-x: auto;
+        color: #e0ccf5;
+        line-height: 1.55;
+        border: 1px solid rgba(176, 109, 255, 0.15);
+      }
+
+      .glass-demo pre .hl { color: #b06dff; }
+      .glass-demo pre .cm { color: #7a7590; }
+      .glass-demo pre .val { color: #a5d8ff; }
+
+      .glass-demo .tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(176, 109, 255, 0.2);
+        color: #d2a9ff;
+        width: fit-content;
+      }
+
+      .glass-header-ref {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.9rem 1.2rem;
+        border-radius: 999px;
+        background: rgba(22, 10, 41, 0.82);
+        border: 1px solid rgba(203, 157, 255, 0.3);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 26px rgba(26, 8, 47, 0.5);
+      }
+
+      .glass-header-ref .logo-placeholder {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7d37dd, #a35eff);
+        border: 1px solid #8d5fd0;
+      }
+
+      .glass-header-ref .nav-placeholder {
+        display: flex; gap: 0.35rem; padding: 0.2rem;
+        border-radius: 999px;
+        background: rgba(109, 67, 173, 0.15);
+        border: 1px solid rgba(176, 122, 243, 0.24);
+      }
+
+      .glass-header-ref .nav-placeholder span {
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .glass-header-ref .ghost-placeholder {
+        padding: 0.5rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid #7e4fc4;
+        background: rgba(144, 88, 227, 0.14);
+        font-size: 0.82rem;
+        color: var(--ink);
+      }
+
+      .glass-variants {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .glass-layer-card {
+        padding: 1.2rem;
+        border-radius: var(--radius);
+        display: grid;
+        gap: 0.5rem;
+        min-height: 140px;
+        align-content: end;
+      }
+
+      .glass-layer-card h4 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .glass-layer-card p {
+        margin: 0;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .layer-stack {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 2;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 30% 30%, #7a2fff 0%, transparent 45%),
+          radial-gradient(circle at 70% 70%, #57229f 0%, transparent 40%);
+        margin-bottom: 0.5rem;
+      }
+
+      .layer-stack .layer {
+        position: absolute;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .layer-stack .layer-1 {
+        top: 10%; left: 10%;
+        width: 55%; height: 75%;
+        background: rgba(22, 10, 41, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+      }
+
+      .layer-stack .layer-2 {
+        bottom: 8%; right: 8%;
+        width: 50%; height: 60%;
+        background: rgba(22, 10, 41, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-color: rgba(203, 157, 255, 0.25);
+      }
+
+      .layer-stack .layer-3 {
+        top: 5%; right: 5%;
+        width: 40%; height: 45%;
+        background: rgba(22, 10, 41, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-color: rgba(203, 157, 255, 0.3);
+      }
+
+      .recipe-table {
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .recipe-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 0.5rem;
+        padding: 0.45rem 0.7rem;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        font-size: 0.85rem;
+      }
+
+      .recipe-row .prop {
+        color: #c5abeb;
+        font-weight: 600;
+      }
+
+      .recipe-row .value {
+        color: #a5d8ff;
+        font-family: "Space Grotesk", monospace;
+      }
+
+      @media (max-width: 640px) {
+        .glass-variants {
+          grid-template-columns: 1fr;
+        }
+        .recipe-row {
+          grid-template-columns: 1fr;
+          gap: 0.15rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="../../../" aria-label="bencodess home">
+        <img src="../../../assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="../../../">Home</a>
+        <a href="../../../ui/">UI</a>
+        <a href="../../../projects/">Projects</a>
+        <a href="../../../socials/">Socials</a>
+        <a href="../../../contact/">Contact</a>
+      </nav>
+      <a class="btn ghost" href="../../../contact/">Say Hi</a>
+    </header>
+
+    <main>
+      <nav style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem; color: var(--muted);">
+        <a href="../../" style="color: var(--accent); text-decoration: none;">UI Recipes</a>
+        <span>/</span>
+        <span style="color: var(--ink);">Glass Morphism</span>
+      </nav>
+
+      <section class="hero reveal">
+        <p class="eyebrow">UI Recipe</p>
+        <h1>Glass <span>Morphism</span></h1>
+        <p class="lead">
+          Frosted glass effects using <code>backdrop-filter: blur()</code> and semi-transparent backgrounds.
+          All examples use the site's existing dark theme.
+        </p>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <h2>The Recipe</h2>
+        </div>
+        <div class="glass-demo" style="background: rgba(22, 10, 41, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(203, 157, 255, 0.2);">
+          <p style="color: #e0ccf5; font-weight: 600;">Every glass element on this site follows the same pattern:</p>
+          <div class="recipe-table">
+            <div class="recipe-row">
+              <span class="prop">background</span>
+              <span class="value">rgba(22, 10, 41, 0.5&ndash;0.85)</span>
+            </div>
+            <div class="recipe-row">
+              <span class="prop">backdrop-filter</span>
+              <span class="value">blur(6px&ndash;20px)</span>
+            </div>
+            <div class="recipe-row">
+              <span class="prop">border</span>
+              <span class="value">1px solid rgba(203, 157, 255, 0.15&ndash;0.3)</span>
+            </div>
+            <div class="recipe-row">
+              <span class="prop">border-radius</span>
+              <span class="value">12px&ndash;18px (cards) / 999px (pills)</span>
+            </div>
+            <div class="recipe-row">
+              <span class="prop">box-shadow</span>
+              <span class="value">0 10px 26px rgba(26, 8, 47, 0.5)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <h2>Variations</h2>
+        </div>
+        <p class="lead" style="margin-bottom: 1.2rem;">
+          Adjusting blur strength and opacity creates different glass intensities.
+        </p>
+        <div class="glass-variants">
+          <div class="glass-layer-card" style="background: rgba(22, 10, 41, 0.45); backdrop-filter: blur(6px); border: 1px solid rgba(203, 157, 255, 0.18);">
+            <span class="tag">Light</span>
+            <h4>blur(6px)</h4>
+            <p>Subtle frosted tint &mdash; good for backgrounds behind text.</p>
+          </div>
+          <div class="glass-layer-card" style="background: rgba(22, 10, 41, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(203, 157, 255, 0.25);">
+            <span class="tag">Default</span>
+            <h4>blur(12px)</h4>
+            <p>The site header uses this &mdash; distinct glass with good readability.</p>
+          </div>
+          <div class="glass-layer-card" style="background: rgba(22, 10, 41, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(203, 157, 255, 0.3);">
+            <span class="tag">Heavy</span>
+            <h4>blur(20px)</h4>
+            <p>Thick frosted look &mdash; works for overlays and modals.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <h2>With Gradient Border</h2>
+        </div>
+        <p class="lead" style="margin-bottom: 1.2rem;">
+          A <code>border-image</code> or pseudo-element gradient adds a neon edge.
+        </p>
+        <div style="position: relative; border-radius: var(--radius); padding: 2px; background: linear-gradient(135deg, #b06dff, #7a2fff, #d2a9ff);">
+          <div style="padding: 1.5rem; border-radius: calc(var(--radius) - 2px); background: rgba(22, 10, 41, 0.7); backdrop-filter: blur(14px); display: grid; gap: 0.6rem;">
+            <h3 style="font-size: 1.1rem;">Gradient Glass</h3>
+            <p style="margin: 0; color: var(--muted); font-size: 0.92rem;">
+              The border is a <code>linear-gradient</code> on the outer wrapper. The inner div contains the glass background and content. This creates a glowing neon frame without affecting the glass layer.
+            </p>
+            <pre>outer { background: <span class="val">linear-gradient(135deg, #b06dff, #7a2fff, #d2a9ff)</span>; }
+inner { background: <span class="val">rgba(22, 10, 41, 0.7)</span>;
+  backdrop-filter: <span class="val">blur(14px)</span>; }</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <h2>Layered Depth</h2>
+        </div>
+        <p class="lead" style="margin-bottom: 1.2rem;">
+          Stacking glass layers with different blurs creates spatial depth.
+        </p>
+        <div class="layer-stack">
+          <div class="layer layer-1"></div>
+          <div class="layer layer-2"></div>
+          <div class="layer layer-3"></div>
+        </div>
+        <div style="margin-top: 0.5rem;">
+          <pre>Layer 1 (back):  blur(<span class="val">6px</span>)  opacity <span class="val">0.6</span>
+Layer 2 (mid):   blur(<span class="val">12px</span>) opacity <span class="val">0.7</span>
+Layer 3 (front): blur(<span class="val">20px</span>) opacity <span class="val">0.8</span></pre>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <h2>Live on This Site</h2>
+        </div>
+        <p class="lead" style="margin-bottom: 1.2rem;">
+          The header nav at the top of this page <em>is</em> glass morphism. Here it is in isolation:
+        </p>
+        <div class="glass-header-ref">
+          <div class="logo-placeholder"></div>
+          <div class="nav-placeholder">
+            <span>Home</span>
+            <span style="background: rgba(190, 139, 255, 0.2); color: #fff;">UI</span>
+            <span>Socials</span>
+            <span>Contact</span>
+          </div>
+          <div class="ghost-placeholder">Say Hi</div>
+        </div>
+        <div style="margin-top: 1rem;">
+          <pre><span class="hl">.site-header</span> {
+  background: <span class="val">rgba(22, 10, 41, 0.82)</span>;
+  border: <span class="val">1px solid rgba(203, 157, 255, 0.3)</span>;
+  backdrop-filter: <span class="val">blur(12px)</span>;
+  box-shadow: <span class="val">0 10px 26px rgba(26, 8, 47, 0.5)</span>;
+}</pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../../../assets/bencodes.svg"}'></canvas>
+      </div>
+      <div class="footer-row">
+        <p>&copy; <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
+        <div class="footer-social">
+          <a class="icon-link" href="https://discord.com/users/1033745912071192688" target="_blank" rel="noreferrer" aria-label="Open Discord profile">
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 640 512" role="img">
+                <path fill="currentColor" d="M524.5 69.8a1.5 1.5 0 0 0-.8-.7A485.1 485.1 0 0 0 404.1 32a1.8 1.8 0 0 0-1.9.9 337.5 337.5 0 0 0-14.9 30.6 447.8 447.8 0 0 0-134.4 0 309.5 309.5 0 0 0-15.1-30.6 1.9 1.9 0 0 0-1.9-.9 483.7 483.7 0 0 0-119.8 37.1 1.7 1.7 0 0 0-.8.7C39.1 183.2 18.2 293.5 28.4 402.5a2 2 0 0 0 .8 1.4A489.9 489.9 0 0 0 176.3 480a1.9 1.9 0 0 0 2.1-.7 348.2 348.2 0 0 0 30-48.8 1.9 1.9 0 0 0-1-2.6 321.2 321.2 0 0 1-45.9-21.9 1.9 1.9 0 0 1-.2-3.1c3.1-2.3 6.3-4.7 9.3-7.1a1.8 1.8 0 0 1 1.9-.3c96 43.8 200 43.8 294.8 0a1.8 1.8 0 0 1 1.9.3c3.1 2.5 6.2 4.9 9.3 7.1a1.9 1.9 0 0 1-.2 3.1 301.4 301.4 0 0 1-45.9 21.8 1.9 1.9 0 0 0-1 2.6 391.1 391.1 0 0 0 30 48.8 1.9 1.9 0 0 0 2.1.7 489.6 489.6 0 0 0 147.2-76.1 1.9 1.9 0 0 0 .8-1.4c12.2-126.7-20.1-236.2-85.7-332.7ZM222.3 337.6c-28.9 0-52.6-26.6-52.6-59.2s23.3-59.2 52.6-59.2c29.5 0 53 26.8 52.6 59.2 0 32.7-23.3 59.2-52.6 59.2Zm195.4 0c-28.9 0-52.6-26.6-52.6-59.2s23.3-59.2 52.6-59.2c29.5 0 53 26.8 52.6 59.2 0 32.7-23.1 59.2-52.6 59.2Z"/>
+              </svg>
+            </span>
+            <span>Discord</span>
+          </a>
+          <a class="icon-link" href="https://github.com/bencodess" target="_blank" rel="noreferrer" aria-label="Open GitHub profile">
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+              </svg>
+            </span>
+            <span>GitHub</span>
+          </a>
+          <a class="icon-link" href="https://www.instagram.com/_ben.oderso/" target="_blank" rel="noreferrer" aria-label="Open Instagram profile">
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 448 512" role="img">
+                <path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
+              </svg>
+            </span>
+            <span>Instagram</span>
+          </a>
+          <a class="icon-link hide-mobile" href="https://www.snapchat.com/add/ben.lovestecca" target="_blank" rel="noreferrer" aria-label="Open Snapchat profile">
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path fill="currentColor" d="M12.206.793c.99 0 4.347.276 5.93 3.821c.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51c.075.045.203.09.401.09c.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104c.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z"/>
+              </svg>
+            </span>
+            <span>Snapchat</span>
+          </a>
+          <a class="icon-link hide-mobile" href="https://open.spotify.com/user/ie4svme4dk1skreap08buyw9z" target="_blank" rel="noreferrer" aria-label="Open Spotify profile">
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path fill="currentColor" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+              </svg>
+            </span>
+            <span>Spotify</span>
+          </a>
+          <a class="icon-link hide-mobile" href="https://steamcommunity.com/profiles/76561199203104671/" target="_blank" rel="noreferrer" aria-label="Open Steam profile">
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path fill="currentColor" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>
+              </svg>
+            </span>
+            <span>Steam</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../../../assets/metallic-paint.js"></script>
+    <script src="../../../script.js"></script>
+  </body>
+</html>
