@@ -1063,3 +1063,18 @@ footer {
   }
 
 }
+
+.metallic-footer {
+  width: 100%;
+  max-width: 500px;
+  height: 80px;
+  margin: 0 auto 1rem;
+  border-radius: var(--radius, 18px);
+  overflow: hidden;
+}
+
+.metallic-footer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

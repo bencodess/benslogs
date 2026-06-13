@@ -205,6 +205,9 @@
     </main>
 
     <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+      </div>
       <div class="footer-row">
         <p>© <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
         <button class="download-link" id="downloadContact" aria-label="Download contact information">
@@ -216,6 +219,7 @@
       </div>
     </footer>
 
+    <script src="../assets/metallic-paint.js"></script>
     <script src="../script.js"></script>
     <script>
       document.getElementById('downloadContact').addEventListener('click', () => {
