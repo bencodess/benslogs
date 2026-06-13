@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Liquid Glass — UI Recipes | bencodess</title>
-    <meta name="description" content="Liquid glass CSS recipe — morphing blob shapes with glass transparency and backdrop-filter" />
+    <meta name="description" content="Apple-inspired liquid glass CSS recipe — frosted glass panels, visionOS-style blur with reflections, and layered glass UI components" />
     <meta name="author" content="bencodess" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#07030f" />
@@ -13,123 +13,263 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="../../../styles.css" />
     <style>
-      .liquid-demo {
-        position: relative;
-        width: 100%;
-        min-height: 320px;
-        border-radius: var(--radius);
-        overflow: hidden;
-        background:
-          radial-gradient(circle at 30% 40%, #7a2fff 0%, transparent 50%),
-          radial-gradient(circle at 70% 60%, #57229f 0%, transparent 40%);
-      }
-      .liquid-demo .blob {
-        position: absolute;
-        width: 180px;
-        height: 180px;
-        background: rgba(22, 10, 41, 0.45);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(203, 157, 255, 0.25);
-        animation: blobMorph 8s ease-in-out infinite;
-      }
-      .liquid-demo .blob:nth-child(1) {
-        top: 15%; left: 10%;
-        animation-delay: 0s;
-      }
-      .liquid-demo .blob:nth-child(2) {
-        top: 45%; left: 55%;
-        width: 140px;
-        height: 140px;
-        animation-delay: -3s;
-        background: rgba(22, 10, 41, 0.55);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-      }
-      .liquid-demo .blob:nth-child(3) {
-        top: 10%; left: 50%;
-        width: 100px;
-        height: 100px;
-        animation-delay: -6s;
-        background: rgba(176, 109, 255, 0.15);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-color: rgba(176, 109, 255, 0.3);
-      }
-      @keyframes blobMorph {
-        0%, 100% {
-          border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-        }
-        25% {
-          border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
-        }
-        50% {
-          border-radius: 50% 60% 30% 80% / 40% 50% 60% 50%;
-        }
-        75% {
-          border-radius: 70% 30% 60% 40% / 60% 40% 50% 70%;
-        }
-      }
-      .liquid-demo .blob:hover {
-        animation-duration: 2s;
-      }
-      .liquid-card {
-        padding: 1.5rem;
-        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-        background: rgba(22, 10, 41, 0.5);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(203, 157, 255, 0.2);
-        max-width: 300px;
-        animation: cardMorph 10s ease-in-out infinite;
-      }
-      .liquid-card h3 {
-        margin: 0 0 0.5rem;
-        font-size: 1.1rem;
-      }
-      .liquid-card p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: var(--muted);
-        line-height: 1.5;
-      }
-      @keyframes cardMorph {
-        0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-        33% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-        66% { border-radius: 50% 60% 30% 80% / 40% 50% 60% 50%; }
-      }
-      .liquid-grid {
+      .glass-showcase {
         display: flex;
         flex-wrap: wrap;
-        gap: 1.5rem;
+        gap: 2rem;
         justify-content: center;
         align-items: center;
+        min-height: 360px;
         padding: 2rem;
         border-radius: var(--radius);
         background:
-          radial-gradient(circle at 20% 30%, rgba(122, 47, 255, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 80% 70%, rgba(87, 34, 159, 0.25) 0%, transparent 40%);
+          radial-gradient(ellipse at 20% 50%, rgba(122, 47, 255, 0.25) 0%, transparent 60%),
+          radial-gradient(ellipse at 80% 50%, rgba(87, 34, 159, 0.2) 0%, transparent 60%);
+        position: relative;
+        overflow: hidden;
       }
-      .liquid-grid .glass-blob {
-        width: 120px;
-        height: 120px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Space Grotesk", sans-serif;
-        font-size: 0.7rem;
-        font-weight: 700;
+      .glass-showcase::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(circle at 10% 20%, rgba(255,255,255,0.04) 0%, transparent 50%),
+          radial-gradient(circle at 90% 80%, rgba(255,255,255,0.03) 0%, transparent 50%);
+        pointer-events: none;
+      }
+      .glass-panel {
+        position: relative;
+        width: 240px;
+        padding: 1.5rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+      .glass-panel::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        border-radius: 20px 20px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+        pointer-events: none;
+      }
+      .glass-panel h3 {
+        margin: 0 0 0.4rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        position: relative;
+      }
+      .glass-panel p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.5;
+        position: relative;
+      }
+      .glass-panel .badge {
+        display: inline-block;
+        margin-top: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.65rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #d6c2ef;
-        background: rgba(22, 10, 41, 0.5);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(203, 157, 255, 0.2);
-        animation: blobMorph 6s ease-in-out infinite;
+        letter-spacing: 0.05em;
+        background: rgba(176, 109, 255, 0.2);
+        border: 0.5px solid rgba(176, 109, 255, 0.3);
+        color: #c999ff;
+        position: relative;
       }
-      .liquid-grid .glass-blob:nth-child(2) { animation-delay: -2s; width: 100px; height: 100px; }
-      .liquid-grid .glass-blob:nth-child(3) { animation-delay: -4s; width: 80px; height: 80px; font-size: 0.6rem; }
+      .glass-panel.light {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+      }
+      .glass-panel.dark {
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border-color: rgba(255, 255, 255, 0.08);
+      }
+      .glass-panel.tinted {
+        background: rgba(122, 47, 255, 0.12);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border-color: rgba(176, 109, 255, 0.2);
+      }
+      .glass-panel.tinted::before {
+        background: linear-gradient(180deg, rgba(176, 109, 255, 0.1) 0%, transparent 100%);
+      }
+      .glass-control {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+      }
+      .glass-btn {
+        position: relative;
+        padding: 0.7rem 1.4rem;
+        border-radius: 40px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow:
+          0 4px 16px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+      .glass-btn::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 55%;
+        border-radius: 40px 40px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+        pointer-events: none;
+      }
+      .glass-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-1px);
+      }
+      .glass-btn.primary {
+        background: rgba(176, 109, 255, 0.25);
+        border-color: rgba(176, 109, 255, 0.3);
+      }
+      .glass-btn.primary::before {
+        background: linear-gradient(180deg, rgba(176, 109, 255, 0.15) 0%, transparent 100%);
+      }
+      .glass-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .glass-window {
+        position: relative;
+        width: 100%;
+        max-width: 480px;
+        padding: 1.8rem;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(50px);
+        -webkit-backdrop-filter: blur(50px);
+        border: 0.5px solid rgba(255, 255, 255, 0.13);
+        box-shadow:
+          0 24px 80px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+      .glass-window::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 45%;
+        border-radius: 28px 28px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+        pointer-events: none;
+      }
+      .glass-window .window-dots {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 1.2rem;
+        position: relative;
+      }
+      .glass-window .window-dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .glass-window .window-dots span:nth-child(1) { background: rgba(255, 95, 87, 0.7); }
+      .glass-window .window-dots span:nth-child(2) { background: rgba(255, 189, 46, 0.7); }
+      .glass-window .window-dots span:nth-child(3) { background: rgba(39, 201, 63, 0.7); }
+      .glass-window h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #fff;
+        position: relative;
+      }
+      .glass-window p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.6;
+        position: relative;
+      }
+      .glass-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        position: relative;
+        min-height: 300px;
+        padding: 3rem 1rem;
+      }
+      .glass-stack .layer {
+        width: 100%;
+        max-width: 320px;
+        padding: 1.2rem 1.5rem;
+        border-radius: 16px;
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 0.5px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        position: relative;
+      }
+      .glass-stack .layer::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 50%;
+        border-radius: 16px 16px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%);
+        pointer-events: none;
+      }
+      .glass-stack .layer-1 {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(20px) scale(0.95);
+        z-index: 0;
+        opacity: 0.6;
+      }
+      .glass-stack .layer-2 {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(0) scale(0.97);
+        z-index: 1;
+        opacity: 0.8;
+      }
+      .glass-stack .layer-3 {
+        background: rgba(255, 255, 255, 0.12);
+        transform: translateY(-20px);
+        z-index: 2;
+      }
+      .glass-stack .layer span {
+        display: block;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.5);
+        position: relative;
+      }
+      .glass-stack .layer strong {
+        display: block;
+        font-size: 0.95rem;
+        color: #fff;
+        margin-top: 0.2rem;
+        position: relative;
+      }
       .recipe-code pre {
         margin: 0;
         font-family: "Space Grotesk", monospace;
@@ -145,6 +285,7 @@
       .recipe-code pre .hl { color: #b06dff; }
       .recipe-code pre .val { color: #a5d8ff; }
       .recipe-code pre .cm { color: #7a7590; }
+      .recipe-code pre .prop { color: #ffb86b; }
     </style>
   </head>
   <body>
@@ -177,73 +318,148 @@
         <p class="eyebrow">UI Recipe</p>
         <h1>Liquid <span>Glass</span></h1>
         <p class="lead">
-          Morphing blob shapes with glass transparency. The key is animating <code>border-radius</code> with asymmetric values to create smooth, organic liquid motion.
+          Apple-inspired frosted glass built with <code>backdrop-filter</code> blur, layered depth, and subtle
+          reflections. The key is combining strong blur with a thin bright border and an inner highlight gradient.
         </p>
       </section>
 
       <section class="section reveal">
-        <div class="section-head"><h2>Blob Morph</h2></div>
-        <p class="lead" style="margin-bottom: 1.2rem;">Varying <code>border-radius</code> at each corner creates organic blob shapes. Animating between different asymmetric values produces a flowing liquid effect.</p>
-        <div class="liquid-demo">
-          <div class="blob"></div>
-          <div class="blob"></div>
-          <div class="blob"></div>
-        </div>
-        <div class="recipe-code" style="margin-top: 1rem;">
-          <pre><span class="hl">.blob</span> {
-  width: <span class="val">180px</span>;
-  height: <span class="val">180px</span>;
-  background: <span class="val">rgba(22, 10, 41, 0.45)</span>;
-  backdrop-filter: <span class="val">blur(16px)</span>;
-  border: <span class="val">1px solid rgba(203, 157, 255, 0.25)</span>;
-  animation: <span class="val">blobMorph 8s ease-in-out infinite</span>;
-}
-<span class="hl">@keyframes blobMorph</span> {
-  <span class="val">0%, 100%</span> {
-    border-radius: <span class="val">60% 40% 30% 70% / 60% 30% 70% 40%</span>;
-  }
-  <span class="val">25%</span> {
-    border-radius: <span class="val">30% 60% 70% 40% / 50% 60% 30% 60%</span>;
-  }
-  <span class="val">50%</span> {
-    border-radius: <span class="val">50% 60% 30% 80% / 40% 50% 60% 50%</span>;
-  }
-  <span class="val">75%</span> {
-    border-radius: <span class="val">70% 30% 60% 40% / 60% 40% 50% 70%</span>;
-  }
-}</pre>
-        </div>
-      </section>
-
-      <section class="section reveal">
-        <div class="section-head"><h2>Liquid Card</h2></div>
-        <p class="lead" style="margin-bottom: 1.2rem;">Apply the same morphing <code>border-radius</code> to a glass card for a living, breathing UI element.</p>
-        <div style="display: flex; justify-content: center;">
-          <div class="liquid-card">
-            <h3>Liquid Card</h3>
-            <p>A glass card that breathes. The border-radius morphs between organic shapes while the backdrop-filter keeps it frosted.</p>
+        <div class="section-head"><h2>Glass Panels</h2></div>
+        <p class="lead" style="margin-bottom: 1.2rem;">Three panel variants — light, dark, and tinted. Each uses a strong <code>backdrop-filter</code> with a top reflection overlay and thin edge border.</p>
+        <div class="glass-showcase">
+          <div class="glass-panel">
+            <h3>Light</h3>
+            <p>The classic frosted glass look. Bright, airy, and translucent.</p>
+            <span class="badge">iOS Style</span>
+          </div>
+          <div class="glass-panel dark">
+            <h3>Dark</h3>
+            <p>Deep, moody glass with higher contrast. Great for overlays.</p>
+            <span class="badge">macOS Style</span>
+          </div>
+          <div class="glass-panel tinted">
+            <h3>Tinted</h3>
+            <p>Accent-tinted glass that picks up your brand color.</p>
+            <span class="badge">visionOS Style</span>
           </div>
         </div>
         <div class="recipe-code" style="margin-top: 1rem;">
-          <pre><span class="hl">.liquid-card</span> {
-  border-radius: <span class="val">60% 40% 30% 70% / 60% 30% 70% 40%</span>;
-  animation: <span class="val">cardMorph 10s ease-in-out infinite</span>;
+          <pre><span class="hl">.glass-panel</span> {
+  padding: <span class="val">1.5rem</span>;
+  border-radius: <span class="val">20px</span>;
+  background: <span class="val">rgba(255, 255, 255, 0.06)</span>;
+  backdrop-filter: <span class="val">blur(30px)</span>;
+  -webkit-backdrop-filter: <span class="val">blur(30px)</span>;
+  border: <span class="val">0.5px solid rgba(255, 255, 255, 0.15)</span>;
+  box-shadow:
+    <span class="val">0 8px 32px rgba(0, 0, 0, 0.3)</span>,
+    <span class="prop">inset</span> <span class="val">0 1px 0 rgba(255, 255, 255, 0.12)</span>;
 }
-<span class="hl">@keyframes cardMorph</span> {
-  <span class="val">0%, 100%</span> { border-radius: <span class="val">60% 40% 30% 70% / 60% 30% 70% 40%</span>; }
-  <span class="val">33%</span> { border-radius: <span class="val">30% 60% 70% 40% / 50% 60% 30% 60%</span>; }
-  <span class="val">66%</span> { border-radius: <span class="val">50% 60% 30% 80% / 40% 50% 60% 50%</span>; }
+<span class="cm">/* Top reflection */</span>
+<span class="hl">.glass-panel::before</span> {
+  content: <span class="val">""</span>;
+  position: <span class="val">absolute</span>;
+  top: <span class="val">0</span>; left: <span class="val">0</span>; right: <span class="val">0</span>;
+  height: <span class="val">50%</span>;
+  border-radius: <span class="val">20px 20px 0 0</span>;
+  background: <span class="val">linear-gradient(180deg,
+    rgba(255,255,255,0.08) 0%, transparent 100%)</span>;
+  pointer-events: <span class="val">none</span>;
 }</pre>
         </div>
       </section>
 
       <section class="section reveal">
-        <div class="section-head"><h2>Blob Grid</h2></div>
-        <p class="lead" style="margin-bottom: 1.2rem;">Multiple blobs with staggered animation delays create a lively composition.</p>
-        <div class="liquid-grid">
-          <div class="glass-blob">ONE</div>
-          <div class="glass-blob">TWO</div>
-          <div class="glass-blob">TRE</div>
+        <div class="section-head"><h2>VisionOS Window</h2></div>
+        <p class="lead" style="margin-bottom: 1.2rem;">The signature floating glass window from Apple's visionOS. Large blur radius, floating shadow, and subtle top reflection create a material that feels tangible yet ethereal.</p>
+        <div class="glass-showcase">
+          <div class="glass-window">
+            <div class="window-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <h2>Floating Window</h2>
+            <p>This glass panel uses <code>blur(50px)</code> with a layered shadow and inner highlight. The material adapts to whatever is behind it while maintaining a bright, frosted appearance.</p>
+          </div>
+        </div>
+        <div class="recipe-code" style="margin-top: 1rem;">
+          <pre><span class="hl">.glass-window</span> {
+  border-radius: <span class="val">28px</span>;
+  background: <span class="val">rgba(255, 255, 255, 0.06)</span>;
+  backdrop-filter: <span class="val">blur(50px)</span>;
+  border: <span class="val">0.5px solid rgba(255, 255, 255, 0.13)</span>;
+  box-shadow:
+    <span class="val">0 24px 80px rgba(0, 0, 0, 0.35)</span>,
+    <span class="prop">inset</span> <span class="val">0 1px 0 rgba(255, 255, 255, 0.15)</span>;
+}
+
+<span class="hl">@media (prefers-reduced-motion: no-preference)</span> {
+  <span class="hl">.glass-window</span> {
+    transition: <span class="val">transform 0.4s ease, box-shadow 0.4s ease</span>;
+  }
+  <span class="hl">.glass-window:hover</span> {
+    transform: <span class="val">translateY(-4px) scale(1.01)</span>;
+    box-shadow: <span class="val">0 32px 100px rgba(0, 0, 0, 0.4)</span>,
+      <span class="prop">inset</span> <span class="val">0 1px 0 rgba(255, 255, 255, 0.15)</span>;
+  }
+}</pre>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head"><h2>Glass Buttons</h2></div>
+        <p class="lead" style="margin-bottom: 1.2rem;">Frosted glass buttons with the same reflection detail. The <code>::before</code> gradient creates the characteristic Apple glass shine.</p>
+        <div class="glass-showcase" style="min-height: 160px;">
+          <div class="glass-control">
+            <button class="glass-btn" disabled>Cancel</button>
+            <button class="glass-btn primary">Continue</button>
+          </div>
+        </div>
+        <div class="recipe-code" style="margin-top: 1rem;">
+          <pre><span class="hl">.glass-btn</span> {
+  padding: <span class="val">0.7rem 1.4rem</span>;
+  border-radius: <span class="val">40px</span>;
+  border: <span class="val">0.5px solid rgba(255, 255, 255, 0.15)</span>;
+  background: <span class="val">rgba(255, 255, 255, 0.06)</span>;
+  backdrop-filter: <span class="val">blur(20px)</span>;
+  box-shadow:
+    <span class="val">0 4px 16px rgba(0, 0, 0, 0.25)</span>,
+    <span class="prop">inset</span> <span class="val">0 1px 0 rgba(255, 255, 255, 0.12)</span>;
+  color: <span class="val">#fff</span>;
+  cursor: <span class="val">pointer</span>;
+}
+<span class="hl">.glass-btn::before</span> {
+  background: <span class="val">linear-gradient(180deg,
+    rgba(255,255,255,0.1) 0%, transparent 100%)</span>;
+}</pre>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head"><h2>Layered Depth</h2></div>
+        <p class="lead" style="margin-bottom: 1.2rem;">Stack multiple glass layers at different depths. Each layer has increasing opacity and a <code>scale</code>/<code>translateY</code> offset to create spatial separation.</p>
+        <div class="glass-showcase glass-stack">
+          <div class="layer layer-1"><span>Background</span><strong>Layer 1</strong></div>
+          <div class="layer layer-2"><span>Middle</span><strong>Layer 2</strong></div>
+          <div class="layer layer-3"><span>Foreground</span><strong>Layer 3</strong></div>
+        </div>
+        <div class="recipe-code" style="margin-top: 1rem;">
+          <pre><span class="hl">.layer-1</span> {
+  background: <span class="val">rgba(255, 255, 255, 0.08)</span>;
+  transform: <span class="val">translateY(20px) scale(0.95)</span>;
+  z-index: <span class="val">0</span>;
+  opacity: <span class="val">0.6</span>;
+}
+<span class="hl">.layer-2</span> {
+  background: <span class="val">rgba(255, 255, 255, 0.1)</span>;
+  transform: <span class="val">translateY(0) scale(0.97)</span>;
+  z-index: <span class="val">1</span>;
+  opacity: <span class="val">0.8</span>;
+}
+<span class="hl">.layer-3</span> {
+  background: <span class="val">rgba(255, 255, 255, 0.12)</span>;
+  transform: <span class="val">translateY(-20px)</span>;
+  z-index: <span class="val">2</span>;
+}</pre>
         </div>
       </section>
     </main>
