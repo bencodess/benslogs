@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Chat | bencodess</title>
+    <meta name="description" content="Chat with an AI model directly on benslogs.dev — powered by Cloudflare Workers AI." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href="https://benslogs.dev/ai/" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <meta property="og:title" content="AI Chat | bencodess" />
+    <meta property="og:description" content="Chat with an AI model directly on benslogs.dev — powered by Cloudflare Workers AI." />
+    <meta property="og:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta property="og:url" content="https://benslogs.dev/ai/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BensLogs" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI Chat | bencodess" />
+    <meta name="twitter:description" content="Chat with an AI model directly on benslogs.dev — powered by Cloudflare Workers AI." />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .ai-layout {
+        display: grid;
+        gap: 1.2rem;
+        max-width: 640px;
+      }
+
+      .ai-box {
+        position: relative;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 0.5px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+      }
+
+      .ai-box::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 40%;
+        border-radius: 20px 20px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+        pointer-events: none;
+      }
+
+      .ai-input-row {
+        display: flex;
+        gap: 0.6rem;
+        padding: 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .ai-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        color: #f5ecff;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.9rem;
+        resize: none;
+        outline: none;
+        transition: border-color 200ms ease;
+        min-height: 48px;
+        max-height: 160px;
+        line-height: 1.5;
+      }
+
+      .ai-input::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      .ai-input:focus {
+        border-color: rgba(176, 109, 255, 0.5);
+      }
+
+      .ai-send {
+        flex: 0 0 48px;
+        height: 48px;
+        border-radius: 12px;
+        border: 1px solid rgba(176, 109, 255, 0.25);
+        background: rgba(176, 109, 255, 0.12);
+        color: #d2a9ff;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: all 200ms ease;
+        align-self: flex-end;
+      }
+
+      .ai-send:hover {
+        background: rgba(176, 109, 255, 0.25);
+        border-color: rgba(176, 109, 255, 0.5);
+        transform: translateY(-1px);
+      }
+
+      .ai-send:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .ai-send svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .ai-response {
+        padding: 1rem 1.2rem;
+        min-height: 100px;
+        position: relative;
+        z-index: 1;
+        font-size: 0.92rem;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .ai-response:empty {
+        display: grid;
+        place-items: center;
+      }
+
+      .ai-response:empty::before {
+        content: "response will appear here";
+        color: rgba(255, 255, 255, 0.15);
+        font-size: 0.85rem;
+        font-style: italic;
+      }
+
+      .ai-response.loading {
+        position: relative;
+      }
+
+      .ai-response.loading::after {
+        content: "";
+        position: absolute;
+        bottom: 1rem;
+        left: 1.2rem;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid rgba(210, 169, 255, 0.15);
+        border-top-color: #d2a9ff;
+        animation: aiSpin 0.7s linear infinite;
+      }
+
+      @keyframes aiSpin {
+        to { transform: rotate(360deg); }
+      }
+
+      .ai-error {
+        color: #ff9aa2;
+        font-size: 0.82rem;
+        padding: 0.5rem 1.2rem 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .ai-model-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.62rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: rgba(176, 109, 255, 0.1);
+        border: 0.5px solid rgba(176, 109, 255, 0.15);
+        color: rgba(210, 169, 255, 0.6);
+        position: relative;
+        z-index: 1;
+        margin: 0 1.2rem 0.8rem;
+      }
+
+      @media (max-width: 640px) {
+        .ai-layout {
+          max-width: 100%;
+        }
+        .ai-input-row {
+          padding: 0.75rem;
+        }
+        .ai-response {
+          padding: 0.75rem 1rem;
+          min-height: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="../" aria-label="bencodess home">
+        <img src="../assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="../ui/">UI</a>
+        <a href="../projects/">Projects</a>
+        <a href="../">Home</a>
+        <a href="../socials/">Socials</a>
+        <a href="../contact/">Contact</a>
+      </nav>
+      <a class="btn ghost" href="../contact/">Say Hi</a>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <p class="eyebrow">AI Chat</p>
+        <h1>Ask <span>BenCodess AI</span></h1>
+        <p class="lead">
+          Powered by Cloudflare Workers AI &mdash; no history, no tracking, just answers.
+        </p>
+      </section>
+
+      <section class="section reveal">
+        <div class="ai-layout">
+          <div class="ai-box">
+            <div class="ai-input-row">
+              <textarea class="ai-input" id="aiInput" rows="1" placeholder="ask anything&hellip;" autofocus></textarea>
+              <button class="ai-send" id="aiSend" aria-label="Send">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/>
+                </svg>
+              </button>
+            </div>
+            <span class="ai-model-badge">llama-3.2-3b</span>
+            <div class="ai-response" id="aiResponse"></div>
+            <div class="ai-error" id="aiError"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+      </div>
+      <div class="footer-row">
+        <p>&copy; <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="../assets/metallic-paint.js"></script>
+    <script src="../script.js"></script>
+    <script>
+      const input = document.getElementById('aiInput');
+      const send = document.getElementById('aiSend');
+      const responseEl = document.getElementById('aiResponse');
+      const errorEl = document.getElementById('aiError');
+
+      function autoResize() {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 160) + 'px';
+      }
+      input.addEventListener('input', autoResize);
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          send.click();
+        }
+      });
+
+      send.addEventListener('click', async () => {
+        const text = input.value.trim();
+        if (!text) return;
+
+        send.disabled = true;
+        responseEl.textContent = '';
+        responseEl.className = 'ai-response loading';
+        errorEl.textContent = '';
+
+        try {
+          const res = await fetch('https://ai.bencodess.workers.dev/?prompt=' + encodeURIComponent(text));
+          if (!res.ok) throw new Error('Worker returned ' + res.status);
+          const data = await res.json();
+          const content = data.result?.choices?.[0]?.message?.content || data.result?.response || JSON.stringify(data.result);
+          responseEl.textContent = content;
+        } catch (err) {
+          errorEl.textContent = 'error: ' + err.message;
+        } finally {
+          responseEl.className = 'ai-response';
+          send.disabled = false;
+          input.focus();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -30,24 +30,45 @@
     />
     <link rel="stylesheet" href="/styles.css" />
     <style>
-      body {
-        min-height: 100vh;
+      html, body {
+        height: 100%;
         overflow: hidden;
+        margin: 0;
       }
 
       .error-wrap {
-        min-height: 100vh;
+        height: 100vh;
         display: grid;
         place-items: center;
         padding: 2rem;
+        box-sizing: border-box;
       }
 
-      .error-content {
+      .error-card {
         text-align: center;
         display: grid;
         justify-items: center;
         gap: 0.8rem;
         position: relative;
+        padding: 3rem 2.5rem 2.5rem;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 0.5px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        max-width: 440px;
+        width: 100%;
+      }
+
+      .error-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 40%;
+        border-radius: 28px 28px 0 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+        pointer-events: none;
       }
 
       .glitch-wrap {
@@ -58,7 +79,7 @@
 
       .glitch {
         font-family: "Space Grotesk", sans-serif;
-        font-size: clamp(7rem, 25vw, 14rem);
+        font-size: clamp(6rem, 20vw, 10rem);
         font-weight: 700;
         line-height: 0.85;
         margin: 0;
@@ -83,31 +104,41 @@
       }
 
       .glow-ring:nth-child(1) {
-        inset: -30px;
+        inset: -20px;
         animation: ringSpin 6s linear infinite;
       }
 
       .glow-ring:nth-child(2) {
-        inset: -50px;
+        inset: -36px;
         border-color: rgba(176, 109, 255, 0.08);
         animation: ringSpin 8s linear infinite reverse;
       }
 
       .glow-ring:nth-child(3) {
-        inset: -70px;
+        inset: -52px;
         border-color: rgba(255, 255, 255, 0.04);
         animation: ringSpin 10s linear infinite;
       }
 
       .glow-ring:nth-child(4) {
-        inset: -90px;
+        inset: -68px;
         border-color: rgba(176, 109, 255, 0.04);
         border-style: dashed;
         animation: ringSpin 12s linear infinite reverse;
       }
 
+      .error-sub {
+        margin: 0;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.45);
+        position: relative;
+        animation: fadeIn 600ms ease forwards;
+        opacity: 0;
+        animation-delay: 100ms;
+      }
+
       .scan-line {
-        width: min(240px, 60vw);
+        width: min(200px, 50vw);
         height: 2px;
         border-radius: 2px;
         background: linear-gradient(90deg, transparent, rgba(176, 109, 255, 0.5), #fff, rgba(176, 109, 255, 0.5), transparent);
@@ -115,19 +146,10 @@
         animation: scanSweep 2s linear infinite;
       }
 
-      .scan-line-2 {
-        width: min(160px, 40vw);
-        height: 1px;
-        border-radius: 1px;
-        background: linear-gradient(90deg, transparent, rgba(176, 109, 255, 0.3), transparent);
-        animation: scanSweep 3s linear infinite reverse;
-        margin-top: -0.5rem;
-      }
-
       .error-path {
-        margin: 0.5rem 0 0;
-        color: rgba(213, 187, 245, 0.5);
-        font-size: 0.85rem;
+        margin: 0;
+        color: rgba(213, 187, 245, 0.4);
+        font-size: 0.78rem;
         font-family: "Space Grotesk", monospace;
         word-break: break-all;
         max-width: 90vw;
@@ -137,27 +159,36 @@
       }
 
       .error-path code {
-        color: rgba(213, 187, 245, 0.85);
+        color: rgba(213, 187, 245, 0.75);
+      }
+
+      .error-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        justify-content: center;
+        margin-top: 0.4rem;
+        position: relative;
+        animation: fadeIn 600ms ease forwards;
+        opacity: 0;
+        animation-delay: 300ms;
       }
 
       .btn-back {
-        margin-top: 0.8rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.7rem 1.4rem;
+        padding: 0.65rem 1.3rem;
         border-radius: 999px;
         border: 1px solid rgba(176, 109, 255, 0.25);
         background: rgba(176, 109, 255, 0.06);
         color: #f5ecff;
         text-decoration: none;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         transition: all 250ms ease;
-        animation: fadeIn 600ms ease forwards;
-        opacity: 0;
-        animation-delay: 400ms;
         backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
       }
 
       .btn-back:hover {
@@ -168,8 +199,8 @@
       }
 
       .btn-back svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         transition: transform 250ms ease;
       }
 
@@ -196,7 +227,7 @@
 
       @keyframes drift {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-6px); }
       }
 
       @keyframes scanSweep {
@@ -211,19 +242,13 @@
       @media (prefers-reduced-motion: reduce) {
         .glitch-wrap,
         .glitch,
-        .glitch::before,
-        .glitch::after,
         .glow-ring,
-        .scan-line,
-        .scan-line-2 {
+        .scan-line {
           animation: none;
         }
-        .glitch::before,
-        .glitch::after {
-          display: none;
-        }
+        .error-sub,
         .error-path,
-        .btn-back {
+        .error-actions {
           opacity: 1;
         }
       }
@@ -236,25 +261,28 @@
 
     <main>
       <section class="error-wrap">
-        <div class="error-content">
+        <div class="error-card">
           <div class="glitch-wrap">
             <div class="glow-ring"></div>
             <div class="glow-ring"></div>
             <div class="glow-ring"></div>
             <div class="glow-ring"></div>
-            <h1 class="glitch" data-text="404">404</h1>
+            <h1 class="glitch">404</h1>
           </div>
+          <p class="error-sub">i donot exist, but my insta does! <a href="https://www.instagram.com/_ben.oderso/" target="_blank" rel="noreferrer" style="color:#ffb3d1;text-decoration:none;font-weight:700;">Follow</a></p>
           <div class="scan-line"></div>
-          <div class="scan-line-2"></div>
           <p class="error-path">
             <code id="requestedPath">/</code>
           </p>
-          <a class="btn-back" href="/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5m7-7-7 7 7 7"/>
-            </svg>
-            Back Home
-          </a>
+          <div class="error-actions">
+            <a class="btn-back" href="/">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5m7-7-7 7 7 7"/>
+              </svg>
+              Back Home
+            </a>
+
+          </div>
         </div>
       </section>
     </main>
