@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact | bencodess – Reach Out & Live Discord Presence</title>
-    <meta name="description" content="Contact bencodess (stilleswasser93) via Discord or GitHub. View live Discord presence with status and Spotify listening activity." />
+    <meta name="description" content="Contact bencodess (stilleswasser93) via Discord or GitHub. View live Discord presence with status and activity." />
     <meta name="author" content="bencodess" />
     <meta name="robots" content="index, follow" />
     <meta name="keywords" content="bencodess, stilleswasser93, contact, Discord, GitHub, backend developer, live presence" />
@@ -127,6 +127,14 @@
               </div>
               <p class="discord-line" id="discordStatusText">Loading status...</p>
               <p class="discord-subline" id="discordActivityText">Waiting for Lanyard</p>
+            </div>
+            <div class="activity-now hidden" id="activityNow">
+              <img id="activityArtwork" class="activity-artwork" src="" alt="Activity artwork" />
+              <div class="activity-meta">
+                <p class="activity-kicker" id="activityKicker">Activity</p>
+                <p class="activity-name" id="activityName">-</p>
+                <p class="activity-details" id="activityDetails">-</p>
+              </div>
             </div>
             <div class="spotify-now hidden" id="spotifyNow">
               <img id="spotifyArtwork" class="spotify-artwork" src="" alt="Spotify artwork" />

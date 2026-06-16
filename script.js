@@ -187,6 +187,11 @@ const spotifyNowEl = document.getElementById('spotifyNow');
 const spotifyArtworkEl = document.getElementById('spotifyArtwork');
 const spotifySongEl = document.getElementById('spotifySong');
 const spotifyArtistEl = document.getElementById('spotifyArtist');
+const activityNowEl = document.getElementById('activityNow');
+const activityArtworkEl = document.getElementById('activityArtwork');
+const activityNameEl = document.getElementById('activityName');
+const activityDetailsEl = document.getElementById('activityDetails');
+const activityKickerEl = document.getElementById('activityKicker');
 
 const presenceLabels = {
   online: 'Online',
@@ -220,6 +225,65 @@ function setActivity(activities = []) {
 
   const fallback = activities.find((item) => item.name);
   activityTextEl.textContent = fallback ? `Activity: ${fallback.name}` : 'No current activity';
+}
+
+function getActivityArtworkUrl(activity) {
+  if (!activity || !activity.assets || !activity.assets.large_image) {
+    return null;
+  }
+
+  const img = activity.assets.large_image;
+
+  if (img.startsWith('mp:external/')) {
+    try {
+      let b64 = img.slice('mp:external/'.length)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+      while (b64.length % 4) {
+        b64 += '=';
+      }
+      return atob(b64);
+    } catch {
+      return null;
+    }
+  }
+
+  const appId = activity.application_id;
+  if (!appId) {
+    return null;
+  }
+
+  return `https://cdn.discordapp.com/app-assets/${appId}/${img}.png?size=256`;
+}
+
+function setActivityArtwork(activities = []) {
+  if (!activityNowEl || !activityArtworkEl || !activityNameEl || !activityDetailsEl) {
+    return;
+  }
+
+  const primary = activities.find(
+    (a) => a.type !== 4 && a.assets && a.assets.large_image
+  );
+
+  if (!primary) {
+    activityNowEl.classList.add('hidden');
+    activityArtworkEl.src = '';
+    activityNameEl.textContent = '-';
+    activityDetailsEl.textContent = '-';
+    return;
+  }
+
+  activityNowEl.classList.remove('hidden');
+  if (activityKickerEl) {
+    activityKickerEl.textContent = primary.name || 'Activity';
+  }
+  activityNameEl.textContent = primary.name || 'Unknown';
+  activityDetailsEl.textContent = primary.state || primary.details || '';
+
+  const url = getActivityArtworkUrl(primary);
+  if (url) {
+    activityArtworkEl.src = url;
+  }
 }
 
 function getDiscordAvatarUrl(discordUser) {
@@ -398,6 +462,7 @@ async function loadDiscordStatus() {
 
     setPresenceStatus(payload.data.discord_status);
     setActivity(payload.data.activities);
+    setActivityArtwork(payload.data.activities);
     setDiscordUser(payload.data.discord_user);
     setSpotify(payload.data.spotify, payload.data.listening_to_spotify);
     markFirstLanyardSuccess();
@@ -414,6 +479,7 @@ async function loadDiscordStatus() {
         : 'Could not load status';
     }
     setSpotify(null, false);
+    setActivityArtwork([]);
   }
 }
 

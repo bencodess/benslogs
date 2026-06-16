@@ -252,6 +252,53 @@
       height: 14px;
     }
 
+    .activity-now {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-top: 0.5rem;
+    }
+
+    .activity-now.hidden { display: none; }
+
+    .activity-artwork {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .activity-info { text-align: left; min-width: 0; flex: 1; }
+
+    .activity-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.5;
+    }
+
+    .activity-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    .activity-details {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .spotify-now {
       display: flex;
       align-items: center;
@@ -340,6 +387,14 @@
           </div>
           <div class="discord-line" id="discordLine">Loading Discord activity...</div>
           <div id="bio"></div>
+          <div class="activity-now hidden" id="activityNow">
+            <img class="activity-artwork" id="activityArtwork" src="" alt="" />
+            <div class="activity-info">
+              <div class="activity-label" id="activityKicker">Activity</div>
+              <div class="activity-name" id="activityName">-</div>
+              <div class="activity-details" id="activityDetails">-</div>
+            </div>
+          </div>
           <div class="spotify-now hidden" id="spotifyNow">
             <img class="spotify-artwork" id="spotifyArtwork" src="" alt="" />
             <div class="spotify-info">
@@ -382,6 +437,11 @@
     const spotifyArtworkEl = document.getElementById('spotifyArtwork');
     const spotifySongEl = document.getElementById('spotifySong');
     const spotifyArtistEl = document.getElementById('spotifyArtist');
+    const activityNowEl = document.getElementById('activityNow');
+    const activityArtworkEl = document.getElementById('activityArtwork');
+    const activityNameEl = document.getElementById('activityName');
+    const activityDetailsEl = document.getElementById('activityDetails');
+    const activityKickerEl = document.getElementById('activityKicker');
     const cardEl = document.getElementById('card');
     const visitorEl = document.getElementById('visitorCount');
 
@@ -473,6 +533,37 @@
       if (data.album_art_url) spotifyArtworkEl.src = data.album_art_url;
     }
 
+    function getActivityArtworkUrl(activity) {
+      if (!activity || !activity.assets || !activity.assets.large_image) return null;
+      const img = activity.assets.large_image;
+      if (img.startsWith('mp:external/')) {
+        try {
+          let b64 = img.slice('mp:external/'.length).replace(/-/g, '+').replace(/_/g, '/');
+          while (b64.length % 4) b64 += '=';
+          return atob(b64);
+        } catch { return null; }
+      }
+      const appId = activity.application_id;
+      if (!appId) return null;
+      return `https://cdn.discordapp.com/app-assets/${appId}/${img}.png?size=256`;
+    }
+
+    function setActivityArtwork(activities) {
+      if (!activityNowEl) return;
+      const primary = activities.find(a => a.type !== 4 && a.assets && a.assets.large_image);
+      if (!primary) {
+        activityNowEl.classList.add('hidden');
+        activityArtworkEl.src = '';
+        return;
+      }
+      activityNowEl.classList.remove('hidden');
+      if (activityKickerEl) activityKickerEl.textContent = primary.name || 'Activity';
+      activityNameEl.textContent = primary.name || 'Unknown';
+      activityDetailsEl.textContent = primary.state || primary.details || '';
+      const url = getActivityArtworkUrl(primary);
+      if (url) activityArtworkEl.src = url;
+    }
+
     function glitchName() {
       nameEl.classList.remove('glitch');
       void nameEl.offsetWidth;
@@ -489,9 +580,11 @@
         const d = json.data;
         setDiscordStatus(d);
         setUser(d.discord_user);
+        setActivityArtwork(d.activities);
         setSpotify(d.spotify, d.listening_to_spotify);
       } catch {
         discordLine.textContent = 'Could not load status';
+        setActivityArtwork([]);
       }
     }
 

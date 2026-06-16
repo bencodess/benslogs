@@ -289,6 +289,7 @@ h1 span {
   grid-template-columns: 72px minmax(0, 1fr);
   grid-template-areas:
     "avatar content"
+    "activity activity"
     "spotify spotify";
   width: 100%;
   align-items: start;
@@ -407,6 +408,79 @@ h1 span {
 
 .hidden {
   display: none !important;
+}
+
+.activity-now {
+  grid-area: activity;
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: stretch;
+  gap: 0.65rem;
+  width: 100%;
+  align-self: stretch;
+  padding: 0.45rem;
+  border-radius: 12px;
+  background: rgba(24, 14, 43, 0.55);
+  border: 1px solid rgba(145, 108, 201, 0.38);
+}
+
+.activity-artwork {
+  width: auto;
+  height: auto;
+  max-width: 96px;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  object-fit: cover;
+  flex: 0 0 auto;
+  align-self: stretch;
+}
+
+.activity-meta {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.activity-kicker,
+.activity-name,
+.activity-details {
+  margin: 0;
+}
+
+.activity-kicker {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.22rem;
+  padding: 0.25rem 0.32rem 0.25rem 0.26rem;
+  border-radius: 8px;
+  background: rgba(113, 71, 175, 0.28);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #be9ef2;
+  font-weight: 700;
+}
+
+.activity-name {
+  font-size: 0.9rem;
+  color: #f3ebff;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: none;
+}
+
+.activity-details {
+  font-size: 0.82rem;
+  color: #ceb6ef;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: none;
 }
 
 .spotify-now {
@@ -1018,6 +1092,7 @@ footer {
     grid-template-columns: 60px minmax(0, 1fr);
     grid-template-areas:
       "avatar content"
+      "activity activity"
       "spotify spotify";
     gap: 0.7rem;
   }
