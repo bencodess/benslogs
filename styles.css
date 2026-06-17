@@ -36,7 +36,8 @@ body {
   min-height: 100vh;
   font-family: "Outfit", sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at 18% 14%, #4c1a85 0%, transparent 35%),
+  background:
+    radial-gradient(circle at 18% 14%, #4c1a85 0%, transparent 35%),
     radial-gradient(circle at 84% 78%, #2f0f58 0%, transparent 33%),
     linear-gradient(160deg, #07030f 0%, #120821 54%, #1a0d32 100%);
   line-height: 1.55;
@@ -66,12 +67,15 @@ a {
   z-index: 9999;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at 18% 14%, #4c1a85 0%, transparent 35%),
+  background:
+    radial-gradient(circle at 18% 14%, #4c1a85 0%, transparent 35%),
     radial-gradient(circle at 84% 78%, #2f0f58 0%, transparent 33%),
     linear-gradient(160deg, #07030f 0%, #120821 54%, #1a0d32 100%);
   opacity: 1;
   visibility: visible;
-  transition: opacity 350ms ease, visibility 350ms ease;
+  transition:
+    opacity 350ms ease,
+    visibility 350ms ease;
 }
 
 .page-loader.is-hidden {
@@ -191,7 +195,9 @@ nav a {
   font-size: 0.9rem;
   padding: 0.45rem 0.85rem;
   border-radius: 999px;
-  transition: background 170ms ease, color 170ms ease;
+  transition:
+    background 170ms ease,
+    color 170ms ease;
 }
 
 nav a:hover {
@@ -394,7 +400,11 @@ h1 span {
 }
 
 .discord-panel.data-stale {
-  background: linear-gradient(135deg, rgba(120, 21, 31, 0.84), rgba(159, 35, 44, 0.84));
+  background: linear-gradient(
+    135deg,
+    rgba(120, 21, 31, 0.84),
+    rgba(159, 35, 44, 0.84)
+  );
   border-color: rgba(255, 102, 112, 0.8);
   box-shadow: 0 12px 32px rgba(122, 18, 27, 0.45);
 }
@@ -612,7 +622,10 @@ h1 span {
   text-decoration: none;
   font-weight: 800;
   padding: 0.72rem 1.2rem;
-  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
 }
 
 .btn:hover {
@@ -657,7 +670,9 @@ h2 {
   border-radius: var(--radius);
   padding: 1.15rem;
   box-shadow: var(--shadow);
-  transition: transform 220ms ease, border-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease;
 }
 
 .project-card:hover {
@@ -782,7 +797,10 @@ h2 {
   max-height: 560px;
   opacity: 1;
   overflow: hidden;
-  transition: max-height 280ms ease, opacity 220ms ease, margin-top 220ms ease;
+  transition:
+    max-height 280ms ease,
+    opacity 220ms ease,
+    margin-top 220ms ease;
 }
 
 .feedback-panel.is-collapsed {
@@ -804,12 +822,21 @@ h2 {
   -webkit-appearance: none;
   border-radius: 14px;
   border: 1px solid rgba(194, 151, 255, 0.58);
-  background: linear-gradient(180deg, rgba(56, 31, 98, 0.88), rgba(32, 17, 59, 0.9));
+  background: linear-gradient(
+    180deg,
+    rgba(56, 31, 98, 0.88),
+    rgba(32, 17, 59, 0.9)
+  );
   color: #f6ecff;
   padding: 0.74rem 0.86rem;
   font: inherit;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 20px rgba(18, 7, 33, 0.35);
-  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 8px 20px rgba(18, 7, 33, 0.35);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
 }
 
 .feedback-input::placeholder {
@@ -819,14 +846,18 @@ h2 {
 .feedback-input:focus {
   outline: none;
   border-color: rgba(233, 201, 255, 0.86);
-  box-shadow: 0 0 0 3px rgba(190, 141, 255, 0.25), 0 12px 24px rgba(20, 8, 37, 0.45);
+  box-shadow:
+    0 0 0 3px rgba(190, 141, 255, 0.25),
+    0 12px 24px rgba(20, 8, 37, 0.45);
 }
 
 .feedback-input:-webkit-autofill,
 .feedback-input:-webkit-autofill:hover,
 .feedback-input:-webkit-autofill:focus {
   -webkit-text-fill-color: #f6ecff;
-  box-shadow: 0 0 0 1000px rgba(41, 22, 74, 0.96) inset, 0 12px 24px rgba(20, 8, 37, 0.45);
+  box-shadow:
+    0 0 0 1000px rgba(41, 22, 74, 0.96) inset,
+    0 12px 24px rgba(20, 8, 37, 0.45);
   border-color: rgba(194, 151, 255, 0.58);
   transition: background-color 9999s ease-in-out 0s;
 }
@@ -864,7 +895,10 @@ h2 {
   color: #f4e7ff;
   text-decoration: none;
   font-weight: 700;
-  transition: transform 170ms ease, border-color 170ms ease, background 170ms ease;
+  transition:
+    transform 170ms ease,
+    border-color 170ms ease,
+    background 170ms ease;
 }
 
 .icon-link:hover {
@@ -885,7 +919,6 @@ h2 {
   width: 18px;
   height: 18px;
 }
-
 
 .project-card ul {
   padding-left: 1rem;
@@ -974,7 +1007,9 @@ footer {
 .reveal {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition:
+    opacity 500ms ease,
+    transform 500ms ease;
 }
 
 .reveal.show {
@@ -1136,7 +1171,6 @@ footer {
   .hide-mobile {
     display: none;
   }
-
 }
 
 .metallic-footer {

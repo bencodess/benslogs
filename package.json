@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "lint:html": "find . -path ./node_modules -prune -o -name '*.html' -print | xargs npx html-validate",
+    "lint:css": "npx stylelint \"**/*.css\"",
+    "lint:js": "npx prettier --check \"**/*.js\" \"**/*.mjs\"",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
+    "format": "npx prettier --write \"**/*.{js,mjs,css,html}\"",
+    "check:links": "npx hyperlink --recursive --internal http://localhost:4173"
+  },
+  "devDependencies": {
+    "html-validate": "^8.0.0",
+    "hyperlink": "^5.0.0",
+    "prettier": "^3.0.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0"
+  }
+}

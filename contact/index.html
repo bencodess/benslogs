@@ -4,24 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact | bencodess – Reach Out & Live Discord Presence</title>
-    <meta name="description" content="Contact bencodess (stilleswasser93) via Discord or GitHub. View live Discord presence with status and activity." />
+    <meta
+      name="description"
+      content="Contact bencodess (stilleswasser93) via Discord or GitHub. View live Discord presence with status and activity."
+    />
     <meta name="author" content="bencodess" />
     <meta name="robots" content="index, follow" />
-    <meta name="keywords" content="bencodess, stilleswasser93, contact, Discord, GitHub, backend developer, live presence" />
+    <meta
+      name="keywords"
+      content="bencodess, stilleswasser93, contact, Discord, GitHub, backend developer, live presence"
+    />
     <meta name="theme-color" content="#07030f" />
     <link rel="canonical" href="https://benslogs.dev/contact/" />
     <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
-    <meta property="og:title" content="Contact bencodess – Reach Out & Live Discord Presence" />
-    <meta property="og:description" content="Reach bencodess through Discord and GitHub, with live Discord presence on this page." />
-    <meta property="og:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta
+      property="og:title"
+      content="Contact bencodess – Reach Out & Live Discord Presence"
+    />
+    <meta
+      property="og:description"
+      content="Reach bencodess through Discord and GitHub, with live Discord presence on this page."
+    />
+    <meta
+      property="og:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
     <meta property="og:url" content="https://benslogs.dev/contact/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="BensLogs" />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Contact bencodess – Reach Out & Live Discord Presence" />
-    <meta name="twitter:description" content="Reach bencodess through Discord and GitHub, with live Discord presence on this page." />
-    <meta name="twitter:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta
+      name="twitter:title"
+      content="Contact bencodess – Reach Out & Live Discord Presence"
+    />
+    <meta
+      name="twitter:description"
+      content="Reach bencodess through Discord and GitHub, with live Discord presence on this page."
+    />
+    <meta
+      name="twitter:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,14 +53,24 @@
     <link rel="preconnect" href="https://api.lanyard.rest" />
     <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://benslogs.dev/" },
-        { "@type": "ListItem", "position": 2, "name": "Contact", "item": "https://benslogs.dev/contact/" }
-      ]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://benslogs.dev/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Contact",
+            "item": "https://benslogs.dev/contact/"
+          }
+        ]
+      }
     </script>
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
@@ -68,7 +102,8 @@
         <p class="eyebrow">Let's Connect</p>
         <h1>Contact <span>bencodess</span></h1>
         <p class="lead">
-          You can find me on Discord and GitHub. My live Discord presence is shown below.
+          You can find me on Discord and GitHub. My live Discord presence is
+          shown below.
         </p>
       </section>
 
@@ -117,19 +152,35 @@
           </article>
 
           <article class="discord-card discord-panel" aria-live="polite">
-            <img id="discordAvatar" class="discord-avatar" src="../assets/swasser.png" alt="Discord profile picture" />
+            <img
+              id="discordAvatar"
+              class="discord-avatar"
+              src="../assets/swasser.png"
+              alt="Discord profile picture"
+            />
             <div class="discord-content">
               <p class="discord-kicker">Discord Presence</p>
-              <p class="discord-warning hidden" id="discordWarning">⚠ Discord data unavailable (5+ sec)</p>
+              <p class="discord-warning hidden" id="discordWarning">
+                ⚠ Discord data unavailable (5+ sec)
+              </p>
               <div class="discord-user-row">
                 <p class="discord-user" id="discordUsername">Loading user...</p>
                 <span class="status-dot" id="discordDot"></span>
               </div>
-              <p class="discord-line" id="discordStatusText">Loading status...</p>
-              <p class="discord-subline" id="discordActivityText">Waiting for Lanyard</p>
+              <p class="discord-line" id="discordStatusText">
+                Loading status...
+              </p>
+              <p class="discord-subline" id="discordActivityText">
+                Waiting for Lanyard
+              </p>
             </div>
             <div class="activity-now hidden" id="activityNow">
-              <img id="activityArtwork" class="activity-artwork" src="" alt="Activity artwork" />
+              <img
+                id="activityArtwork"
+                class="activity-artwork"
+                src=""
+                alt="Activity artwork"
+              />
               <div class="activity-meta">
                 <p class="activity-kicker" id="activityKicker">Activity</p>
                 <p class="activity-name" id="activityName">-</p>
@@ -137,7 +188,12 @@
               </div>
             </div>
             <div class="spotify-now hidden" id="spotifyNow">
-              <img id="spotifyArtwork" class="spotify-artwork" src="" alt="Spotify artwork" />
+              <img
+                id="spotifyArtwork"
+                class="spotify-artwork"
+                src=""
+                alt="Spotify artwork"
+              />
               <div class="spotify-meta">
                 <p class="spotify-kicker">
                   <span class="spotify-logo" aria-hidden="true">
@@ -156,7 +212,10 @@
             </div>
           </article>
 
-          <article id="feedbackBlock" class="project-card feedback-block hidden">
+          <article
+            id="feedbackBlock"
+            class="project-card feedback-block hidden"
+          >
             <div class="feedback-box feedback-box--standalone">
               <p class="card-tag">Feedback</p>
               <div class="feedback-head">
@@ -192,7 +251,11 @@
                   ></textarea>
                   <button class="btn" type="submit">Send feedback</button>
                 </form>
-                <p id="feedbackStatus" class="feedback-status" aria-live="polite"></p>
+                <p
+                  id="feedbackStatus"
+                  class="feedback-status"
+                  aria-live="polite"
+                ></p>
               </div>
             </div>
           </article>
@@ -206,22 +269,49 @@
         </div>
         <p class="body-copy">
           I've contributed to projects at
-          <a href="https://github.com/microsoft" target="_blank" rel="noreferrer">Microsoft</a>
+          <a
+            href="https://github.com/microsoft"
+            target="_blank"
+            rel="noreferrer"
+            >Microsoft</a
+          >
           and
-          <a href="https://github.com/aternosorg" target="_blank" rel="noreferrer">Aternos</a>.
+          <a
+            href="https://github.com/aternosorg"
+            target="_blank"
+            rel="noreferrer"
+            >Aternos</a
+          >.
         </p>
       </section>
     </main>
 
     <footer>
       <div class="metallic-footer">
-        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+        <canvas
+          data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'
+        ></canvas>
       </div>
       <div class="footer-row">
-        <p>© <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
-        <button class="download-link" id="downloadContact" aria-label="Download contact information">
-          <svg viewBox="0 0 256 256" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
-            <path d="M74.34 85.66a8 8 0 0 1 11.32-11.32L120 108.69V24a8 8 0 0 1 16 0v84.69l34.34-34.35a8 8 0 0 1 11.32 11.32l-48 48a8 8 0 0 1-11.32 0ZM240 136v64a16 16 0 0 1-16 16H32a16 16 0 0 1-16-16v-64a16 16 0 0 1 16-16h52.4a4 4 0 0 1 2.83 1.17L111 145a24 24 0 0 0 34 0l23.8-23.8a4 4 0 0 1 2.8-1.2H224a16 16 0 0 1 16 16m-40 32a12 12 0 1 0-12 12a12 12 0 0 0 12-12" fill="currentColor"></path>
+        <p>
+          © <span id="year"></span> bencodess / stilleswasser93. All rights
+          reserved.
+        </p>
+        <button
+          class="download-link"
+          id="downloadContact"
+          aria-label="Download contact information"
+        >
+          <svg
+            viewBox="0 0 256 256"
+            height="16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M74.34 85.66a8 8 0 0 1 11.32-11.32L120 108.69V24a8 8 0 0 1 16 0v84.69l34.34-34.35a8 8 0 0 1 11.32 11.32l-48 48a8 8 0 0 1-11.32 0ZM240 136v64a16 16 0 0 1-16 16H32a16 16 0 0 1-16-16v-64a16 16 0 0 1 16-16h52.4a4 4 0 0 1 2.83 1.17L111 145a24 24 0 0 0 34 0l23.8-23.8a4 4 0 0 1 2.8-1.2H224a16 16 0 0 1 16 16m-40 32a12 12 0 1 0-12 12a12 12 0 0 0 12-12"
+              fill="currentColor"
+            ></path>
           </svg>
           Download Contact
         </button>
@@ -231,33 +321,35 @@
     <script src="../assets/metallic-paint.js"></script>
     <script src="../script.js"></script>
     <script>
-      document.getElementById('downloadContact').addEventListener('click', () => {
-        const text = [
-          'bencodess (stilleswasser93)',
-          '────────────────────────────────────',
-          '',
-          'Backend developer from Germany building bots, APIs, and tools.',
-          'I focus on practical projects and learn by doing.',
-          '',
-          'Languages & Tools: Node.js, Python, API Design, Databases, Linux',
-          '',
-          'Open Source Contributions:',
-          '  • Microsoft        - github.com/microsoft',
-          '  • Aternos          - github.com/aternosorg',
-          '',
-          'Find me online:',
-          '  • Discord          - discord.com/users/1033745912071192688',
-          '  • GitHub           - github.com/bencodess',
-          '  • Website          - benslogs.dev',
-        ].join('\n');
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'bencodess-contact.txt';
-        a.click();
-        URL.revokeObjectURL(url);
-      });
+      document
+        .getElementById("downloadContact")
+        .addEventListener("click", () => {
+          const text = [
+            "bencodess (stilleswasser93)",
+            "────────────────────────────────────",
+            "",
+            "Backend developer from Germany building bots, APIs, and tools.",
+            "I focus on practical projects and learn by doing.",
+            "",
+            "Languages & Tools: Node.js, Python, API Design, Databases, Linux",
+            "",
+            "Open Source Contributions:",
+            "  • Microsoft        - github.com/microsoft",
+            "  • Aternos          - github.com/aternosorg",
+            "",
+            "Find me online:",
+            "  • Discord          - discord.com/users/1033745912071192688",
+            "  • GitHub           - github.com/bencodess",
+            "  • Website          - benslogs.dev",
+          ].join("\n");
+          const blob = new Blob([text], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "bencodess-contact.txt";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
     </script>
   </body>
 </html>

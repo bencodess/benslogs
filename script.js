@@ -1,8 +1,8 @@
 function normalizePath(pathname) {
   if (!pathname) {
-    return '/';
+    return "/";
   }
-  if (pathname.length > 1 && pathname.endsWith('/')) {
+  if (pathname.length > 1 && pathname.endsWith("/")) {
     return pathname.slice(0, -1);
   }
   return pathname;
@@ -20,7 +20,10 @@ function isProjectsIndexPath(pathname) {
 
 function isProjectDetailPath(pathname) {
   const path = normalizePath(pathname);
-  return /\/projects\/[^/]+(?:\/index\.html)?$/.test(path) && !isProjectsIndexPath(path);
+  return (
+    /\/projects\/[^/]+(?:\/index\.html)?$/.test(path) &&
+    !isProjectsIndexPath(path)
+  );
 }
 
 let hasFirstLanyardSuccess = false;
@@ -35,13 +38,13 @@ function markFirstLanyardSuccess() {
   }
 
   hasFirstLanyardSuccess = true;
-  if (typeof resolveFirstLanyardSuccess === 'function') {
+  if (typeof resolveFirstLanyardSuccess === "function") {
     resolveFirstLanyardSuccess();
   }
 }
 
 function setupPageLoader() {
-  const existingLoader = document.querySelector('.page-loader');
+  const existingLoader = document.querySelector(".page-loader");
   if (existingLoader || !document.body) {
     return;
   }
@@ -50,16 +53,16 @@ function setupPageLoader() {
   const isContactPage = isContactPath(path);
   const isProjectDetailPage = isProjectDetailPath(path);
   const loaderText = isProjectDetailPage
-    ? 'Loading project...'
+    ? "Loading project..."
     : isContactPage
-      ? 'Loading Discord presence...'
-      : 'Loading assets...';
+      ? "Loading Discord presence..."
+      : "Loading assets...";
 
-  document.body.classList.add('is-loading');
+  document.body.classList.add("is-loading");
 
-  const loader = document.createElement('div');
-  loader.className = 'page-loader';
-  loader.setAttribute('aria-hidden', 'true');
+  const loader = document.createElement("div");
+  loader.className = "page-loader";
+  loader.setAttribute("aria-hidden", "true");
   loader.innerHTML = `
     <div class="page-loader__inner">
       <div class="page-loader__spinner"></div>
@@ -74,22 +77,24 @@ function setupPageLoader() {
       return;
     }
     isClosed = true;
-    document.body.classList.remove('is-loading');
-    loader.classList.add('is-hidden');
+    document.body.classList.remove("is-loading");
+    loader.classList.add("is-hidden");
     window.setTimeout(() => loader.remove(), 420);
   };
 
   const pageLoadedPromise = new Promise((resolve) => {
-    if (document.readyState === 'complete') {
+    if (document.readyState === "complete") {
       resolve();
       return;
     }
 
-    window.addEventListener('load', resolve, { once: true });
+    window.addEventListener("load", resolve, { once: true });
   });
 
   if (isContactPage) {
-    Promise.all([pageLoadedPromise, firstLanyardSuccessPromise]).then(closeLoader);
+    Promise.all([pageLoadedPromise, firstLanyardSuccessPromise]).then(
+      closeLoader,
+    );
     window.setTimeout(closeLoader, 15000);
     return;
   }
@@ -101,23 +106,26 @@ function setupPageLoader() {
 setupPageLoader();
 
 function setupContentProtection() {
-  document.addEventListener('selectstart', (event) => {
+  document.addEventListener("selectstart", (event) => {
     event.preventDefault();
   });
 
-  document.addEventListener('contextmenu', (event) => {
+  document.addEventListener("contextmenu", (event) => {
     event.preventDefault();
   });
 
-  document.addEventListener('dragstart', (event) => {
+  document.addEventListener("dragstart", (event) => {
     const target = event.target;
-    if (target instanceof HTMLImageElement || target instanceof HTMLAnchorElement) {
+    if (
+      target instanceof HTMLImageElement ||
+      target instanceof HTMLAnchorElement
+    ) {
       event.preventDefault();
     }
   });
 
-  document.querySelectorAll('img').forEach((img) => {
-    img.setAttribute('draggable', 'false');
+  document.querySelectorAll("img").forEach((img) => {
+    img.setAttribute("draggable", "false");
   });
 
   // document.addEventListener('keydown', (event) => {
@@ -138,18 +146,18 @@ function setupContentProtection() {
 
 setupContentProtection();
 
-const revealItems = document.querySelectorAll('.reveal');
+const revealItems = document.querySelectorAll(".reveal");
 
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('show');
+        entry.target.classList.add("show");
         observer.unobserve(entry.target);
       }
     });
   },
-  { threshold: 0.18 }
+  { threshold: 0.18 },
 );
 
 revealItems.forEach((item, index) => {
@@ -157,18 +165,18 @@ revealItems.forEach((item, index) => {
   observer.observe(item);
 });
 
-document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById("year").textContent = new Date().getFullYear();
 
-const USER_ID = '1033745912071192688';
+const USER_ID = "1033745912071192688";
 const FEEDBACK_WEBHOOK_URL =
-  'https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D';
+  "https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D";
 const FEEDBACK_BLOCKED_TERMS = [
-  'hitler',
-  'nigga',
-  'nigger',
-  'heil',
-  'nazis',
-  'nazi',
+  "hitler",
+  "nigga",
+  "nigger",
+  "heil",
+  "nazis",
+  "nazi",
 ];
 const DEFAULT_SITE_CONFIG = {
   feedback: true,
@@ -176,28 +184,28 @@ const DEFAULT_SITE_CONFIG = {
 const AUTO_RELOAD_MS = 60000;
 const LANYARD_STALE_MS = 5 * 1000;
 const OUTAGE_START_KEY = `lanyard_outage_start_${USER_ID}`;
-const statusTextEl = document.getElementById('discordStatusText');
-const activityTextEl = document.getElementById('discordActivityText');
-const dotEl = document.getElementById('discordDot');
-const usernameEl = document.getElementById('discordUsername');
-const avatarEl = document.getElementById('discordAvatar');
-const discordPanelEl = document.querySelector('.discord-panel');
-const discordWarningEl = document.getElementById('discordWarning');
-const spotifyNowEl = document.getElementById('spotifyNow');
-const spotifyArtworkEl = document.getElementById('spotifyArtwork');
-const spotifySongEl = document.getElementById('spotifySong');
-const spotifyArtistEl = document.getElementById('spotifyArtist');
-const activityNowEl = document.getElementById('activityNow');
-const activityArtworkEl = document.getElementById('activityArtwork');
-const activityNameEl = document.getElementById('activityName');
-const activityDetailsEl = document.getElementById('activityDetails');
-const activityKickerEl = document.getElementById('activityKicker');
+const statusTextEl = document.getElementById("discordStatusText");
+const activityTextEl = document.getElementById("discordActivityText");
+const dotEl = document.getElementById("discordDot");
+const usernameEl = document.getElementById("discordUsername");
+const avatarEl = document.getElementById("discordAvatar");
+const discordPanelEl = document.querySelector(".discord-panel");
+const discordWarningEl = document.getElementById("discordWarning");
+const spotifyNowEl = document.getElementById("spotifyNow");
+const spotifyArtworkEl = document.getElementById("spotifyArtwork");
+const spotifySongEl = document.getElementById("spotifySong");
+const spotifyArtistEl = document.getElementById("spotifyArtist");
+const activityNowEl = document.getElementById("activityNow");
+const activityArtworkEl = document.getElementById("activityArtwork");
+const activityNameEl = document.getElementById("activityName");
+const activityDetailsEl = document.getElementById("activityDetails");
+const activityKickerEl = document.getElementById("activityKicker");
 
 const presenceLabels = {
-  online: 'Online',
-  idle: 'Idle',
-  dnd: 'Do Not Disturb',
-  offline: 'Offline',
+  online: "Online",
+  idle: "Idle",
+  dnd: "Do Not Disturb",
+  offline: "Offline",
 };
 
 function setPresenceStatus(presence) {
@@ -205,10 +213,10 @@ function setPresenceStatus(presence) {
     return;
   }
 
-  const finalPresence = presence || 'offline';
-  dotEl.className = 'status-dot';
+  const finalPresence = presence || "offline";
+  dotEl.className = "status-dot";
   dotEl.classList.add(finalPresence);
-  statusTextEl.textContent = `Status: ${presenceLabels[finalPresence] || 'Unknown'}`;
+  statusTextEl.textContent = `Status: ${presenceLabels[finalPresence] || "Unknown"}`;
 }
 
 function setActivity(activities = []) {
@@ -224,7 +232,9 @@ function setActivity(activities = []) {
   }
 
   const fallback = activities.find((item) => item.name);
-  activityTextEl.textContent = fallback ? `Activity: ${fallback.name}` : 'No current activity';
+  activityTextEl.textContent = fallback
+    ? `Activity: ${fallback.name}`
+    : "No current activity";
 }
 
 function getActivityArtworkUrl(activity) {
@@ -234,13 +244,14 @@ function getActivityArtworkUrl(activity) {
 
   const img = activity.assets.large_image;
 
-  if (img.startsWith('mp:external/')) {
+  if (img.startsWith("mp:external/")) {
     try {
-      let b64 = img.slice('mp:external/'.length)
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
+      let b64 = img
+        .slice("mp:external/".length)
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
       while (b64.length % 4) {
-        b64 += '=';
+        b64 += "=";
       }
       return atob(b64);
     } catch {
@@ -257,28 +268,33 @@ function getActivityArtworkUrl(activity) {
 }
 
 function setActivityArtwork(activities = []) {
-  if (!activityNowEl || !activityArtworkEl || !activityNameEl || !activityDetailsEl) {
+  if (
+    !activityNowEl ||
+    !activityArtworkEl ||
+    !activityNameEl ||
+    !activityDetailsEl
+  ) {
     return;
   }
 
   const primary = activities.find(
-    (a) => a.type !== 2 && a.type !== 4 && a.assets && a.assets.large_image
+    (a) => a.type !== 2 && a.type !== 4 && a.assets && a.assets.large_image,
   );
 
   if (!primary) {
-    activityNowEl.classList.add('hidden');
-    activityArtworkEl.src = '';
-    activityNameEl.textContent = '-';
-    activityDetailsEl.textContent = '-';
+    activityNowEl.classList.add("hidden");
+    activityArtworkEl.src = "";
+    activityNameEl.textContent = "-";
+    activityDetailsEl.textContent = "-";
     return;
   }
 
-  activityNowEl.classList.remove('hidden');
+  activityNowEl.classList.remove("hidden");
   if (activityKickerEl) {
-    activityKickerEl.textContent = primary.name || 'Activity';
+    activityKickerEl.textContent = primary.name || "Activity";
   }
-  activityNameEl.textContent = primary.name || 'Unknown';
-  activityDetailsEl.textContent = primary.state || primary.details || '';
+  activityNameEl.textContent = primary.name || "Unknown";
+  activityDetailsEl.textContent = primary.state || primary.details || "";
 
   const url = getActivityArtworkUrl(primary);
   if (url) {
@@ -291,14 +307,15 @@ function getDiscordAvatarUrl(discordUser) {
     return null;
   }
 
-  const isAnimated = discordUser.avatar.startsWith('a_');
-  const ext = isAnimated ? 'gif' : 'png';
+  const isAnimated = discordUser.avatar.startsWith("a_");
+  const ext = isAnimated ? "gif" : "png";
   return `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.${ext}?size=256`;
 }
 
 function setDiscordUser(discordUser) {
   if (usernameEl) {
-    const username = discordUser?.global_name || discordUser?.username || 'Unknown user';
+    const username =
+      discordUser?.global_name || discordUser?.username || "Unknown user";
     usernameEl.textContent = username;
   }
 
@@ -308,40 +325,48 @@ function setDiscordUser(discordUser) {
     avatarEl.src = avatarUrl;
   }
 
-  const logoImgs = document.querySelectorAll('.logo img');
+  const logoImgs = document.querySelectorAll(".logo img");
   if (avatarUrl) {
-    logoImgs.forEach((img) => { img.src = avatarUrl; });
+    logoImgs.forEach((img) => {
+      img.src = avatarUrl;
+    });
   }
 
   const favicon = document.querySelector('link[rel="icon"]');
   if (favicon && avatarUrl) {
-    const isAnimated = avatarUrl.includes('.gif');
-    const ext = isAnimated ? 'gif' : 'png';
-    favicon.href = avatarUrl.replace(/\?size=\d+/, '?size=64');
+    const isAnimated = avatarUrl.includes(".gif");
+    const ext = isAnimated ? "gif" : "png";
+    favicon.href = avatarUrl.replace(/\?size=\d+/, "?size=64");
   }
 }
 
 function setSpotify(spotifyData, isListeningToSpotify) {
-  if (!spotifyNowEl || !spotifyArtworkEl || !spotifySongEl || !spotifyArtistEl) {
+  if (
+    !spotifyNowEl ||
+    !spotifyArtworkEl ||
+    !spotifySongEl ||
+    !spotifyArtistEl
+  ) {
     return;
   }
 
   const spotifyEnd = Number(spotifyData?.timestamps?.end || 0);
-  const isStaleSpotify = spotifyEnd > 0 && Date.now() > spotifyEnd + 5 * 60 * 1000;
+  const isStaleSpotify =
+    spotifyEnd > 0 && Date.now() > spotifyEnd + 5 * 60 * 1000;
 
   if (!isListeningToSpotify || !spotifyData || isStaleSpotify) {
-    spotifyNowEl.classList.add('hidden');
-    spotifySongEl.classList.remove('is-marquee');
-    spotifySongEl.removeAttribute('data-song-title');
-    spotifySongEl.textContent = '-';
-    spotifyArtistEl.textContent = '-';
+    spotifyNowEl.classList.add("hidden");
+    spotifySongEl.classList.remove("is-marquee");
+    spotifySongEl.removeAttribute("data-song-title");
+    spotifySongEl.textContent = "-";
+    spotifyArtistEl.textContent = "-";
     return;
   }
 
-  const songTitle = spotifyData.song || 'Unknown song';
-  spotifyNowEl.classList.remove('hidden');
+  const songTitle = spotifyData.song || "Unknown song";
+  spotifyNowEl.classList.remove("hidden");
   setSongMarquee(songTitle);
-  spotifyArtistEl.textContent = spotifyData.artist || 'Unknown artist';
+  spotifyArtistEl.textContent = spotifyData.artist || "Unknown artist";
 
   if (spotifyData.album_art_url) {
     spotifyArtworkEl.src = spotifyData.album_art_url;
@@ -358,13 +383,13 @@ function setSongMarquee(songTitle) {
   }
 
   spotifySongEl.dataset.songTitle = songTitle;
-  spotifySongEl.classList.remove('is-marquee');
-  spotifySongEl.style.removeProperty('--marquee-shift');
-  spotifySongEl.style.removeProperty('--marquee-duration');
+  spotifySongEl.classList.remove("is-marquee");
+  spotifySongEl.style.removeProperty("--marquee-shift");
+  spotifySongEl.style.removeProperty("--marquee-duration");
   spotifySongEl.textContent = songTitle;
 
   window.requestAnimationFrame(() => {
-    if (!spotifySongEl || spotifyNowEl?.classList.contains('hidden')) {
+    if (!spotifySongEl || spotifyNowEl?.classList.contains("hidden")) {
       return;
     }
 
@@ -377,30 +402,30 @@ function setSongMarquee(songTitle) {
       return;
     }
 
-    const trackA = document.createElement('span');
-    trackA.className = 'marquee-track';
+    const trackA = document.createElement("span");
+    trackA.className = "marquee-track";
     trackA.textContent = songTitle;
 
-    const gap = document.createElement('span');
-    gap.className = 'marquee-gap';
-    gap.textContent = '•';
+    const gap = document.createElement("span");
+    gap.className = "marquee-gap";
+    gap.textContent = "•";
 
-    const trackB = document.createElement('span');
-    trackB.className = 'marquee-track';
+    const trackB = document.createElement("span");
+    trackB.className = "marquee-track";
     trackB.textContent = songTitle;
 
-    const inner = document.createElement('span');
-    inner.className = 'marquee-inner';
+    const inner = document.createElement("span");
+    inner.className = "marquee-inner";
     inner.append(trackA, gap, trackB);
 
-    spotifySongEl.textContent = '';
+    spotifySongEl.textContent = "";
     spotifySongEl.appendChild(inner);
-    spotifySongEl.classList.add('is-marquee');
+    spotifySongEl.classList.add("is-marquee");
 
     const shift = Math.max(80, trackA.offsetWidth + gap.offsetWidth);
     const duration = Math.max(7, Math.min(14, shift / 32));
-    spotifySongEl.style.setProperty('--marquee-shift', `${shift}px`);
-    spotifySongEl.style.setProperty('--marquee-duration', `${duration}s`);
+    spotifySongEl.style.setProperty("--marquee-shift", `${shift}px`);
+    spotifySongEl.style.setProperty("--marquee-duration", `${duration}s`);
   });
 }
 
@@ -438,26 +463,29 @@ function isLanyardStale() {
 
 function setLanyardWarningState(isStale) {
   if (discordPanelEl) {
-    discordPanelEl.classList.toggle('data-stale', isStale);
+    discordPanelEl.classList.toggle("data-stale", isStale);
   }
   if (discordWarningEl) {
-    discordWarningEl.classList.toggle('hidden', !isStale);
+    discordWarningEl.classList.toggle("hidden", !isStale);
   }
 }
 
 async function loadDiscordStatus() {
   try {
-    const response = await fetch(`https://api.lanyard.rest/v1/users/${USER_ID}?t=${Date.now()}`, {
-      cache: 'no-store',
-      headers: {
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
+    const response = await fetch(
+      `https://api.lanyard.rest/v1/users/${USER_ID}?t=${Date.now()}`,
+      {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
       },
-    });
+    );
     const payload = await response.json();
 
     if (!payload.success || !payload.data) {
-      throw new Error('Invalid Lanyard response');
+      throw new Error("Invalid Lanyard response");
     }
 
     setPresenceStatus(payload.data.discord_status);
@@ -472,19 +500,16 @@ async function loadDiscordStatus() {
     setOutageStartIfMissing();
     const staleOutage = isLanyardStale();
     setLanyardWarningState(staleOutage);
-    setPresenceStatus('offline');
+    setPresenceStatus("offline");
     if (activityTextEl) {
       activityTextEl.textContent = staleOutage
-        ? 'Data unavailable for over 5 seconds'
-        : 'Could not load status';
+        ? "Data unavailable for over 5 seconds"
+        : "Could not load status";
     }
     setSpotify(null, false);
     setActivityArtwork([]);
   }
 }
-
-
-
 
 function setupAutoReload() {
   if (isContactPath(window.location.pathname)) {
@@ -497,12 +522,12 @@ function setupAutoReload() {
 }
 
 function setupFeedbackForm() {
-  const form = document.getElementById('feedbackForm');
-  const nameEl = document.getElementById('feedbackName');
-  const messageEl = document.getElementById('feedbackMessage');
-  const statusEl = document.getElementById('feedbackStatus');
-  const toggleBtn = document.getElementById('feedbackToggleBtn');
-  const panelEl = document.getElementById('feedbackPanel');
+  const form = document.getElementById("feedbackForm");
+  const nameEl = document.getElementById("feedbackName");
+  const messageEl = document.getElementById("feedbackMessage");
+  const statusEl = document.getElementById("feedbackStatus");
+  const toggleBtn = document.getElementById("feedbackToggleBtn");
+  const panelEl = document.getElementById("feedbackPanel");
 
   if (!form || !nameEl || !messageEl || !statusEl) {
     return;
@@ -510,20 +535,21 @@ function setupFeedbackForm() {
 
   const syncTextareaHeight = () => {
     const maxHeight = 300;
-    messageEl.style.height = 'auto';
+    messageEl.style.height = "auto";
     const nextHeight = Math.min(messageEl.scrollHeight, maxHeight);
     messageEl.style.height = `${nextHeight}px`;
-    messageEl.style.overflowY = messageEl.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    messageEl.style.overflowY =
+      messageEl.scrollHeight > maxHeight ? "auto" : "hidden";
   };
 
   syncTextareaHeight();
-  messageEl.addEventListener('input', syncTextareaHeight);
+  messageEl.addEventListener("input", syncTextareaHeight);
 
   if (toggleBtn && panelEl) {
     const setPanelState = (isOpen) => {
-      panelEl.classList.toggle('is-collapsed', !isOpen);
-      toggleBtn.textContent = isOpen ? 'Close' : 'Open';
-      toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      panelEl.classList.toggle("is-collapsed", !isOpen);
+      toggleBtn.textContent = isOpen ? "Close" : "Open";
+      toggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
 
       if (isOpen) {
         window.setTimeout(syncTextareaHeight, 120);
@@ -531,46 +557,48 @@ function setupFeedbackForm() {
     };
 
     setPanelState(false);
-    toggleBtn.addEventListener('click', () => {
-      const isOpen = panelEl.classList.contains('is-collapsed');
+    toggleBtn.addEventListener("click", () => {
+      const isOpen = panelEl.classList.contains("is-collapsed");
       setPanelState(isOpen);
     });
   }
 
-  form.addEventListener('submit', async (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const name = nameEl.value.trim();
     const feedback = messageEl.value.trim();
 
     if (!name || !feedback) {
-      statusEl.textContent = 'Please enter your name and feedback.';
-      statusEl.className = 'feedback-status err';
+      statusEl.textContent = "Please enter your name and feedback.";
+      statusEl.className = "feedback-status err";
       return;
     }
 
     const loweredName = name.toLowerCase();
-    const hasBlockedTerm = FEEDBACK_BLOCKED_TERMS.some((term) => loweredName.includes(term));
+    const hasBlockedTerm = FEEDBACK_BLOCKED_TERMS.some((term) =>
+      loweredName.includes(term),
+    );
     if (hasBlockedTerm) {
-      statusEl.textContent = 'Please use a different name.';
-      statusEl.className = 'feedback-status err';
+      statusEl.textContent = "Please use a different name.";
+      statusEl.className = "feedback-status err";
       return;
     }
 
-    statusEl.textContent = 'Sending feedback...';
-    statusEl.className = 'feedback-status';
+    statusEl.textContent = "Sending feedback...";
+    statusEl.className = "feedback-status";
 
     const safeName = name.slice(0, 256);
     const safeFeedback = feedback.slice(0, 1000);
     const payload = {
-      username: 'Website Feedback',
+      username: "Website Feedback",
       embeds: [
         {
-          title: 'New feedback from contact page',
+          title: "New feedback from contact page",
           color: 10247679,
           fields: [
-            { name: 'Name', value: safeName || '-', inline: false },
-            { name: 'Message', value: safeFeedback || '-', inline: false },
+            { name: "Name", value: safeName || "-", inline: false },
+            { name: "Message", value: safeFeedback || "-", inline: false },
           ],
           timestamp: new Date().toISOString(),
         },
@@ -579,9 +607,9 @@ function setupFeedbackForm() {
 
     try {
       const response = await fetch(FEEDBACK_WEBHOOK_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -590,29 +618,29 @@ function setupFeedbackForm() {
         throw new Error(`Webhook failed (${response.status})`);
       }
 
-      statusEl.textContent = 'Feedback sent. Thank you!';
-      statusEl.className = 'feedback-status ok';
+      statusEl.textContent = "Feedback sent. Thank you!";
+      statusEl.className = "feedback-status ok";
       form.reset();
       syncTextareaHeight();
     } catch {
-      statusEl.textContent = 'Could not send feedback. Please try again.';
-      statusEl.className = 'feedback-status err';
+      statusEl.textContent = "Could not send feedback. Please try again.";
+      statusEl.className = "feedback-status err";
     }
   });
 }
 
 async function loadSiteConfig() {
-  const candidates = ['config.json', '../config.json', '../../config.json'];
+  const candidates = ["config.json", "../config.json", "../../config.json"];
 
   for (const path of candidates) {
     try {
-      const response = await fetch(path, { cache: 'no-store' });
+      const response = await fetch(path, { cache: "no-store" });
       if (!response.ok) {
         continue;
       }
 
       const raw = await response.json();
-      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
         return { ...DEFAULT_SITE_CONFIG };
       }
 
@@ -626,24 +654,24 @@ async function loadSiteConfig() {
 }
 
 function applySiteConfig(config) {
-  const feedbackBlockEl = document.getElementById('feedbackBlock');
+  const feedbackBlockEl = document.getElementById("feedbackBlock");
   if (feedbackBlockEl) {
     if (config.feedback === false) {
-      feedbackBlockEl.classList.add('hidden');
+      feedbackBlockEl.classList.add("hidden");
     } else {
-      feedbackBlockEl.classList.remove('hidden');
+      feedbackBlockEl.classList.remove("hidden");
     }
   }
 }
 
 function setupProjectCards() {
-  const cards = document.querySelectorAll('.project-card--interactive');
+  const cards = document.querySelectorAll(".project-card--interactive");
   if (!cards.length) {
     return;
   }
 
   const openProjectPage = (card) => {
-    const slug = card.getAttribute('data-project');
+    const slug = card.getAttribute("data-project");
     if (!slug) {
       return;
     }
@@ -651,15 +679,15 @@ function setupProjectCards() {
   };
 
   cards.forEach((card) => {
-    card.addEventListener('click', (event) => {
-      if (event.target instanceof Element && event.target.closest('a')) {
+    card.addEventListener("click", (event) => {
+      if (event.target instanceof Element && event.target.closest("a")) {
         return;
       }
       openProjectPage(card);
     });
 
-    card.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         openProjectPage(card);
       }

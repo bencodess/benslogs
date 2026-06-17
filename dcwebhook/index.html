@@ -10,16 +10,28 @@
     <meta name="theme-color" content="#07030f" />
     <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
     <meta property="og:title" content="DC Webhook | bencodess" />
-    <meta property="og:description" content="Embedded Discord webhook sender." />
-    <meta property="og:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta
+      property="og:description"
+      content="Embedded Discord webhook sender."
+    />
+    <meta
+      property="og:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
     <meta property="og:url" content="https://benslogs.dev/dcwebhook/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="BensLogs" />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DC Webhook | bencodess" />
-    <meta name="twitter:description" content="Embedded Discord webhook sender." />
-    <meta name="twitter:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta
+      name="twitter:description"
+      content="Embedded Discord webhook sender."
+    />
+    <meta
+      name="twitter:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
@@ -163,7 +175,9 @@
             <label>Preview</label>
             <div class="wh-embed-preview" id="whPreview">
               <div class="embed-title" id="previewTitle">New message</div>
-              <p class="embed-desc" id="previewDesc">Your message will appear here...</p>
+              <p class="embed-desc" id="previewDesc">
+                Your message will appear here...
+              </p>
               <p class="embed-footer" id="previewFooter">via webhook</p>
             </div>
           </div>
@@ -177,33 +191,39 @@
     </main>
 
     <footer>
-      <p>&copy; <span id="year"></span> bencodess / stilleswasser93. All rights reserved.</p>
+      <p>
+        &copy; <span id="year"></span> bencodess / stilleswasser93. All rights
+        reserved.
+      </p>
     </footer>
 
     <script src="../script.js"></script>
     <script>
-      const form = document.getElementById('whForm');
-      const urlEl = document.getElementById('whUrl');
-      const usernameEl = document.getElementById('whUsername');
-      const messageEl = document.getElementById('whMessage');
-      const statusEl = document.getElementById('whStatus');
-      const previewDesc = document.getElementById('previewDesc');
+      const form = document.getElementById("whForm");
+      const urlEl = document.getElementById("whUrl");
+      const usernameEl = document.getElementById("whUsername");
+      const messageEl = document.getElementById("whMessage");
+      const statusEl = document.getElementById("whStatus");
+      const previewDesc = document.getElementById("previewDesc");
 
       const syncTextarea = () => {
         const maxHeight = 300;
-        messageEl.style.height = 'auto';
-        messageEl.style.height = Math.min(messageEl.scrollHeight, maxHeight) + 'px';
-        messageEl.style.overflowY = messageEl.scrollHeight > maxHeight ? 'auto' : 'hidden';
+        messageEl.style.height = "auto";
+        messageEl.style.height =
+          Math.min(messageEl.scrollHeight, maxHeight) + "px";
+        messageEl.style.overflowY =
+          messageEl.scrollHeight > maxHeight ? "auto" : "hidden";
       };
 
       syncTextarea();
-      messageEl.addEventListener('input', syncTextarea);
+      messageEl.addEventListener("input", syncTextarea);
 
-      messageEl.addEventListener('input', () => {
-        previewDesc.textContent = messageEl.value.trim() || 'Your message will appear here...';
+      messageEl.addEventListener("input", () => {
+        previewDesc.textContent =
+          messageEl.value.trim() || "Your message will appear here...";
       });
 
-      form.addEventListener('submit', async (e) => {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const url = urlEl.value.trim();
@@ -211,19 +231,19 @@
         const content = messageEl.value.trim();
 
         if (!url) {
-          statusEl.textContent = 'Please enter a webhook URL.';
-          statusEl.className = 'wh-status err';
+          statusEl.textContent = "Please enter a webhook URL.";
+          statusEl.className = "wh-status err";
           return;
         }
 
         if (!content) {
-          statusEl.textContent = 'Please enter a message.';
-          statusEl.className = 'wh-status err';
+          statusEl.textContent = "Please enter a message.";
+          statusEl.className = "wh-status err";
           return;
         }
 
-        statusEl.textContent = 'Sending...';
-        statusEl.className = 'wh-status';
+        statusEl.textContent = "Sending...";
+        statusEl.className = "wh-status";
 
         const body = {
           content,
@@ -232,24 +252,28 @@
 
         try {
           const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
 
           if (!res.ok) {
-            const text = await res.text().catch(() => '');
-            throw new Error(text ? `Discord returned ${res.status}: ${text}` : `Discord returned ${res.status}`);
+            const text = await res.text().catch(() => "");
+            throw new Error(
+              text
+                ? `Discord returned ${res.status}: ${text}`
+                : `Discord returned ${res.status}`,
+            );
           }
 
-          statusEl.textContent = 'Message sent!';
-          statusEl.className = 'wh-status ok';
-          messageEl.value = '';
-          previewDesc.textContent = 'Your message will appear here...';
+          statusEl.textContent = "Message sent!";
+          statusEl.className = "wh-status ok";
+          messageEl.value = "";
+          previewDesc.textContent = "Your message will appear here...";
           syncTextarea();
         } catch (err) {
           statusEl.textContent = err.message;
-          statusEl.className = 'wh-status err';
+          statusEl.className = "wh-status err";
         }
       });
     </script>
