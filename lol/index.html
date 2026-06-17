@@ -550,7 +550,7 @@
 
     function setActivityArtwork(activities) {
       if (!activityNowEl) return;
-      const primary = activities.find(a => a.type !== 4 && a.assets && a.assets.large_image);
+      const primary = activities.find(a => a.type !== 2 && a.type !== 4 && a.assets && a.assets.large_image);
       if (!primary) {
         activityNowEl.classList.add('hidden');
         activityArtworkEl.src = '';

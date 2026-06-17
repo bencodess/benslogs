@@ -262,7 +262,7 @@ function setActivityArtwork(activities = []) {
   }
 
   const primary = activities.find(
-    (a) => a.type !== 4 && a.assets && a.assets.large_image
+    (a) => a.type !== 2 && a.type !== 4 && a.assets && a.assets.large_image
   );
 
   if (!primary) {
