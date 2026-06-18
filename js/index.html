@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS | BensLogs – JavaScript Edition</title>
+    <meta
+      name="description"
+      content="JavaScript-themed version of BensLogs – portfolio of bencodess (stilleswasser93) – backend development projects, APIs, bots."
+    />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="index, follow" />
+    <meta
+      name="keywords"
+      content="bencodess, stilleswasser93, JavaScript, backend developer, Node.js, Python, API, bot, portfolio"
+    />
+    <meta name="theme-color" content="#0d0b06" />
+    <link rel="canonical" href="https://benslogs.dev/js/" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <meta
+      property="og:title"
+      content="JS | BensLogs – JavaScript Edition"
+    />
+    <meta
+      property="og:description"
+      content="JavaScript-themed portfolio of bencodess (stilleswasser93). Backend development projects, APIs, bots, and progress logs."
+    />
+    <meta
+      property="og:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
+    <meta property="og:url" content="https://benslogs.dev/js/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BensLogs JS" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="JS | BensLogs – JavaScript Edition"
+    />
+    <meta
+      name="twitter:description"
+      content="JavaScript-themed portfolio of bencodess (stilleswasser93)."
+    />
+    <meta
+      name="twitter:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
+    <meta name="twitter:site" content="@stilleswasser93" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.lanyard.rest" />
+    <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "bencodess",
+        "alternateName": "stilleswasser93",
+        "url": "https://benslogs.dev/js/",
+        "image": "https://benslogs.dev/assets/swasser.png",
+        "sameAs": [
+          "https://github.com/bencodess",
+          "https://discord.com/users/1033745912071192688"
+        ],
+        "jobTitle": "Backend Developer",
+        "knowsAbout": ["Node.js", "APIs", "Databases", "Linux"],
+        "description": "bencodess (stilleswasser93) is a backend developer from Germany building bots, APIs, and tools."
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "BensLogs JS",
+        "url": "https://benslogs.dev/js/",
+        "description": "JavaScript-themed portfolio of bencodess – backend projects and learning journey.",
+        "author": {
+          "@type": "Person",
+          "name": "bencodess"
+        }
+      }
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="./" aria-label="bencodess home">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="4" fill="#F7DF1E"/>
+          <text x="50%" y="54%" dominant-baseline="central" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="36" fill="#0d0b06">JS</text>
+        </svg>
+      </a>
+      <nav>
+        <a href="ui/">UI</a>
+        <a href="projects/">Projects</a>
+        <a href="./">Home</a>
+        <a href="socials/">Socials</a>
+        <a href="contact/">Contact</a>
+      </nav>
+      <a class="btn ghost" href="contact/">Say Hi</a>
+    </header>
+
+    <main id="home">
+      <section class="hero reveal">
+        <h1>
+          Hey, I'm <span>bencodess</span>
+          and this is the <span>JS</span> edition.
+        </h1>
+        <p class="lead">
+          Also known as stilleswasser93. I build bots, APIs, and tools to
+          practice backend development and improve with every project.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn" href="projects/">See My Work</a>
+          <a class="btn ghost" href="contact/">Contact Me</a>
+        </div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-head">
+          <p class="eyebrow">Profile</p>
+          <h2>About</h2>
+        </div>
+        <p class="body-copy">
+          I'm bencodess (stilleswasser93), a backend developer from Germany. I
+          focus on building practical tools, bots, and APIs while learning by
+          doing.
+        </p>
+        <div class="pill-row">
+          <span>Node.js</span>
+          <span>Python</span>
+          <span>API Design</span>
+          <span>Databases</span>
+          <span>Linux & Git</span>
+        </div>
+      </section>
+
+      <section class="section reveal">
+        <div class="section-head">
+          <p class="eyebrow">Network</p>
+          <h2>Friends</h2>
+        </div>
+        <div class="project-grid" id="friendsGrid">
+          <div
+            class="project-card"
+            style="grid-column: 1 / -1; text-align: center; color: var(--muted)"
+          >
+            Loading friends...
+          </div>
+        </div>
+      </section>
+
+      <script>
+        (async () => {
+          const friends = ["Planeteriumprovider", "Z3p-z", "insanexyz"];
+          const grid = document.getElementById("friendsGrid");
+          const cacheKey = "friends";
+          const cache = localStorage.getItem(cacheKey);
+          const now = Date.now();
+
+          const fallbackData = [
+            {
+              login: "Planeteriumprovider",
+              name: "Planeteriumprovider",
+              html_url: "https://github.com/Planeteriumprovider",
+              avatar_url:
+                "https://avatars.githubusercontent.com/u/104488348?v=4",
+            },
+            {
+              login: "Z3p-z",
+              name: "Z3p-z",
+              html_url: "https://github.com/Z3p-z",
+              avatar_url:
+                "https://avatars.githubusercontent.com/u/65971479?v=4",
+            },
+            {
+              login: "insanexyz",
+              name: "insanexyz",
+              html_url: "https://github.com/insanexyz",
+              avatar_url:
+                "https://avatars.githubusercontent.com/u/75593601?v=4",
+            },
+          ];
+
+          if (cache) {
+            try {
+              const { data, expiry } = JSON.parse(cache);
+              if (now < expiry) {
+                renderFriends(grid, data);
+                return;
+              }
+            } catch {
+              // ignore
+            }
+          }
+
+          try {
+            const results = await Promise.allSettled(
+              friends.map((login) =>
+                fetch(`https://api.github.com/users/${login}`).then((r) => {
+                  if (!r.ok) throw new Error();
+                  return r.json();
+                }),
+              ),
+            );
+
+            const data = results
+              .filter((r) => r.status === "fulfilled")
+              .map((r) => r.value);
+
+            if (data.length) {
+              localStorage.setItem(
+                cacheKey,
+                JSON.stringify({ data, expiry: now + 3_600_000 }),
+              );
+              renderFriends(grid, data);
+            } else {
+              renderFallback(grid);
+            }
+          } catch {
+            renderFallback(grid);
+          }
+
+          function renderFallback(grid) {
+            const stored = localStorage.getItem(cacheKey);
+            if (stored) {
+              try {
+                const { data } = JSON.parse(stored);
+                if (data.length) {
+                  renderFriends(grid, data);
+                  return;
+                }
+              } catch {}
+            }
+            renderFriends(grid, fallbackData);
+          }
+
+          function renderFriends(grid, data) {
+            const cards = data.map((user) => {
+              const a = document.createElement("a");
+              a.href = user.html_url;
+              a.target = "_blank";
+              a.rel = "noreferrer";
+              a.className = "project-card";
+              a.style.textDecoration = "none";
+
+              const img = document.createElement("img");
+              img.src = user.avatar_url;
+              img.alt = user.name || user.login;
+              img.style.cssText =
+                "width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #F7DF1E; margin-bottom: 0.5rem;";
+
+              const name = document.createElement("h3");
+              name.style.fontSize = "1rem";
+              name.textContent = user.name || user.login;
+
+              const handle = document.createElement("p");
+              handle.style.cssText =
+                "font-size: 0.85rem; color: var(--muted); margin: 0;";
+              handle.textContent = `@${user.login}`;
+
+              a.append(img, name, handle);
+              return a;
+            });
+
+            grid.replaceChildren(...cards);
+          }
+        })();
+      </script>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas
+          data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'
+        ></canvas>
+      </div>
+      <div class="footer-row">
+        <p>
+          &copy; <span id="year"></span> bencodess / stilleswasser93. All rights
+          reserved.
+        </p>
+        <div class="footer-social">
+          <a
+            class="icon-link"
+            href="https://discord.com/users/1033745912071192688"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Discord profile"
+          >
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 640 512" role="img">
+                <path
+                  fill="currentColor"
+                  d="M524.5 69.8a1.5 1.5 0 0 0-.8-.7A485.1 485.1 0 0 0 404.1 32a1.8 1.8 0 0 0-1.9.9 337.5 337.5 0 0 0-14.9 30.6 447.8 447.8 0 0 0-134.4 0 309.5 309.5 0 0 0-15.1-30.6 1.9 1.9 0 0 0-1.9-.9 483.7 483.7 0 0 0-119.8 37.1 1.7 1.7 0 0 0-.8.7C39.1 183.2 18.2 293.5 28.4 402.5a2 2 0 0 0 .8 1.4A489.9 489.9 0 0 0 176.3 480a1.9 1.9 0 0 0 2.1-.7 348.2 348.2 0 0 0 30-48.8 1.9 1.9 0 0 0-1-2.6 321.2 321.2 0 0 1-45.9-21.9 1.9 1.9 0 0 1-.2-3.1c3.1-2.3 6.3-4.7 9.3-7.1a1.8 1.8 0 0 1 1.9-.3c96 43.8 200 43.8 294.8 0a1.8 1.8 0 0 1 1.9.3c3.1 2.5 6.2 4.9 9.3 7.1a1.9 1.9 0 0 1-.2 3.1 301.4 301.4 0 0 1-45.9 21.8 1.9 1.9 0 0 0-1 2.6 391.1 391.1 0 0 0 30 48.8 1.9 1.9 0 0 0 2.1.7 489.6 489.6 0 0 0 147.2-76.1 1.9 1.9 0 0 0 .8-1.4c12.2-126.7-20.1-236.2-85.7-332.7ZM222.3 337.6c-28.9 0-52.6-26.6-52.6-59.2s23.3-59.2 52.6-59.2c29.5 0 53 26.8 52.6 59.2 0 32.7-23.3 59.2-52.6 59.2Zm195.4 0c-28.9 0-52.6-26.6-52.6-59.2s23.3-59.2 52.6-59.2c29.5 0 53 26.8 52.6 59.2 0 32.7-23.1 59.2-52.6 59.2Z"
+                />
+              </svg>
+            </span>
+            <span>Discord</span>
+          </a>
+          <a
+            class="icon-link"
+            href="https://github.com/bencodess"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open GitHub profile"
+          >
+            <span class="icon-wrap" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path
+                  fill="currentColor"
+                  d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                />
+              </svg>
+            </span>
+            <span>GitHub</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../assets/metallic-paint.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 – Page Not Found | bencodess – JS Edition</title>
+    <meta
+      name="description"
+      content="Page not found on BensLogs JS. Head back to the homepage of bencodess (stilleswasser93) – a backend developer building bots, APIs, and tools."
+    />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#0d0b06" />
+    <link rel="canonical" href="https://benslogs.dev/js/404" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <meta property="og:title" content="404 – Page Not Found | bencodess – JS Edition" />
+    <meta
+      property="og:description"
+      content="Page not found on BensLogs JS. Head back to the homepage of bencodess (stilleswasser93) – a backend developer building bots, APIs, and tools."
+    />
+    <meta
+      property="og:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
+    <meta property="og:url" content="https://benslogs.dev/js/404" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BensLogs JS" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="404 – Page Not Found | bencodess – JS Edition" />
+    <meta
+      name="twitter:description"
+      content="Page not found on BensLogs JS. Head back to the homepage of bencodess (stilleswasser93) – a backend developer building bots, APIs, and tools."
+    />
+    <meta
+      name="twitter:image"
+      content="https://benslogs.dev/assets/swasser.png"
+    />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+      }
+
+      .error-wrap {
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        box-sizing: border-box;
+      }
+
+      .error-card {
+        text-align: center;
+        display: grid;
+        justify-items: center;
+        gap: 0.8rem;
+        position: relative;
+        padding: 3rem 2.5rem 2.5rem;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 0.5px solid rgba(255, 255, 255, 0.08);
+        box-shadow:
+          0 24px 80px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        max-width: 440px;
+        width: 100%;
+      }
+
+      .error-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        border-radius: 28px 28px 0 0;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.04) 0%,
+          transparent 100%
+        );
+        pointer-events: none;
+      }
+
+      .glitch-wrap {
+        position: relative;
+        display: inline-block;
+        animation: drift 5s ease-in-out infinite;
+      }
+
+      .glitch {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(6rem, 20vw, 10rem);
+        font-weight: 700;
+        line-height: 0.85;
+        margin: 0;
+        color: #fde74c;
+        position: relative;
+        text-shadow:
+          0 0 40px rgba(247, 223, 30, 0.4),
+          0 0 80px rgba(247, 223, 30, 0.2);
+        animation: glitchSkew 4s infinite;
+      }
+
+      .glitch::before,
+      .glitch::after {
+        display: none;
+      }
+
+      .glow-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1.5px solid rgba(247, 223, 30, 0.15);
+        pointer-events: none;
+      }
+
+      .glow-ring:nth-child(1) {
+        inset: -20px;
+        animation: ringSpin 6s linear infinite;
+      }
+
+      .glow-ring:nth-child(2) {
+        inset: -36px;
+        border-color: rgba(247, 223, 30, 0.08);
+        animation: ringSpin 8s linear infinite reverse;
+      }
+
+      .glow-ring:nth-child(3) {
+        inset: -52px;
+        border-color: rgba(255, 255, 255, 0.04);
+        animation: ringSpin 10s linear infinite;
+      }
+
+      .glow-ring:nth-child(4) {
+        inset: -68px;
+        border-color: rgba(247, 223, 30, 0.04);
+        border-style: dashed;
+        animation: ringSpin 12s linear infinite reverse;
+      }
+
+      .error-sub {
+        margin: 0;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.45);
+        position: relative;
+        animation: fadeIn 600ms ease forwards;
+        opacity: 0;
+        animation-delay: 100ms;
+      }
+
+      .scan-line {
+        width: min(200px, 50vw);
+        height: 2px;
+        border-radius: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(247, 223, 30, 0.5),
+          #fff,
+          rgba(247, 223, 30, 0.5),
+          transparent
+        );
+        background-size: 200% 100%;
+        animation: scanSweep 2s linear infinite;
+      }
+
+      .error-path {
+        margin: 0;
+        color: rgba(213, 187, 245, 0.4);
+        font-size: 0.78rem;
+        font-family: "Space Grotesk", monospace;
+        word-break: break-all;
+        max-width: 90vw;
+        animation: fadeIn 600ms ease forwards;
+        opacity: 0;
+        animation-delay: 200ms;
+      }
+
+      .error-path code {
+        color: rgba(213, 187, 245, 0.75);
+      }
+
+      .error-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        justify-content: center;
+        margin-top: 0.4rem;
+        position: relative;
+        animation: fadeIn 600ms ease forwards;
+        opacity: 0;
+        animation-delay: 300ms;
+      }
+
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1.3rem;
+        border-radius: 999px;
+        border: 1px solid rgba(247, 223, 30, 0.25);
+        background: rgba(247, 223, 30, 0.06);
+        color: #f5f0e0;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: all 250ms ease;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+
+      .btn-back:hover {
+        background: rgba(247, 223, 30, 0.18);
+        border-color: rgba(247, 223, 30, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(247, 223, 30, 0.2);
+      }
+
+      .btn-back svg {
+        width: 16px;
+        height: 16px;
+        transition: transform 250ms ease;
+      }
+
+      .btn-back:hover svg {
+        transform: translateX(-3px);
+      }
+
+      @keyframes glitchSkew {
+        0%,
+        100% {
+          transform: skew(0deg);
+        }
+        2% {
+          transform: skew(1deg);
+        }
+        4% {
+          transform: skew(0deg);
+        }
+        30% {
+          transform: skew(0deg);
+        }
+        32% {
+          transform: skew(-0.5deg);
+        }
+        34% {
+          transform: skew(0deg);
+        }
+        60% {
+          transform: skew(0deg);
+        }
+        62% {
+          transform: skew(2deg);
+        }
+        64% {
+          transform: skew(0deg);
+        }
+      }
+
+      @keyframes ringSpin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes drift {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      @keyframes scanSweep {
+        from {
+          background-position: -200% 0;
+        }
+        to {
+          background-position: 200% 0;
+        }
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .glitch-wrap,
+        .glitch,
+        .glow-ring,
+        .scan-line {
+          animation: none;
+        }
+        .error-sub,
+        .error-path,
+        .error-actions {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <main>
+      <section class="error-wrap">
+        <div class="error-card">
+          <div class="glitch-wrap">
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <h1 class="glitch">404</h1>
+          </div>
+          <p class="error-sub">
+            i donot exist, but my insta does!
+            <a
+              href="https://www.instagram.com/_ben.oderso/"
+              target="_blank"
+              rel="noreferrer"
+              style="color: #ffb3d1; text-decoration: none; font-weight: 700"
+              >Follow</a
+            >
+          </p>
+          <div class="scan-line"></div>
+          <p class="error-path">
+            <code id="requestedPath">/</code>
+          </p>
+          <div class="error-actions">
+            <a class="btn-back" href="../">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M19 12H5m7-7-7 7 7 7" />
+              </svg>
+              Back Home
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      document.getElementById("requestedPath").textContent =
+        window.location.pathname || "/";
+    </script>
+  </body>
+</html>
