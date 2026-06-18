@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en" style="color-scheme: dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleep | bencodess</title>
+    <meta name="description" content="Sleep screensaver" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href="https://benslogs.dev/sleep/" />
+    <link rel="icon" type="image/png" href="/assets/swasser-round.png?v=2" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400&family=Space+Grotesk:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html { color-scheme: dark; }
+
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: #07030f;
+        color: #f5ecff;
+        font-family: 'Outfit', sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .bg-noise {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        opacity: 0.15;
+        pointer-events: none;
+        background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px);
+        background-size: 3px 3px;
+      }
+
+      canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 0;
+        will-change: transform;
+      }
+
+      .orb-a {
+        width: 60vmax;
+        height: 60vmax;
+        background: radial-gradient(circle, rgba(176, 109, 255, 0.12), transparent 70%);
+        top: -20%;
+        left: -10%;
+        animation: orbDrift 30s ease-in-out infinite;
+      }
+
+      .orb-b {
+        width: 50vmax;
+        height: 50vmax;
+        background: radial-gradient(circle, rgba(210, 169, 255, 0.08), transparent 70%);
+        bottom: -15%;
+        right: -5%;
+        animation: orbDrift 35s ease-in-out infinite reverse;
+      }
+
+      @keyframes orbDrift {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(4%, 6%) scale(1.08); }
+        66% { transform: translate(-2%, -4%) scale(0.97); }
+      }
+
+      .centerpiece {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+
+      .wordmark {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: clamp(3rem, 10vw, 8rem);
+        letter-spacing: -0.02em;
+        color: #c9a6ff;
+        text-shadow:
+          0 0 60px rgba(176, 109, 255, 0.4),
+          0 0 120px rgba(176, 109, 255, 0.2),
+          0 0 200px rgba(176, 109, 255, 0.1);
+        animation: breathe 5s ease-in-out infinite;
+        will-change: transform, opacity;
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1); opacity: 0.92; }
+        50% { transform: scale(1.015); opacity: 1; }
+      }
+
+      .hint {
+        position: fixed;
+        bottom: 2.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        font-size: 0.75rem;
+        font-weight: 300;
+        color: rgba(245, 236, 255, 0.12);
+        letter-spacing: 0.06em;
+        pointer-events: none;
+        transition: opacity 600ms ease;
+      }
+
+      .hint.fade { opacity: 0; }
+
+      .exit-hint {
+        position: fixed;
+        bottom: 2.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        font-size: 0.75rem;
+        font-weight: 300;
+        color: rgba(245, 236, 255, 0.18);
+        letter-spacing: 0.06em;
+        opacity: 0;
+        transition: opacity 400ms ease;
+        pointer-events: none;
+      }
+
+      .exit-hint.show { opacity: 1; }
+
+      .fullscreen-trigger {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: transparent;
+        font-size: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .fullscreen-trigger:focus-visible {
+        outline: 2px solid rgba(176, 109, 255, 0.5);
+        outline-offset: -2px;
+      }
+
+      .mute-btn {
+        position: fixed;
+        bottom: 2.5rem;
+        right: 2.5rem;
+        z-index: 6;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 300;
+        letter-spacing: 0.06em;
+        color: rgba(245, 236, 255, 0.18);
+        background: none;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 400ms ease;
+        pointer-events: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .mute-btn.show { opacity: 1; pointer-events: auto; }
+
+      .mute-btn:hover { color: rgba(245, 236, 255, 0.4); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .orb-a, .orb-b { animation: none; }
+        .wordmark { animation: none; }
+        canvas { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+    <canvas id="dust" aria-hidden="true"></canvas>
+
+    <div class="centerpiece">
+      <span class="wordmark" aria-hidden="true" translate="no">bencodess</span>
+    </div>
+
+    <p class="hint" id="hint">click anywhere</p>
+    <p class="exit-hint" id="exitHint">click or press any key to exit</p>
+    <button class="mute-btn" id="muteBtn" aria-label="Toggle sound">mute</button>
+
+    <button class="fullscreen-trigger" id="trigger" aria-label="Enter fullscreen"></button>
+
+    <script>
+      var canvas = document.getElementById('dust');
+      var ctx = canvas.getContext('2d');
+      var hint = document.getElementById('hint');
+      var exitHint = document.getElementById('exitHint');
+      var trigger = document.getElementById('trigger');
+      var muteBtn = document.getElementById('muteBtn');
+      var isFull = false;
+      var cursorTimer;
+      var particles = [];
+      var running = true;
+      var audioCtx = null;
+      var gainNode = null;
+      var isMuted = false;
+
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function initParticles(n) {
+        n = n || 50;
+        particles = [];
+        for (var i = 0; i < n; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 2 + 0.3,
+            dx: (Math.random() - 0.5) * 0.08,
+            dy: -(Math.random() * 0.15 + 0.05),
+            o: Math.random() * 0.04 + 0.02,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      }
+
+      function draw(t) {
+        if (!running) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          p.x += p.dx + Math.sin(p.phase + t * 0.0003) * 0.04;
+          p.y += p.dy;
+          p.phase += 0.004;
+
+          if (p.y < -4) {
+            p.y = canvas.height + 4;
+            p.x = Math.random() * canvas.width;
+          }
+          if (p.x < -4) p.x = canvas.width + 4;
+          if (p.x > canvas.width + 4) p.x = -4;
+
+          var alpha = p.o * (0.6 + 0.4 * Math.sin(p.phase));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(210, 169, 255, ' + alpha + ')';
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      function start() {
+        if (prefersReduced) return;
+        resize();
+        initParticles();
+        requestAnimationFrame(draw);
+      }
+
+      start();
+      window.addEventListener('resize', function() {
+        resize();
+        if (!prefersReduced) initParticles();
+      });
+
+      trigger.addEventListener('click', function() {
+        if (!isFull) {
+          var docEl = document.documentElement;
+          if (docEl.requestFullscreen) {
+            docEl.requestFullscreen().then(function() {
+              isFull = true;
+              hint.classList.add('fade');
+              initAudio();
+            }).catch(function() {});
+          }
+        } else {
+          exitSleep();
+        }
+      });
+
+      muteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMute();
+      });
+
+      document.addEventListener('fullscreenchange', function() {
+        if (document.fullscreenElement) {
+          isFull = true;
+          hint.classList.add('fade');
+        } else {
+          isFull = false;
+          exitHint.classList.remove('show');
+          muteBtn.classList.remove('show');
+          hint.classList.remove('fade');
+        }
+      });
+
+      document.addEventListener('keydown', function() {
+        if (isFull) exitSleep();
+      });
+
+      document.addEventListener('mousemove', function() {
+        if (isFull) {
+          document.body.style.cursor = 'default';
+          exitHint.classList.add('show');
+          muteBtn.classList.add('show');
+          clearTimeout(cursorTimer);
+          cursorTimer = setTimeout(function() {
+            document.body.style.cursor = 'none';
+            exitHint.classList.remove('show');
+            muteBtn.classList.remove('show');
+          }, 3000);
+        }
+      });
+
+      function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var bufferSize = audioCtx.sampleRate * 4;
+        var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        var data = buffer.getChannelData(0);
+        var lastOut = 0;
+        for (var i = 0; i < bufferSize; i++) {
+          var white = Math.random() * 2 - 1;
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5;
+        }
+        var source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0.12;
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start();
+      }
+
+      function toggleMute() {
+        if (!gainNode) return;
+        isMuted = !isMuted;
+        gainNode.gain.value = isMuted ? 0 : 0.12;
+        muteBtn.textContent = isMuted ? 'unmute' : 'mute';
+      }
+
+      function exitSleep() {
+        running = false;
+        if (audioCtx) {
+          audioCtx.close().catch(function() {});
+        }
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        }
+        window.location.href = '/';
+      }
+    </script>
+  </body>
+</html>
