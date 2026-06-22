@@ -71,7 +71,76 @@ function hasDirectoryIndex(absPath) {
   return false;
 }
 
+const esc = (code, s) => `\x1b[${code}m${s}\x1b[0m`;
+const dim = (s) => esc("2", s);
+const green = (s) => esc("32", s);
+const yellow = (s) => esc("33", s);
+const red = (s) => esc("31", s);
+const cyan = (s) => esc("36", s);
+const magenta = (s) => esc("35", s);
+
+function methodColor(m) {
+  switch (m) {
+    case "GET":
+      return green(m);
+    case "HEAD":
+      return cyan(m);
+    case "POST":
+      return yellow(m);
+    case "PUT":
+    case "PATCH":
+      return magenta(m);
+    case "DELETE":
+      return red(m);
+    default:
+      return m;
+  }
+}
+
+function statusColor(s) {
+  if (s < 200) return magenta(String(s));
+  if (s < 300) return green(String(s));
+  if (s < 400) return cyan(String(s));
+  if (s < 500) return yellow(String(s));
+  return red(String(s));
+}
+
+function timeColor(ms) {
+  if (ms < 10) return green(`${ms}ms`);
+  if (ms < 50) return yellow(`${ms}ms`);
+  return red(`${ms}ms`);
+}
+
+function shortType(ct) {
+  if (!ct) return "-";
+  if (ct.includes("text/html")) return "html";
+  if (ct.includes("text/css")) return "css";
+  if (ct.includes("javascript")) return "js";
+  if (ct.includes("image/")) return ct.split("/")[1];
+  if (ct.includes("application/json")) return "json";
+  if (ct.includes("font/")) return ct.split("/")[1];
+  return ct;
+}
+
 createServer((req, res) => {
+  const start = Date.now();
+  const originalWriteHead = res.writeHead.bind(res);
+  let status = 200;
+  res.writeHead = function (statusCode, ...args) {
+    status = statusCode;
+    return originalWriteHead(statusCode, ...args);
+  };
+
+  res.once("finish", () => {
+    const elapsed = Date.now() - start;
+    const ts = dim(new Date().toLocaleTimeString());
+    const method = methodColor(req.method).padEnd(6);
+    const url = req.url || "/";
+    const sc = statusColor(status);
+    const type = shortType(res.getHeader("Content-Type"));
+    console.log(`${ts}  ${method} ${url}  ${sc}  ${type}  ${timeColor(elapsed)}`);
+  });
+
   if (req.method !== "GET" && req.method !== "HEAD") {
     res.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Method Not Allowed");
