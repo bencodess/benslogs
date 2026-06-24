@@ -163,20 +163,13 @@
 
       <script>
         (async () => {
-          const friends = ["Planeteriumprovider", "Z3p-z", "insanexyz"];
+          const friends = ["Z3p-z", "insanexyz"];
           const grid = document.getElementById("friendsGrid");
           const cacheKey = "friends";
           const cache = localStorage.getItem(cacheKey);
           const now = Date.now();
 
           const fallbackData = [
-            {
-              login: "Planeteriumprovider",
-              name: "Planeteriumprovider",
-              html_url: "https://github.com/Planeteriumprovider",
-              avatar_url:
-                "https://avatars.githubusercontent.com/u/104488348?v=4",
-            },
             {
               login: "Z3p-z",
               name: "Z3p-z",
