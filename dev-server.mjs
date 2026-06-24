@@ -138,7 +138,9 @@ createServer((req, res) => {
     const url = req.url || "/";
     const sc = statusColor(status);
     const type = shortType(res.getHeader("Content-Type"));
-    console.log(`${ts}  ${method} ${url}  ${sc}  ${type}  ${timeColor(elapsed)}`);
+    console.log(
+      `${ts}  ${method} ${url}  ${sc}  ${type}  ${timeColor(elapsed)}`,
+    );
   });
 
   if (req.method !== "GET" && req.method !== "HEAD") {
