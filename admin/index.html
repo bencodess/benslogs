@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | bencodess</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#07030f" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .admin-card {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .admin-card h2 {
+        margin-top: 0;
+      }
+      .admin-form {
+        display: grid;
+        gap: 1rem;
+      }
+      .admin-form label {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .admin-form input,
+      .admin-form textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--bg-soft);
+        color: var(--ink);
+        font-family: "Outfit", sans-serif;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+      .admin-form textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .admin-form .btn {
+        justify-self: start;
+      }
+      .admin-status {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+      }
+      .admin-status.ok { color: #4ade80; }
+      .admin-status.err { color: #f87171; }
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      .current-status {
+        padding: 1rem;
+        background: var(--bg-soft);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+      .current-status strong {
+        color: var(--accent);
+      }
+      #authView, #adminView {
+        display: none;
+      }
+      #authView.active, #adminView.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="../" aria-label="bencodess home">
+        <img src="../assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="../ui/">UI</a>
+        <a href="../">Home</a>
+        <a href="../socials/">Socials</a>
+        <a href="../contact/">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <p class="eyebrow">Admin</p>
+        <h1>Status <span>Dashboard</span></h1>
+      </section>
+
+      <section class="section reveal">
+        <div class="admin-card">
+          <div id="authView" class="active">
+            <h2>Sign in</h2>
+            <form id="loginForm" class="admin-form">
+              <div>
+                <label for="email">Email</label>
+                <input id="email" type="email" autocomplete="email" required />
+              </div>
+              <div>
+                <label for="password">Password</label>
+                <input id="password" type="password" autocomplete="current-password" required />
+              </div>
+              <button class="btn" type="submit">Sign in</button>
+              <p id="authStatus" class="admin-status"></p>
+            </form>
+          </div>
+
+          <div id="adminView">
+            <div class="admin-header">
+              <h2>Update Status</h2>
+              <button id="signoutBtn" class="btn ghost" type="button">Sign out</button>
+            </div>
+            <div class="current-status" id="currentStatus">
+              Current: <strong id="currentMessage">Loading...</strong>
+              <span id="currentUpdated"></span>
+            </div>
+            <form id="statusForm" class="admin-form">
+              <div>
+                <label for="statusMessage">Status message</label>
+                <textarea id="statusMessage" maxlength="280" placeholder="What's your status?"></textarea>
+              </div>
+              <button class="btn" type="submit">Save</button>
+              <p id="adminStatus" class="admin-status"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+      </div>
+      <div class="footer-row">
+        <p>&copy; <span id="year"></span> bencodess / stilleswasser93</p>
+      </div>
+    </footer>
+
+    <script src="../assets/metallic-paint.js"></script>
+    <script src="../script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.1/dist/umd/supabase.min.js"></script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const SUPABASE_URL = "https://wrcamtynhtlgwwbslwst.supabase.co";
+      const SUPABASE_ANON_KEY = "sb_publishable_47mqXmlh6giKIxeKczqaqg_CeQoBXMc";
+      const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/admin-auth`;
+
+      const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const authView = document.getElementById("authView");
+      const adminView = document.getElementById("adminView");
+
+      function showView(view) {
+        authView.classList.toggle("active", view === "auth");
+        adminView.classList.toggle("active", view === "admin");
+      }
+
+      async function loadCurrentStatus() {
+        try {
+          const res = await fetch(FUNCTION_URL);
+          const data = await res.json();
+          document.getElementById("currentMessage").textContent = data.message || "Available";
+          const updated = data.updated_at ? new Date(data.updated_at).toLocaleString() : "";
+          document.getElementById("currentUpdated").textContent = updated ? ` (${updated})` : "";
+          document.getElementById("statusMessage").value = data.message || "";
+        } catch {
+          document.getElementById("currentMessage").textContent = "Could not load";
+        }
+      }
+
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+          showView("admin");
+          loadCurrentStatus();
+        } else {
+          showView("auth");
+        }
+      });
+
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const status = document.getElementById("authStatus");
+
+        status.className = "admin-status";
+        status.textContent = "Signing in...";
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          status.className = "admin-status err";
+          status.textContent = error.message;
+        } else {
+          status.textContent = "";
+        }
+      });
+
+      document.getElementById("signoutBtn").addEventListener("click", () => {
+        supabase.auth.signOut();
+      });
+
+      document.getElementById("statusForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = document.getElementById("statusMessage").value.trim();
+        const status = document.getElementById("adminStatus");
+
+        if (!message) {
+          status.className = "admin-status err";
+          status.textContent = "Message cannot be empty.";
+          return;
+        }
+
+        status.className = "admin-status";
+        status.textContent = "Saving...";
+
+        const { data: { session } } = await supabase.auth.getSession();
+
+        try {
+          const res = await fetch(FUNCTION_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ message }),
+          });
+
+          if (!res.ok) throw new Error((await res.json()).message || "Failed");
+
+          status.className = "admin-status ok";
+          status.textContent = "Status updated!";
+          loadCurrentStatus();
+        } catch (err) {
+          status.className = "admin-status err";
+          status.textContent = err.message;
+        }
+      });
+    </script>
+  </body>
+</html>
