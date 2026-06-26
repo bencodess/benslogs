@@ -4,7 +4,17 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   if (req.method === "GET") {
     const { data } = await supabase
       .from("status")
@@ -15,33 +25,25 @@ Deno.serve(async (req: Request) => {
 
     return new Response(
       JSON.stringify({ message: data?.message ?? "Available", updated_at: data?.updated_at ?? null }),
-      { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
+      { headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
-  }
-
-  if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    });
   }
 
   if (req.method === "POST") {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response("Unauthorized", { status: 401 });
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
     const token = authHeader.slice(7);
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) return new Response("Unauthorized", { status: 401 });
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
 
     const { message } = await req.json();
     if (!message || typeof message !== "string") {
-      return new Response("Missing message", { status: 400 });
+      return new Response(JSON.stringify({ error: "Missing message" }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
     const { error } = await supabase
@@ -49,9 +51,12 @@ Deno.serve(async (req: Request) => {
       .update({ message: message.slice(0, 280), updated_at: new Date().toISOString() })
       .eq("id", 1);
 
-    if (error) throw error;
-    return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
+
+    return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
   }
 
-  return new Response("Method not allowed", { status: 405 });
+  return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json", ...corsHeaders } });
 });
