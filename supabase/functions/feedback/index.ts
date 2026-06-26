@@ -1,4 +1,4 @@
-const webhookUrl = "https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D";
+const webhookUrl = "https://discord.com/api/webhooks/1520058747383451738/DAbhm1BGiZQGWMCHoHZaaDdNIFo-0t9jasoHcFaGQkqb7YhWsXl7qjyNSNgSv8Kar07N";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
