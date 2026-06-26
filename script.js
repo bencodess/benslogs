@@ -511,8 +511,13 @@ async function loadDiscordStatus() {
   }
 }
 
+function isAdminPath(pathname) {
+  const path = normalizePath(pathname);
+  return /\/admin(?:\/index\.html)?$/.test(path);
+}
+
 function setupAutoReload() {
-  if (isContactPath(window.location.pathname)) {
+  if (isContactPath(window.location.pathname) || isAdminPath(window.location.pathname)) {
     return;
   }
 
