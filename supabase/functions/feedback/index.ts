@@ -1,4 +1,12 @@
-const webhookUrl = "https://discord.com/api/webhooks/1520058747383451738/DAbhm1BGiZQGWMCHoHZaaDdNIFo-0t9jasoHcFaGQkqb7YhWsXl7qjyNSNgSv8Kar07N";
+const ENC_KEY = "b3nc0d3ss_f33db4ck_k3y_2026";
+const ENC_HEX = "0a471a13435e1c5c173615505c16061a000432445209361d4757540a5c0108434b0246416f56060b53560350536c5f06486801081d722351060e0126741a290e21647e272a5b2b313e0a771d117b765d1b5247570951175c3b10190774620f13565432373c4021330541584f2c60200463120b38122d56047d";
+
+function decrypt(hex: string, key: string): string {
+  const bytes = new Uint8Array(hex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)));
+  return String.fromCharCode(...bytes.map((b, i) => b ^ key.charCodeAt(i % key.length)));
+}
+
+const webhookUrl = decrypt(ENC_HEX, ENC_KEY);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
