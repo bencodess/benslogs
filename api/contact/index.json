@@ -7,9 +7,5 @@
     "discord": "https://discord.com/users/1033745912071192688",
     "github": "https://github.com/bencodess"
   },
-  "contributions": ["Microsoft", "Aternos"],
-  "feedback": {
-    "webhook": "https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D",
-    "blocked_terms": ["hitler", "nigga", "nigger", "heil", "nazis", "nazi"]
-  }
+  "contributions": ["Microsoft", "Aternos"]
 }
