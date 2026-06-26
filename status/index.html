@@ -89,7 +89,9 @@
     <script>
       document.getElementById("year").textContent = new Date().getFullYear();
 
-      fetch("https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/admin-auth")
+      const FN = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/admin-auth";
+
+      fetch(FN)
         .then((r) => r.json())
         .then((data) => {
           document.getElementById("statusMessage").textContent = data.message;
@@ -97,6 +99,8 @@
         .catch(() => {
           document.getElementById("statusMessage").textContent = "Could not load status.";
         });
+
+      fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "track", page: "/status/" }) }).catch(() => {});
     </script>
   </body>
 </html>

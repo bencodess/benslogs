@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dependencies | bencodess</title>
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href="https://benslogs.dev/dependencies/" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .dep-grid {
+        display: grid;
+        gap: 0.5rem;
+      }
+      .dep-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-family: "Space Grotesk", monospace;
+      }
+      .dep-row .tag {
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        background: var(--surface-2);
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+      .dep-row .tag.prod { background: rgba(176, 109, 255, 0.2); color: var(--accent-2); }
+      .dep-row .tag.dev { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+      .dep-row .name { color: var(--ink); }
+      .dep-count {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-family: "Space Grotesk", monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="../" aria-label="bencodess home">
+        <img src="../assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="../ui/">UI</a>
+        <a href="../">Home</a>
+        <a href="../socials/">Socials</a>
+        <a href="../contact/">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <p class="eyebrow">Stack</p>
+        <h1>Dependencies</h1>
+        <p class="lead">Packages used in this project.</p>
+      </section>
+
+      <section class="section reveal">
+        <p class="dep-count" id="depCount"></p>
+        <div class="dep-grid" id="depList"></div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+      </div>
+      <div class="footer-row">
+        <p>&copy; <span id="year"></span> bencodess / stilleswasser93</p>
+      </div>
+    </footer>
+
+    <script src="../assets/metallic-paint.js"></script>
+    <script src="../script.js"></script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const deps = {
+        "@supabase/server": "prod",
+        "html-validate": "dev",
+        "hyperlink": "dev",
+        "prettier": "dev",
+        "stylelint": "dev",
+        "stylelint-config-standard": "dev"
+      };
+
+      const list = document.getElementById("depList");
+      const count = document.getElementById("depCount");
+      const entries = Object.entries(deps).sort((a, b) => a[0].localeCompare(b[0]));
+      const prodCount = entries.filter(([, t]) => t === "prod").length;
+      const devCount = entries.filter(([, t]) => t === "dev").length;
+      count.textContent = `${entries.length} total — ${prodCount} production, ${devCount} dev`;
+
+      for (const [name, type] of entries) {
+        const row = document.createElement("div");
+        row.className = "dep-row";
+        row.innerHTML = `<span class="tag ${type}">${type}</span><span class="name">${name}</span>`;
+        list.appendChild(row);
+      }
+    </script>
+  </body>
+</html>

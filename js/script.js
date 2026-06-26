@@ -151,6 +151,21 @@ revealItems.forEach((item, index) => {
 document.getElementById("year").textContent = new Date().getFullYear();
 
 const USER_ID = "1033745912071192688";
+const TRACKING_URL = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/admin-auth";
+
+function isAdminPath(pathname) {
+  const path = normalizePath(pathname);
+  return /\/admin(?:\/index\.html)?$/.test(path);
+}
+
+function trackPageView() {
+  if (isAdminPath(window.location.pathname)) return;
+  const page = normalizePath(window.location.pathname) || "/";
+  navigator.sendBeacon(TRACKING_URL, new Blob([JSON.stringify({ action: "track", page })], { type: "application/json" }));
+}
+
+trackPageView();
+
 const FEEDBACK_WEBHOOK_URL =
   "https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D";
 const FEEDBACK_BLOCKED_TERMS = [

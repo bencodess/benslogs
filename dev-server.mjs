@@ -172,9 +172,14 @@ createServer((req, res) => {
       }
 
       if (stats.isDirectory()) {
-        const indexFile = join(target, "index.html");
-        if (existsSync(indexFile) && statSync(indexFile).isFile()) {
-          serveFile(res, indexFile, 200);
+        const indexHtml = join(target, "index.html");
+        if (existsSync(indexHtml) && statSync(indexHtml).isFile()) {
+          serveFile(res, indexHtml, 200);
+          return;
+        }
+        const indexJson = join(target, "index.json");
+        if (existsSync(indexJson) && statSync(indexJson).isFile()) {
+          serveFile(res, indexJson, 200);
           return;
         }
       }

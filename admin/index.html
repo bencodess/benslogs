@@ -5,158 +5,345 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin | bencodess</title>
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#07030f" />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles.css" />
+    <meta name="theme-color" content="#020617" />
+    <link rel="canonical" href="https://benslogs.dev/admin/" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      .admin-card {
-        max-width: 480px;
-        margin: 0 auto;
-        padding: 2rem;
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #020617;
+        --surface: #0F172A;
+        --surface-2: #1E293B;
+        --line: #334155;
+        --ink: #F8FAFC;
+        --muted: #94A3B8;
+        --accent: #22C55E;
+        --accent-dim: #16A34A;
+        --red: #EF4444;
+        --radius: 12px;
+        --font-sans: "Fira Sans", system-ui, sans-serif;
+        --font-mono: "Fira Code", monospace;
       }
-      .admin-card h2 {
-        margin-top: 0;
-      }
-      .admin-form {
-        display: grid;
-        gap: 1rem;
-      }
-      .admin-form label {
-        font-size: 0.9rem;
-        color: var(--muted);
-      }
-      .admin-form input,
-      .admin-form textarea {
-        width: 100%;
-        padding: 0.7rem 1rem;
-        border-radius: 10px;
-        border: 1px solid var(--line);
-        background: var(--bg-soft);
+      html, body { height: 100%; }
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg);
         color: var(--ink);
-        font-family: "Outfit", sans-serif;
-        font-size: 1rem;
-        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
-      .admin-form textarea {
-        min-height: 100px;
-        resize: vertical;
+      .app { display: flex; height: 100vh; }
+      .sidebar {
+        width: 240px;
+        background: var(--surface);
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 0.5rem;
+        flex-shrink: 0;
       }
-      .admin-form .btn {
-        justify-self: start;
+      .sidebar h1 {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        font-family: var(--font-mono);
       }
-      .admin-status {
-        margin-top: 1rem;
-        font-size: 0.9rem;
+      .sidebar .nav-item {
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        transition: background 150ms, color 150ms;
+        cursor: pointer;
       }
-      .admin-status.ok { color: #4ade80; }
-      .admin-status.err { color: #f87171; }
-      .admin-header {
+      .sidebar .nav-item:hover { background: var(--surface-2); color: var(--ink); }
+      .sidebar .nav-item.active { color: var(--accent); background: rgba(34,197,94,0.1); }
+      .sidebar .spacer { flex: 1; }
+      .sidebar .user-tag {
+        font-size: 0.75rem;
+        color: var(--muted);
+        padding: 0.5rem 0.75rem;
+        font-family: var(--font-mono);
+      }
+      .sidebar .signout-btn {
+        font-size: 0.8rem;
+        color: var(--muted);
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0.4rem 0.75rem;
+        cursor: pointer;
+        font-family: var(--font-sans);
+        transition: border-color 150ms, color 150ms;
+      }
+      .sidebar .signout-btn:hover { border-color: var(--red); color: var(--red); }
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        padding: 2rem;
+      }
+      .main-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
       }
-      .current-status {
-        padding: 1rem;
-        background: var(--bg-soft);
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
+      .main-header h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
       }
-      .current-status strong {
+      .main-header .date {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+      }
+      .stat-card .label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        font-weight: 500;
+        font-family: var(--font-mono);
+      }
+      .stat-card .value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 0.3rem;
+        font-family: var(--font-mono);
         color: var(--accent);
       }
-      #authView, #adminView {
-        display: none;
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
       }
-      #authView.active, #adminView.active {
-        display: block;
+      .card h3 {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--muted);
+        margin-bottom: 1rem;
+        font-family: var(--font-mono);
+      }
+      .current-status {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: var(--bg);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+      .current-status .dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+      }
+      .current-status .time {
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        margin-left: auto;
+      }
+      .admin-form { display: grid; gap: 0.75rem; }
+      .admin-form textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 80px;
+      }
+      .admin-form textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1.25rem;
+        border-radius: 8px;
+        border: none;
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 150ms, opacity 150ms;
+      }
+      .btn-primary { background: var(--accent); color: #020617; }
+      .btn-primary:hover { opacity: 0.9; }
+      .btn-primary:disabled { opacity: 0.4; cursor: default; }
+      .status-msg { font-size: 0.8rem; font-family: var(--font-mono); }
+      .status-msg.ok { color: var(--accent); }
+      .status-msg.err { color: var(--red); }
+
+      #authView, #adminView { display: none; }
+      #authView.active, #adminView.active { display: flex; flex-direction: column; height: 100%; }
+
+      .auth-center {
+        flex: 1;
+        display: grid;
+        place-items: center;
+      }
+      .auth-box {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 380px;
+      }
+      .auth-box h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+      .auth-box .sub {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+      }
+      .auth-form { display: grid; gap: 0.75rem; }
+      .auth-form label {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-family: var(--font-mono);
+      }
+      .auth-form input {
+        padding: 0.65rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+      }
+      .auth-form input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+      }
+      .auth-form .btn { justify-self: start; margin-top: 0.5rem; }
+
+      .inline-loader {
+        display: inline-block;
+        width: 14px; height: 14px;
+        border: 2px solid var(--line);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      @media (max-width: 640px) {
+        .sidebar { display: none; }
+        .main { padding: 1rem; }
+        .stats-row { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
-    <div class="bg-noise" aria-hidden="true"></div>
-    <div class="orb orb-a" aria-hidden="true"></div>
-    <div class="orb orb-b" aria-hidden="true"></div>
+    <div class="app">
+      <aside class="sidebar">
+        <h1>Admin</h1>
+        <a class="nav-item active" href="../admin/">Dashboard</a>
+        <a class="nav-item" href="../status/">Status</a>
+        <a class="nav-item" href="../">Site</a>
+        <div class="spacer"></div>
+        <div class="user-tag" id="userTag"></div>
+        <button class="signout-btn" id="signoutBtn">Sign out</button>
+      </aside>
 
-    <header class="site-header">
-      <a class="logo" href="../" aria-label="bencodess home">
-        <img src="../assets/swasser.png" alt="bencodess logo" />
-      </a>
-      <nav>
-        <a href="../ui/">UI</a>
-        <a href="../">Home</a>
-        <a href="../socials/">Socials</a>
-        <a href="../contact/">Contact</a>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero reveal">
-        <p class="eyebrow">Admin</p>
-        <h1>Status <span>Dashboard</span></h1>
-      </section>
-
-      <section class="section reveal">
-        <div class="admin-card">
-          <div id="authView" class="active">
-            <h2>Sign in</h2>
-            <form id="loginForm" class="admin-form">
-              <div>
+      <main class="main">
+        <div id="authView" class="active">
+          <div class="auth-center">
+            <div class="auth-box">
+              <h2>Sign in</h2>
+              <p class="sub">Supabase authentication</p>
+              <form class="auth-form" id="loginForm">
                 <label for="email">Email</label>
                 <input id="email" type="email" autocomplete="email" required />
-              </div>
-              <div>
                 <label for="password">Password</label>
                 <input id="password" type="password" autocomplete="current-password" required />
-              </div>
-              <button class="btn" type="submit">Sign in</button>
-              <p id="authStatus" class="admin-status"></p>
-            </form>
+                <button class="btn btn-primary" type="submit">Sign in</button>
+                <p id="authStatus" class="status-msg"></p>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="adminView">
+          <div class="main-header">
+            <h2>Dashboard</h2>
+            <span class="date" id="currentDate"></span>
           </div>
 
-          <div id="adminView">
-            <div class="admin-header">
-              <h2>Update Status</h2>
-              <button id="signoutBtn" class="btn ghost" type="button">Sign out</button>
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="label">Status</div>
+              <div class="value" id="statStatus" style="font-size:1rem;font-weight:400;">—</div>
             </div>
-            <div class="current-status" id="currentStatus">
-              Current: <strong id="currentMessage">Loading...</strong>
-              <span id="currentUpdated"></span>
+            <div class="stat-card">
+              <div class="label">Views this week</div>
+              <div class="value" id="statViews">—</div>
             </div>
-            <form id="statusForm" class="admin-form">
-              <div>
-                <label for="statusMessage">Status message</label>
-                <textarea id="statusMessage" maxlength="280" placeholder="What's your status?"></textarea>
+            <div class="stat-card">
+              <div class="label">Last updated</div>
+              <div class="value" id="statUpdated" style="font-size:0.85rem;font-weight:400;color:var(--muted);">—</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Update status</h3>
+            <div class="current-status" id="currentStatusBar">
+              <span class="dot"></span>
+              <span id="currentMessage">Loading...</span>
+              <span class="time" id="currentTime"></span>
+            </div>
+            <form class="admin-form" id="statusForm">
+              <textarea id="statusMessage" maxlength="280" placeholder="Write your status message..."></textarea>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <button class="btn btn-primary" type="submit" id="saveBtn">Save</button>
+                <span id="adminStatus" class="status-msg"></span>
               </div>
-              <button class="btn" type="submit">Save</button>
-              <p id="adminStatus" class="admin-status"></p>
             </form>
           </div>
         </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="metallic-footer">
-        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
-      </div>
-      <div class="footer-row">
-        <p>&copy; <span id="year"></span> bencodess / stilleswasser93</p>
-      </div>
-    </footer>
-
-    <script src="../assets/metallic-paint.js"></script>
-    <script src="../script.js"></script>
+      </main>
+    </div>
 
     <script type="module">
       import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.1/+esm";
-
-      document.getElementById("year").textContent = new Date().getFullYear();
 
       const SUPABASE_URL = "https://wrcamtynhtlgwwbslwst.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_47mqXmlh6giKIxeKczqaqg_CeQoBXMc";
@@ -166,18 +353,25 @@
       const authView = document.getElementById("authView");
       const adminView = document.getElementById("adminView");
 
+      document.getElementById("currentDate").textContent = new Date().toLocaleDateString("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+
       function showView(view) {
         authView.classList.toggle("active", view === "auth");
         adminView.classList.toggle("active", view === "admin");
       }
 
-      async function loadCurrentStatus() {
+      async function loadDashboard() {
         try {
           const res = await fetch(FUNCTION_URL);
           const data = await res.json();
           document.getElementById("currentMessage").textContent = data.message || "Available";
-          const updated = data.updated_at ? new Date(data.updated_at).toLocaleString() : "";
-          document.getElementById("currentUpdated").textContent = updated ? ` (${updated})` : "";
+          document.getElementById("statStatus").textContent = data.message || "Available";
+          document.getElementById("statViews").textContent = data.views_this_week != null ? data.views_this_week : "—";
+          if (data.updated_at) {
+            const d = new Date(data.updated_at);
+            document.getElementById("currentTime").textContent = d.toLocaleString();
+            document.getElementById("statUpdated").textContent = d.toLocaleString();
+          }
           document.getElementById("statusMessage").value = data.message || "";
         } catch {
           document.getElementById("currentMessage").textContent = "Could not load";
@@ -186,9 +380,11 @@
 
       supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
+          document.getElementById("userTag").textContent = session.user?.email || "Signed in";
           showView("admin");
-          loadCurrentStatus();
+          loadDashboard();
         } else {
+          document.getElementById("userTag").textContent = "";
           showView("auth");
         }
       });
@@ -198,13 +394,12 @@
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const status = document.getElementById("authStatus");
-
-        status.className = "admin-status";
-        status.textContent = "Signing in...";
+        status.className = "status-msg";
+        status.innerHTML = '<span class="inline-loader"></span> Signing in...';
 
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
-          status.className = "admin-status err";
+          status.className = "status-msg err";
           status.textContent = error.message;
         } else {
           status.textContent = "";
@@ -219,15 +414,17 @@
         e.preventDefault();
         const message = document.getElementById("statusMessage").value.trim();
         const status = document.getElementById("adminStatus");
+        const btn = document.getElementById("saveBtn");
 
         if (!message) {
-          status.className = "admin-status err";
+          status.className = "status-msg err";
           status.textContent = "Message cannot be empty.";
           return;
         }
 
-        status.className = "admin-status";
+        status.className = "status-msg";
         status.textContent = "Saving...";
+        btn.disabled = true;
 
         const { data: { session } } = await supabase.auth.getSession();
 
@@ -241,14 +438,19 @@
             body: JSON.stringify({ message }),
           });
 
-          if (!res.ok) throw new Error((await res.json()).message || "Failed");
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || "Failed");
+          }
 
-          status.className = "admin-status ok";
-          status.textContent = "Status updated!";
-          loadCurrentStatus();
+          status.className = "status-msg ok";
+          status.textContent = "Saved";
+          loadDashboard();
         } catch (err) {
-          status.className = "admin-status err";
+          status.className = "status-msg err";
           status.textContent = err.message;
+        } finally {
+          btn.disabled = false;
         }
       });
     </script>
