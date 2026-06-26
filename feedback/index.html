@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback | bencodess</title>
+    <meta name="description" content="Send feedback to bencodess." />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href="https://benslogs.dev/feedback/" />
+    <link rel="icon" type="image/png" href="../assets/swasser-round.png?v=2" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .feedback-form-wrap {
+        max-width: 520px;
+        margin: 0 auto;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 2rem;
+      }
+      .feedback-form-wrap h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem;
+      }
+      .feedback-form-wrap .sub {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+      }
+      .feedback-form {
+        display: grid;
+        gap: 0.75rem;
+      }
+      .feedback-form label {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-family: "Space Grotesk", monospace;
+      }
+      .feedback-form input,
+      .feedback-form textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--bg-soft);
+        color: var(--ink);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 200ms, box-shadow 200ms;
+      }
+      .feedback-form input:focus,
+      .feedback-form textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(176, 109, 255, 0.2);
+      }
+      .feedback-form textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      .feedback-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
+      }
+      .feedback-status {
+        font-size: 0.8rem;
+        font-family: "Space Grotesk", monospace;
+      }
+      .feedback-status.err { color: #ef4444; }
+      .feedback-status.ok { color: var(--accent); }
+
+      .inline-loader {
+        display: inline-block;
+        width: 14px; height: 14px;
+        border: 2px solid var(--line);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="../" aria-label="bencodess home">
+        <img src="../assets/swasser.png" alt="bencodess logo" />
+      </a>
+      <nav>
+        <a href="../ui/">UI</a>
+        <a href="../">Home</a>
+        <a href="../socials/">Socials</a>
+        <a href="../contact/">Contact</a>
+      </nav>
+      <a class="btn ghost" href="../feedback/">Feedback</a>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <p class="eyebrow">Speak your mind</p>
+        <h1>Feedback</h1>
+        <p class="lead">Send anonymous feedback directly to me.</p>
+      </section>
+
+      <section class="section reveal">
+        <div class="feedback-form-wrap">
+          <h2>Send feedback</h2>
+          <p class="sub">Your message goes straight to my Discord.</p>
+          <form class="feedback-form" id="feedbackForm">
+            <label for="name">Name</label>
+            <input id="name" type="text" autocomplete="off" maxlength="256" placeholder="Your name" required />
+            <label for="message">Message</label>
+            <textarea id="message" maxlength="1000" placeholder="Write your feedback..." required></textarea>
+            <div class="feedback-actions">
+              <button class="btn" type="submit" id="sendBtn">Send</button>
+              <span id="statusMsg" class="feedback-status"></span>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="metallic-footer">
+        <canvas data-metallic-paint='{"imageSrc":"../assets/bencodes.svg"}'></canvas>
+      </div>
+      <div class="footer-row">
+        <p>&copy; <span id="year"></span> bencodess / stilleswasser93</p>
+      </div>
+    </footer>
+
+    <script src="../assets/metallic-paint.js"></script>
+    <script src="../script.js"></script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const FN = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/feedback";
+      const form = document.getElementById("feedbackForm");
+      const statusEl = document.getElementById("statusMsg");
+      const btn = document.getElementById("sendBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!name || !message) {
+          statusEl.className = "feedback-status err";
+          statusEl.textContent = "Please fill in both fields.";
+          return;
+        }
+
+        statusEl.className = "feedback-status";
+        statusEl.innerHTML = '<span class="inline-loader"></span> Sending...';
+        btn.disabled = true;
+
+        try {
+          const res = await fetch(FN, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, message }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Failed");
+          statusEl.className = "feedback-status ok";
+          statusEl.textContent = "Sent!";
+          form.reset();
+        } catch (err) {
+          statusEl.className = "feedback-status err";
+          statusEl.textContent = err.message;
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

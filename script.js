@@ -176,8 +176,7 @@ function trackPageView() {
 
 trackPageView();
 
-const FEEDBACK_WEBHOOK_URL =
-  "https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D";
+const FEEDBACK_FN_URL = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/feedback";
 const FEEDBACK_BLOCKED_TERMS = [
   "hitler",
   "nigga",
@@ -601,34 +600,18 @@ function setupFeedbackForm() {
     statusEl.textContent = "Sending feedback...";
     statusEl.className = "feedback-status";
 
-    const safeName = name.slice(0, 256);
-    const safeFeedback = feedback.slice(0, 1000);
-    const payload = {
-      username: "Website Feedback",
-      embeds: [
-        {
-          title: "New feedback from contact page",
-          color: 10247679,
-          fields: [
-            { name: "Name", value: safeName || "-", inline: false },
-            { name: "Message", value: safeFeedback || "-", inline: false },
-          ],
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    };
-
     try {
-      const response = await fetch(FEEDBACK_WEBHOOK_URL, {
+      const response = await fetch(FEEDBACK_FN_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ name: name.slice(0, 256), message: feedback.slice(0, 1000) }),
       });
 
       if (!response.ok) {
-        throw new Error(`Webhook failed (${response.status})`);
+        const err = await response.json().catch(() => ({ error: "Failed" }));
+        throw new Error(err.error || "Failed");
       }
 
       statusEl.textContent = "Feedback sent. Thank you!";
