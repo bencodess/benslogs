@@ -1,0 +1,16 @@
+{
+  "name": "bencodess",
+  "alias": "stilleswasser93",
+  "headline": "Backend Developer",
+  "location": "Germany",
+  "site": "https://benslogs.dev",
+  "socials": {
+    "github": "https://github.com/bencodess",
+    "discord": "https://discord.com/users/1033745912071192688",
+    "instagram": "https://instagram.com/_ben.oderso_",
+    "spotify": "https://open.spotify.com/user/bencodess",
+    "steam": "https://steamcommunity.com/id/stilleswasser93"
+  },
+  "skills": ["Node.js", "Python", "API Design", "Databases", "Linux & Git"],
+  "about": "backend developer from Germany building bots, APIs, and tools"
+}
