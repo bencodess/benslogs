@@ -12,35 +12,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css" />
     <style>
-      .feedback-form-wrap {
+      .fb-wrap {
         max-width: 520px;
         margin: 0 auto;
+      }
+
+      .fb-card {
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: var(--radius);
         padding: 2rem;
+        position: relative;
+        overflow: hidden;
       }
-      .feedback-form-wrap h2 {
+
+      .fb-card__glow {
+        position: absolute;
+        top: -60%;
+        right: -30%;
+        width: 240px;
+        height: 240px;
+        background: radial-gradient(circle, rgba(176, 109, 255, 0.08), transparent 70%);
+        pointer-events: none;
+      }
+
+      .fb-card h2 {
         font-size: 1.3rem;
         font-weight: 700;
         margin: 0 0 0.25rem;
       }
-      .feedback-form-wrap .sub {
+
+      .fb-card .sub {
         color: var(--muted);
         font-size: 0.85rem;
         margin-bottom: 1.5rem;
       }
-      .feedback-form {
+
+      .fb-form {
         display: grid;
-        gap: 0.75rem;
+        gap: 1rem;
       }
-      .feedback-form label {
-        font-size: 0.8rem;
+
+      .fb-field {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .fb-field label {
+        font-size: 0.78rem;
         color: var(--muted);
         font-family: "Space Grotesk", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
       }
-      .feedback-form input,
-      .feedback-form textarea {
+
+      .fb-field input,
+      .fb-field textarea {
         width: 100%;
         padding: 0.7rem 1rem;
         border-radius: 12px;
@@ -52,38 +79,174 @@
         outline: none;
         transition: border-color 200ms, box-shadow 200ms;
       }
-      .feedback-form input:focus,
-      .feedback-form textarea:focus {
+
+      .fb-field input:focus,
+      .fb-field textarea:focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(176, 109, 255, 0.2);
       }
-      .feedback-form textarea {
-        resize: vertical;
-        min-height: 100px;
+
+      .fb-field input.has-error,
+      .fb-field textarea.has-error {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
       }
-      .feedback-actions {
+
+      .fb-field input.has-success,
+      .fb-field textarea.has-success {
+        border-color: var(--accent);
+      }
+
+      .fb-field textarea {
+        resize: vertical;
+        min-height: 110px;
+      }
+
+      .fb-field__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 1.2rem;
+      }
+
+      .fb-field__error {
+        font-size: 0.73rem;
+        font-family: "Space Grotesk", monospace;
+        color: #ef4444;
+        opacity: 0;
+        transition: opacity 200ms;
+      }
+
+      .fb-field__error.visible {
+        opacity: 1;
+      }
+
+      .fb-field__counter {
+        font-size: 0.7rem;
+        font-family: "Space Grotesk", monospace;
+        color: var(--muted);
+        margin-left: auto;
+        transition: color 200ms;
+      }
+
+      .fb-field__counter.warn {
+        color: #f59e0b;
+      }
+
+      .fb-field__counter.limit {
+        color: #ef4444;
+      }
+
+      .fb-actions {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        margin-top: 0.25rem;
+        margin-top: 0.5rem;
       }
-      .feedback-status {
+
+      .fb-status {
         font-size: 0.8rem;
         font-family: "Space Grotesk", monospace;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: opacity 200ms;
       }
-      .feedback-status.err { color: #ef4444; }
-      .feedback-status.ok { color: var(--accent); }
+
+      .fb-status svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      .fb-status.err { color: #ef4444; }
+      .fb-status.ok { color: var(--accent); }
+
+      .fb-success {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1rem;
+        text-align: center;
+        animation: fbFadeIn 400ms ease;
+      }
+
+      .fb-success.visible {
+        display: flex;
+      }
+
+      .fb-success__icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(176, 109, 255, 0.15);
+        display: grid;
+        place-items: center;
+        margin-bottom: 1rem;
+        animation: fbPop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .fb-success__icon svg {
+        width: 28px;
+        height: 28px;
+        color: var(--accent);
+      }
+
+      .fb-success h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 0 0 0.3rem;
+      }
+
+      .fb-success p {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin: 0 0 1.25rem;
+      }
+
+      .fb-success .btn {
+        font-size: 0.82rem;
+      }
+
+      .fb-form.hidden {
+        display: none;
+      }
+
+      @keyframes fbFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes fbPop {
+        0% { transform: scale(0); }
+        60% { transform: scale(1.15); }
+        100% { transform: scale(1); }
+      }
+
+      .fb-form .btn {
+        min-width: 100px;
+        justify-content: center;
+      }
 
       .inline-loader {
         display: inline-block;
-        width: 14px; height: 14px;
+        width: 14px;
+        height: 14px;
         border: 2px solid var(--line);
         border-top-color: var(--accent);
         border-radius: 50%;
         animation: spin 0.6s linear infinite;
         vertical-align: middle;
       }
-      @keyframes spin { to { transform: rotate(360deg); } }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @media (max-width: 560px) {
+        .fb-card { padding: 1.25rem; }
+      }
     </style>
   </head>
   <body>
@@ -112,19 +275,51 @@
       </section>
 
       <section class="section reveal">
-        <div class="feedback-form-wrap">
-          <h2>Send feedback</h2>
-          <p class="sub">Your message goes straight to my Discord.</p>
-          <form class="feedback-form" id="feedbackForm">
-            <label for="name">Name</label>
-            <input id="name" type="text" autocomplete="off" maxlength="256" placeholder="Your name" required />
-            <label for="message">Message</label>
-            <textarea id="message" maxlength="1000" placeholder="Write your feedback..." required></textarea>
-            <div class="feedback-actions">
-              <button class="btn" type="submit" id="sendBtn">Send</button>
-              <span id="statusMsg" class="feedback-status"></span>
+        <div class="fb-wrap">
+          <div class="fb-card">
+            <div class="fb-card__glow" aria-hidden="true"></div>
+
+            <div class="fb-form" id="fbForm">
+              <h2>Send feedback</h2>
+              <p class="sub">Your message goes straight to my Discord.</p>
+
+              <form id="feedbackForm" novalidate>
+                <div class="fb-field">
+                  <label for="fbName">Name</label>
+                  <input id="fbName" type="text" autocomplete="off" maxlength="256" placeholder="Your name" required />
+                  <div class="fb-field__footer">
+                    <span class="fb-field__error" id="nameError"></span>
+                    <span class="fb-field__counter" id="nameCounter">0/256</span>
+                  </div>
+                </div>
+
+                <div class="fb-field">
+                  <label for="fbMessage">Message</label>
+                  <textarea id="fbMessage" maxlength="1000" placeholder="Write your feedback..." required></textarea>
+                  <div class="fb-field__footer">
+                    <span class="fb-field__error" id="msgError"></span>
+                    <span class="fb-field__counter" id="msgCounter">0/1000</span>
+                  </div>
+                </div>
+
+                <div class="fb-actions">
+                  <button class="btn" type="submit" id="sendBtn">Send</button>
+                  <span id="statusMsg" class="fb-status"></span>
+                </div>
+              </form>
             </div>
-          </form>
+
+            <div class="fb-success" id="fbSuccess">
+              <div class="fb-success__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <h3>Sent!</h3>
+              <p>Your feedback has been delivered.</p>
+              <button class="btn ghost" id="sendAnotherBtn">Send another</button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -145,41 +340,111 @@
 
       const FN = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/feedback";
       const form = document.getElementById("feedbackForm");
-      const statusEl = document.getElementById("statusMsg");
-      const btn = document.getElementById("sendBtn");
+      const fbFormWrap = document.getElementById("fbForm");
+      const fbSuccess = document.getElementById("fbSuccess");
+      const nameInput = document.getElementById("fbName");
+      const msgInput = document.getElementById("fbMessage");
+      const nameError = document.getElementById("nameError");
+      const msgError = document.getElementById("msgError");
+      const nameCounter = document.getElementById("nameCounter");
+      const msgCounter = document.getElementById("msgCounter");
+      const statusMsg = document.getElementById("statusMsg");
+      const sendBtn = document.getElementById("sendBtn");
+
+      function updateCounter(input, el, max) {
+        const len = input.value.length;
+        el.textContent = `${len}/${max}`;
+        el.className = "fb-field__counter";
+        if (len > max * 0.9) el.classList.add("warn");
+        if (len >= max) el.classList.add("limit");
+      }
+
+      function validateField(input, errorEl, opts = {}) {
+        const val = input.value.trim();
+        let err = "";
+        if (!val && opts.required) err = opts.emptyMsg || "Required";
+        else if (val && opts.min && val.length < opts.min) err = opts.minMsg || `Min ${opts.min} chars`;
+        if (err) {
+          input.classList.remove("has-success");
+          input.classList.add("has-error");
+          errorEl.textContent = err;
+          errorEl.classList.add("visible");
+          return false;
+        }
+        input.classList.remove("has-error");
+        input.classList.add("has-success");
+        errorEl.classList.remove("visible");
+        return true;
+      }
+
+      function clearField(input) {
+        input.classList.remove("has-error", "has-success");
+      }
+
+      nameInput.addEventListener("input", () => {
+        updateCounter(nameInput, nameCounter, 256);
+        clearField(nameInput);
+        nameError.classList.remove("visible");
+      });
+
+      nameInput.addEventListener("blur", () => {
+        validateField(nameInput, nameError, { required: true, emptyMsg: "Enter your name", min: 2, minMsg: "Name needs at least 2 characters" });
+      });
+
+      msgInput.addEventListener("input", () => {
+        updateCounter(msgInput, msgCounter, 1000);
+        clearField(msgInput);
+        msgError.classList.remove("visible");
+      });
+
+      msgInput.addEventListener("blur", () => {
+        validateField(msgInput, msgError, { required: true, emptyMsg: "Write a message", min: 10, minMsg: "At least 10 characters" });
+      });
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("name").value.trim();
-        const message = document.getElementById("message").value.trim();
+        statusMsg.className = "fb-status";
+        statusMsg.textContent = "";
 
-        if (!name || !message) {
-          statusEl.className = "feedback-status err";
-          statusEl.textContent = "Please fill in both fields.";
-          return;
-        }
+        const nameOk = validateField(nameInput, nameError, { required: true, emptyMsg: "Enter your name", min: 2, minMsg: "Name needs at least 2 characters" });
+        const msgOk = validateField(msgInput, msgError, { required: true, emptyMsg: "Write a message", min: 10, minMsg: "At least 10 characters" });
+        if (!nameOk || !msgOk) return;
 
-        statusEl.className = "feedback-status";
-        statusEl.innerHTML = '<span class="inline-loader"></span> Sending...';
-        btn.disabled = true;
+        if (!nameOk || !msgOk) return;
+
+        statusMsg.innerHTML = '<span class="inline-loader"></span> Sending...';
+        sendBtn.disabled = true;
 
         try {
           const res = await fetch(FN, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, message }),
+            body: JSON.stringify({ name: nameInput.value.trim(), message: msgInput.value.trim() }),
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "Failed");
-          statusEl.className = "feedback-status ok";
-          statusEl.textContent = "Sent!";
-          form.reset();
+
+          fbFormWrap.classList.add("hidden");
+          fbSuccess.classList.add("visible");
         } catch (err) {
-          statusEl.className = "feedback-status err";
-          statusEl.textContent = err.message;
+          statusMsg.className = "fb-status err";
+          statusMsg.textContent = err.message;
         } finally {
-          btn.disabled = false;
+          sendBtn.disabled = false;
         }
+      });
+
+      document.getElementById("sendAnotherBtn").addEventListener("click", () => {
+        form.reset();
+        fbSuccess.classList.remove("visible");
+        fbFormWrap.classList.remove("hidden");
+        nameCounter.textContent = "0/256";
+        msgCounter.textContent = "0/1000";
+        [nameInput, msgInput].forEach(clearField);
+        [nameError, msgError].forEach((el) => el.classList.remove("visible"));
+        statusMsg.className = "fb-status";
+        statusMsg.textContent = "";
+        nameInput.focus();
       });
     </script>
   </body>
