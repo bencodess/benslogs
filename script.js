@@ -144,8 +144,6 @@ function setupContentProtection() {
   // });
 }
 
-setupContentProtection();
-
 const revealItems = document.querySelectorAll(".reveal");
 
 const observer = new IntersectionObserver(
@@ -179,7 +177,7 @@ const FEEDBACK_BLOCKED_TERMS = [
   "nazi",
 ];
 const DEFAULT_SITE_CONFIG = {
-  feedback: true,
+  devtools: false,
 };
 const AUTO_RELOAD_MS = 60000;
 const LANYARD_STALE_MS = 5 * 1000;
@@ -659,14 +657,6 @@ async function loadSiteConfig() {
 }
 
 function applySiteConfig(config) {
-  const feedbackBlockEl = document.getElementById("feedbackBlock");
-  if (feedbackBlockEl) {
-    if (config.feedback === false) {
-      feedbackBlockEl.classList.add("hidden");
-    } else {
-      feedbackBlockEl.classList.remove("hidden");
-    }
-  }
 }
 
 function setupProjectCards() {
@@ -711,7 +701,7 @@ setupProjectCards();
 void (async () => {
   const config = await loadSiteConfig();
   applySiteConfig(config);
-  if (config.feedback !== false) {
-    setupFeedbackForm();
+  if (!config.devtools) {
+    setupContentProtection();
   }
 })();
