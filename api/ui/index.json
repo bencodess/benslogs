@@ -1,0 +1,12 @@
+{
+  "recipes": [
+    "glassmorphism",
+    "neon-glow",
+    "card-effects",
+    "neumorphism",
+    "neobrutalism",
+    "loading-spinners",
+    "liquid-glass"
+  ],
+  "base_url": "https://benslogs.dev/ui/recipes/"
+}
