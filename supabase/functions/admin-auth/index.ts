@@ -48,7 +48,8 @@ Deno.serve(async (req: Request) => {
   }
 
   if (req.method === "POST") {
-    const body = await req.json();
+    let body: Record<string, unknown>;
+    try { body = await req.json(); } catch { body = {}; }
 
     if (body.action === "track") {
       const page = typeof body.page === "string" ? body.page.slice(0, 200) : "/";
