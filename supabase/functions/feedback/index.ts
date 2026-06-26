@@ -1,4 +1,4 @@
-const webhookUrl = Deno.env.get("DISCORD_FEEDBACK_WEBHOOK");
+const webhookUrl = "https://discord.com/api/webhooks/1473065432880775179/i2kwPxElK6jr-jJiTUrRr4vPmC0m6MFnBYiEbGzTHuoThO5bbdnrkHrFpypFXB9-NG4D";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,10 +15,6 @@ Deno.serve(async (req: Request) => {
 
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json", ...corsHeaders } });
-  }
-
-  if (!webhookUrl) {
-    return new Response(JSON.stringify({ error: "Server not configured" }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
   }
 
   let body: Record<string, unknown>;
