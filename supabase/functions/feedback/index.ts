@@ -8,13 +8,14 @@ function decrypt(hex: string, key: string): string {
 
 const webhookUrl = decrypt(ENC_HEX, ENC_KEY);
 
+const BLOCKED_ENC = "0a5a1a0f55164f1d1a3801524f0a0b53040e2d175b1c365e4c5c57185a1d1f5e05491a0f390754540b1648050a3817581034574c41460b501200580d5d180f38095c58181051170a2d0f4f0b3a465140520757121742055d1d0a23024a5801";
+const BLOCKED_TERMS = decrypt(BLOCKED_ENC, ENC_KEY).split("|");
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
-
-const BLOCKED_TERMS = ["hitler", "nigga", "nigger", "heil", "nazis", "nazi"];
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {

@@ -188,7 +188,6 @@ const FEEDBACK_BLOCKED_TERMS = [
 const DEFAULT_SITE_CONFIG = {
   devtools: false,
 };
-const AUTO_RELOAD_MS = 60000;
 const LANYARD_STALE_MS = 5 * 1000;
 const OUTAGE_START_KEY = `lanyard_outage_start_${USER_ID}`;
 const statusTextEl = document.getElementById("discordStatusText");
@@ -523,16 +522,6 @@ function isAdminPath(pathname) {
   return /\/admin(?:\/index\.html)?$/.test(path);
 }
 
-function setupAutoReload() {
-  if (isContactPath(window.location.pathname) || isAdminPath(window.location.pathname)) {
-    return;
-  }
-
-  window.setInterval(() => {
-    window.location.reload();
-  }, AUTO_RELOAD_MS);
-}
-
 function setupFeedbackForm() {
   const form = document.getElementById("feedbackForm");
   const nameEl = document.getElementById("feedbackName");
@@ -688,7 +677,6 @@ if (statusTextEl && activityTextEl && dotEl) {
   setInterval(loadDiscordStatus, 5000);
 }
 
-setupAutoReload();
 setupProjectCards();
 
 void (async () => {
