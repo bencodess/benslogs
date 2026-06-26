@@ -153,15 +153,16 @@
     <script src="../assets/metallic-paint.js"></script>
     <script src="../script.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.1/dist/umd/supabase.min.js"></script>
-    <script>
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.1/+esm";
+
       document.getElementById("year").textContent = new Date().getFullYear();
 
       const SUPABASE_URL = "https://wrcamtynhtlgwwbslwst.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_47mqXmlh6giKIxeKczqaqg_CeQoBXMc";
       const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/admin-auth`;
 
-      const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       const authView = document.getElementById("authView");
       const adminView = document.getElementById("adminView");
 
