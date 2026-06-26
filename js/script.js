@@ -161,7 +161,7 @@ function isAdminPath(pathname) {
 function trackPageView() {
   if (isAdminPath(window.location.pathname)) return;
   const page = normalizePath(window.location.pathname) || "/";
-  navigator.sendBeacon(TRACKING_URL, new Blob([JSON.stringify({ action: "track", page })], { type: "application/json" }));
+  fetch(TRACKING_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "track", page }), keepalive: true }).catch(() => {});
 }
 
 trackPageView();
