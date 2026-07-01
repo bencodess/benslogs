@@ -11,7 +11,7 @@
     "check:links": "npx hyperlink --recursive --internal http://localhost:4173"
   },
   "devDependencies": {
-    "html-validate": "^11.5.3",
+    "html-validate": "^11.5.4",
     "hyperlink": "^5.0.0",
     "prettier": "^3.0.0",
     "stylelint": "^16.0.0",
