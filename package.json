@@ -18,6 +18,6 @@
     "stylelint-config-standard": "^36.0.0"
   },
   "dependencies": {
-    "@supabase/server": "^1.2.0"
+    "@supabase/server": "^1.4.0"
   }
 }
