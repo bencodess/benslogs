@@ -197,6 +197,19 @@ player.resume();</code></pre>
             <li><strong>Encoding:</strong> Float32Array where 1.0 = maximum amplitude</li>
           </ul>
           <p>The MLow codec (WhatsApp's default) operates on this format. The encoder/decoder is currently a passthrough stub — the raw PCM bytes are sent as-is until a WASM port of the Go MLow codec is available.</p>
+
+          <h2>Sample sounds</h2>
+          <p>Ready-to-use WAV files for testing your bot:</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>File</th><th>Description</th><th>Download</th></tr></thead>
+            <tbody>
+              <tr><td><code>greeting.wav</code></td><td>Short greeting tone for answering calls</td><td><a href="https://benslogs.dev/meowcaller-js/samples/greeting.wav">greeting.wav</a></td></tr>
+              <tr><td><code>tone.wav</code></td><td>Example audio for testing playback</td><td><a href="https://benslogs.dev/meowcaller-js/samples/tone.wav">tone.wav</a></td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>// Use in your bot:
+const greeting = await WAVFile('greeting.wav');
+call.play(greeting);</code></pre>
         </article>
       </main>
     </div>

@@ -324,7 +324,18 @@ Create a complete WhatsApp bot in TypeScript at bot/ that:
 5. Handles reconnection on disconnect
 6. Uses proper TypeScript types throughout
 7. Has a config.ts for environment variables (phone numbers, audio paths, log level)
-8. Includes proper error handling and cleanup on shutdown</code></pre>
+8. Includes proper error handling and cleanup on shutdown
+
+## Sample Sounds
+
+Download ready-to-use WAV files from https://benslogs.dev/meowcaller-js/samples
+
+- greeting.wav — short greeting tone for answering calls
+- tone.wav — example audio for testing playback
+
+Usage:
+  const greeting = await WAVFile('greeting.wav');
+  call.play(greeting);</code></pre>
         </div>
       </main>
     </div>
