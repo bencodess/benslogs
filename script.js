@@ -166,17 +166,24 @@ revealItems.forEach((item, index) => {
 document.getElementById("year").textContent = new Date().getFullYear();
 
 const USER_ID = "1033745912071192688";
-const TRACKING_URL = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/admin-auth";
+const TRACKING_URL =
+  "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/admin-auth";
 
 function trackPageView() {
   if (isAdminPath(window.location.pathname)) return;
   const page = normalizePath(window.location.pathname) || "/";
-  fetch(TRACKING_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "track", page }), keepalive: true }).catch(() => {});
+  fetch(TRACKING_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "track", page }),
+    keepalive: true,
+  }).catch(() => {});
 }
 
 trackPageView();
 
-const FEEDBACK_FN_URL = "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/feedback";
+const FEEDBACK_FN_URL =
+  "https://wrcamtynhtlgwwbslwst.supabase.co/functions/v1/feedback";
 const FEEDBACK_BLOCKED_TERMS = [
   "hitler",
   "nigga",
@@ -595,7 +602,10 @@ function setupFeedbackForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: name.slice(0, 256), message: feedback.slice(0, 1000) }),
+        body: JSON.stringify({
+          name: name.slice(0, 256),
+          message: feedback.slice(0, 1000),
+        }),
       });
 
       if (!response.ok) {
@@ -638,8 +648,7 @@ async function loadSiteConfig() {
   return { ...DEFAULT_SITE_CONFIG };
 }
 
-function applySiteConfig(config) {
-}
+function applySiteConfig(config) {}
 
 function setupProjectCards() {
   const cards = document.querySelectorAll(".project-card--interactive");
