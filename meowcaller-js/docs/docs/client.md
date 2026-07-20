@@ -1,12 +1,9 @@
 # Client
 
-The `Client` is the main entry point. It wraps a Baileys socket and manages call lifecycle.
+The `Client` wraps a Baileys socket and provides the high-level call API.
 
 ```js
 import { Client } from 'meowcaller-js';
-
-const client = new Client(wa, { logger });
-client.connect();
 ```
 
 ## Constructor
@@ -15,102 +12,64 @@ client.connect();
 new Client(wa, opts?)
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `wa` | `WASocket` | A connected Baileys socket |
-| `opts` | `ConfigOption \| ConfigOption[]` | Optional configuration (logger, diagnostics) |
-
-The `opts` parameter accepts configuration functions:
-
-```js
-import { Client, WithLogger, WithDiagnostics } from 'meowcaller-js';
-import { Recorder } from 'meowcaller-js/src/diag.js';
-
-const client = new Client(wa, [
-  WithLogger(pino({ level: 'debug' })),
-  WithDiagnostics(new Recorder('calls.jsonl')),
-]);
-```
+- `wa` — A connected `WASocket` from `@whiskeysockets/baileys`
+- `opts` — A `ConfigOption` function, or an array of them. See [logging](#logging-options).
 
 ## Methods
 
 ### `client.connect()`
 
-Installs call event handlers on the Baileys socket. Call this after the socket is created but before or after it connects — the handlers will fire when WhatsApp sends call events.
-
-Returns `this` for chaining.
+Installs call event handlers on the Baileys socket. Call this before the socket connects. Returns the client for chaining.
 
 ```js
+const client = new Client(wa);
 client.connect();
-// or
-const self = client.connect();
 ```
 
 ### `client.call(ctx, target)`
 
-Place an outbound voice call.
+Place an outbound call.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `ctx` | `any` | Context (reserved for future use, pass `{}`) |
-| `target` | `string` | Phone number with `+` prefix or full JID |
+- `ctx` — Context object (currently unused, pass `{}`)
+- `target` — Phone number (e.g. `'+15551234567'`) or JID (e.g. `'15551234567@s.whatsapp.net'`)
 
-Returns `Promise<Call>`.
+Returns a `Promise<Call>`.
 
 ```js
 const call = await client.call({}, '+15551234567');
-call.onEnd((reason) => console.log(reason));
 ```
-
-The target is resolved to a WhatsApp JID internally:
-- `+15551234567` → `15551234567@s.whatsapp.net`
-- `15551234567@s.whatsapp.net` → used as-is
 
 ### `client.onIncomingCall(fn)`
 
-Register a callback for incoming call offers.
+Register a callback for incoming calls. The callback receives a `Call` object.
 
 ```js
 client.onIncomingCall((call) => {
-  console.log('incoming call from', call.peer());
+  console.log('call from', call.peer());
   call.answer();
 });
 ```
 
-Only one handler can be active at a time. Calling this again replaces the previous handler.
-
 ### `client.listCalls()`
 
-Returns an array of all active `Call` or `CallSession` objects in the registry.
-
-```js
-const calls = client.listCalls();
-for (const c of calls) {
-  console.log(c.id(), c.state());
-}
-```
+Returns an array of all active `Call` or `CallSession` objects from the registry.
 
 ### `client.getCall(callID)`
 
-Look up a specific call by its ID.
+Look up a specific call by its ID. Returns the `Call` or `CallSession`, or `null` if not found.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `callID` | `string` | The call ID |
+## Logging options
 
-Returns `Call`, `CallSession`, or `null`.
+Pass configuration functions to the constructor:
 
 ```js
-const call = client.getCall('ABCDEF1234567890');
-if (call) {
-  console.log(call.state());
-}
+import { Client, WithLogger, WithDiagnostics } from 'meowcaller-js';
+
+const client = new Client(wa, [
+  WithLogger(myLogger),
+  WithDiagnostics(myRecorder),
+]);
 ```
 
-## Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `client.wa` | `WASocket` | The underlying Baileys socket |
-| `client.log` | `Logger \| null` | Logger instance if configured |
-| `client.registry` | `CallRegistry` | The call registry |
+- `WithLogger(logger)` — Attach a [pino](https://github.com/pinojs/pino)-compatible logger
+- `WithDiagnostics(rec)` — Attach a `Recorder` for diagnostic event logging

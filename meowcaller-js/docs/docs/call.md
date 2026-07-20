@@ -1,211 +1,96 @@
 # Call
 
-A `Call` represents an active voice or video call. You get one from `client.call()` (outbound) or from the `onIncomingCall` callback (inbound).
+The `Call` object represents an active voice or video call.
 
-## Properties
+## Properties (accessor methods)
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `call.id` | `string` | Unique call identifier (32-char hex) |
-| `call.peer` | `string` | Peer's JID or phone number |
+### `call.id()`
 
-## Methods
+Returns the call ID string.
 
-### Identity
+### `call.peer()`
 
-#### `call.id()`
+Returns the peer's JID or phone number.
 
-Returns the call's unique ID.
+### `call.state()`
 
-#### `call.peer()`
+Returns the current `CallPhase` symbol:
 
-Returns the peer's identifier (JID).
+| Symbol | Meaning |
+|--------|---------|
+| `CallPhase.Idle` | Not yet started |
+| `CallPhase.Calling` | Outbound call sent, waiting for answer |
+| `CallPhase.Ringing` | Incoming call, waiting for answer |
+| `CallPhase.Connecting` | Call accepted, media establishing |
+| `CallPhase.Active` | Call is live (first RTP decoded) |
+| `CallPhase.Ended` | Call has ended |
 
-#### `call.state()`
+### `call.isVideo()`
 
-Returns the current `CallPhase` symbol.
+Returns `true` if this is a video call.
 
-```js
-if (call.state() === CallPhase.Active) {
-  console.log('call is active');
-}
-```
+## Call control
 
-#### `call.isVideo()`
+### `call.answer()`
 
-Returns `true` if the call has video.
+Accept an incoming call. Returns a `Promise`.
 
-### Lifecycle
+### `call.reject()`
 
-#### `call.answer()`
+Reject an incoming call. Returns a `Promise`.
 
-Answer an incoming call. Sends a preaccept and starts the media pipeline.
+### `call.hangup()`
 
-```js
-client.onIncomingCall((call) => {
-  call.answer();
-});
-```
+End the call (either direction). Returns a `Promise`.
 
-#### `call.reject()`
+## Audio
 
-Reject an incoming call. Sends a reject stanza and cleans up.
+### `call.subscribe(player)`
 
-```js
-client.onIncomingCall((call) => {
-  call.reject();
-});
-```
+Attach a `Player` to the call. Each audio frame the player produces is sent to the remote peer.
 
-#### `call.hangup()`
+### `call.play(source)`
 
-Hang up any active call (inbound or outbound). Sends a terminate stanza and cleans up.
+Convenience method — creates a `NewPlayer`, subscribes it, and starts playing the given `AudioSource`. Returns the `Player`.
 
 ```js
-call.hangup();
-```
-
-### Audio
-
-#### `call.play(source)`
-
-Play audio into the call. Creates a new `Player`, subscribes it, and starts playback.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `source` | `AudioSource` | Audio source (WAVFile, PCMStream, SourceFunc) |
-
-Returns the `Player` instance.
-
-```js
-import { WAVFile } from 'meowcaller-js';
-
 const player = call.play(await WAVFile('music.wav'));
-player.onFinish(() => console.log('done playing'));
 ```
 
-#### `call.subscribe(player)`
+### `call.receive(sink)`
 
-Attach an existing `Player` to the call.
-
-```js
-import { NewPlayer, SourceFunc } from 'meowcaller-js';
-
-const player = NewPlayer();
-player.play(SourceFunc(async () => new Float32Array(960)));
-call.subscribe(player);
-```
-
-#### `call.receive(sink)`
-
-Set the audio sink for incoming audio. The sink's `writeFrame` is called with each decoded audio frame.
+Set an `AudioSink` to receive incoming audio frames. Each frame is a `Float32Array` of 960 samples at 16 kHz.
 
 ```js
-import { SinkFunc } from 'meowcaller-js';
-
 call.receive(SinkFunc((frame) => {
-  // frame: Float32Array of 960 samples at 16 kHz
-  processAudio(frame);
+  // process PCM frame
 }));
 ```
 
-### Video
+## Video
 
-#### `call.receiveVideo(sink)`
+### `call.receiveVideo(sink)`
 
-Set the video sink for incoming video.
+Set a `VideoSink` to receive incoming H.264 Annex B access units.
 
-```js
-import { VideoSinkFunc } from 'meowcaller-js';
+### `call.sendVideo(annexB)`
 
-call.receiveVideo(VideoSinkFunc((au) => {
-  // au: Uint8Array containing H.264 Annex B data
-  processVideo(au);
-}));
-```
+Send an H.264 Annex B access unit to the remote peer. The argument should be a `Uint8Array`.
 
-#### `call.sendVideo(accessUnit)`
+## Event callbacks
 
-Send a video frame (H.264 Annex B access unit).
+### `call.onReady(fn)`
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `accessUnit` | `Uint8Array` | H.264 Annex B data |
+Called when the first inbound RTP packet is decoded — the call is fully active.
 
-```js
-call.sendVideo(h264Frame);
-```
+### `call.onEnd(fn)`
 
-**Note:** Video TX is not yet wired up in the media pipeline. This will throw until the video send path is implemented.
+Called when the call ends. The callback receives a reason string (e.g. `'hangup'`, `'rejected'`, `'remote_ended'`).
 
-### Events
+### `call.onStateChange(fn)`
 
-#### `call.onReady(fn)`
+Called on every phase transition. The callback receives the new `CallPhase` symbol.
 
-Fired when the first inbound RTP packet is decoded — the call is active and media is flowing.
+### `call.onVideoState(fn)`
 
-```js
-call.onReady(() => {
-  console.log('media flowing');
-});
-```
-
-#### `call.onEnd(fn)`
-
-Fired when the call ends for any reason.
-
-| Callback arg | Type | Description |
-|--------------|------|-------------|
-| `reason` | `string` | `'hangup'`, `'rejected'`, `'remote_ended'`, or `'server:<error>'` |
-
-```js
-call.onEnd((reason) => {
-  console.log('call ended:', reason);
-});
-```
-
-#### `call.onStateChange(fn)`
-
-Fired on every phase transition.
-
-| Callback arg | Type | Description |
-|--------------|------|-------------|
-| `phase` | `symbol` | The new `CallPhase` |
-
-```js
-import { CallPhase } from 'meowcaller-js';
-
-call.onStateChange((phase) => {
-  if (phase === CallPhase.Active) console.log('connected');
-  if (phase === CallPhase.Ended) console.log('done');
-});
-```
-
-#### `call.onVideoState(fn)`
-
-Fired when video state changes.
-
-```js
-call.onVideoState((vs) => {
-  console.log('video active:', vs.Active);
-});
-```
-
-## Call phases
-
-A call progresses through these states:
-
-```
-Idle → Calling → Ringing → Connecting → Active → Ended
-```
-
-| Phase | Description |
-|-------|-------------|
-| `CallPhase.Idle` | Outbound call created, not yet sent |
-| `CallPhase.Calling` | Offer sent, waiting for response |
-| `CallPhase.Ringing` | Remote phone ringing (inbound calls start here) |
-| `CallPhase.Connecting` | Call accepted, media starting |
-| `CallPhase.Active` | First RTP decoded, media flowing |
-| `CallPhase.Ended` | Call finished (any reason) |
-
-Invalid transitions are silently ignored and return `false`.
+Called when video state changes. The callback receives a `VideoState` object.

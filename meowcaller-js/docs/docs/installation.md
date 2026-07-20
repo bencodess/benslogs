@@ -1,38 +1,49 @@
 # Installation
 
-```bash
+```sh
 npm install meowcaller-js
 ```
 
-Or with yarn:
+## Native dependency
 
-```bash
-yarn add meowcaller-js
+`meowcaller-js` depends on [`node-datachannel`](https://github.com/murat-dogan/node-datachannel), which is a native C++ addon wrapping [libdatachannel](https://github.com/paullouisageneau/libdatachannel). It provides the DTLS, SCTP, and WebRTC DataChannel transport used to connect to WhatsApp's relay servers.
+
+If `node-datachannel` fails to compile, ensure you have:
+
+- A C++17 compiler (GCC 7+, Clang 5+, MSVC 2017+)
+- CMake 3.12+
+- Python 3 (for node-gyp)
+
+On Debian/Ubuntu:
+
+```sh
+sudo apt install build-essential cmake g++ python3
 ```
 
-## Peer dependency
+On macOS:
 
-meowcaller-js requires Baileys as a peer dependency. If you don't already have it:
-
-```bash
-npm install @whiskeysockets/baileys
+```sh
+xcode-select --install
+brew install cmake
 ```
 
-## Requirements
+## Dependencies
 
-- **Node.js 20+** — uses `node:test`, `node:crypto`, `node:dgram` built-ins
-- **ES Modules** — the package uses `"type": "module"`, so your project needs `"type": "module"` in `package.json` or files must use `.mjs` extension
+| Package | Purpose |
+|---------|---------|
+| `@whiskeysockets/baileys` | WhatsApp Web socket protocol |
+| `node-datachannel` | DTLS/SCTP/DataChannel (native) |
+| `pino` | Structured logging |
+| `protobufjs` | Protocol buffer encoding |
 
 ## TypeScript
 
-Type definitions are included at `types/index.d.ts`. No separate `@types` package needed.
+TypeScript declarations are included at `types/index.d.ts`. No separate `@types` package is needed.
 
-```ts
-import { Client, Call, CallPhase } from 'meowcaller-js';
+## Verify installation
+
+```sh
+node -e "import('meowcaller-js').then(m => console.log(Object.keys(m)))"
 ```
 
-The `typecheck` script runs `tsc --noEmit` against the bundled types:
-
-```bash
-npm run typecheck
-```
+You should see the exported classes and functions listed.

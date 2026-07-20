@@ -1,30 +1,48 @@
-# Introduction
+# meowcaller-js
 
-meowcaller-js is a JavaScript port of [meowcaller](https://github.com/purpshell/meowcaller) — a WhatsApp VoIP library built on top of [Baileys](https://github.com/WhiskeySockets/Baileys).
+WhatsApp VoIP library for [Baileys](https://github.com/WhiskeySockets/Baileys). Provides call signaling, SRTP media relay, and audio/video adapters for Node.js.
 
-It lets you place and receive WhatsApp voice and video calls from Node.js using the WhatsApp Web protocol. No native bindings, no CGO, no WebRTC dependency — pure JavaScript.
+**Version:** 0.2.0  
+**License:** MIT
 
 ## What it does
 
-- **Call signaling** — offer, accept, reject, terminate, preaccept
-- **Call lifecycle** — state machine tracking idle → calling → ringing → connecting → active → ended
-- **Media pipeline** — STUN allocation, SRTP key derivation, RTP packetization
-- **Audio adapters** — play PCM streams, WAV files, or custom frame generators into calls; receive audio via sinks
-- **Video adapters** — send H.264 Annex B access units; record incoming video
-- **Call registry** — track active calls, clean up media tasks on hangup
+- Place and receive WhatsApp voice and video calls
+- DTLS relay transport via `node-datachannel` (libdatachannel), with automatic fallback to direct UDP
+- Audio source/sink adapters for piping PCM, WAV, and custom frames
+- Video sink for recording H.264 Annex B streams
+- Call registry for inspecting and managing active sessions
+- Full TypeScript type definitions included
 
-## What it doesn't do (yet)
+## Implementation status
 
-- **MLow codec** — the encoder/decoder is a passthrough stub. Needs a WASM port from the Go original.
-- **DTLS transport** — the relay layer currently communicates directly via STUN + SRTP over UDP. A proper DTLS layer needs a native addon or WebRTC bridge.
-- **Signal Protocol encryption** — call key encryption is simplified. Production use requires encrypting via Signal sessions.
-
-## Status
-
-**Experimental.** Signaling is fully ported. Media relay works partially depending on WhatsApp's relay server acceptance policies. See the [implementation table](../README.md#implementation-status) for details.
+| Feature | Status |
+|---------|--------|
+| Outbound calls | Implemented |
+| Inbound calls | Implemented |
+| Audio calls | Signaling + media relay via DTLS/SCTP/DataChannel |
+| Video calls | Signaling + depacketizer ported |
+| DTLS relay | Implemented via `node-datachannel` |
+| MLow codec | Stub — needs WASM port |
+| Signal Protocol encryption | Not yet implemented |
+| Opus codec | Planned |
 
 ## Requirements
 
-- Node.js 20+
-- A Baileys socket connected to WhatsApp
-- `@whiskeysockets/baileys` ^7.0.0
+- Node.js 18+
+- A working [Baileys](https://github.com/WhiskeySockets/Baileys) socket connection
+- `node-datachannel` — native dependency (C++ addon via libdatachannel)
+
+## Tests
+
+10 tests pass. Run with:
+
+```sh
+npm test
+```
+
+## Next
+
+- [Installation](installation.md)
+- [Quick Start](quick-start.md)
+- [API Reference](api-reference.md)

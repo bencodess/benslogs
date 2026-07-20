@@ -1,106 +1,67 @@
 # Events
 
-meowcaller-js uses callback-based events rather than EventEmitter. You register handlers on `Call` and `Client` objects.
+meowcaller-js uses callback registration rather than EventEmitter. Each `Call` object exposes these event hooks:
 
-## Client events
+## `call.onStateChange(fn)`
 
-### `client.onIncomingCall(fn)`
-
-Fired when a call offer arrives from WhatsApp.
+Fires whenever the call phase changes. The callback receives the new `CallPhase` symbol.
 
 ```js
-client.onIncomingCall((call) => {
-  console.log('call from', call.peer());
-  call.answer();
+call.onStateChange((phase) => {
+  if (phase === CallPhase.Active) console.log('call is live');
+  if (phase === CallPhase.Ended) console.log('call ended');
 });
 ```
 
-The callback receives a `Call` object already in the `Ringing` phase. A preaccept is sent automatically before the callback fires.
+Phase transitions follow a strict state machine:
 
-## Call events
+```
+Outgoing: Idle -> Calling -> Ringing -> Connecting -> Active -> Ended
+Incoming: Ringing -> Connecting -> Active -> Ended
+```
 
-### `call.onEnd(fn)`
+Any phase can transition to `Ended`.
 
-Fired when the call ends. The reason string indicates why:
+## `call.onEnd(fn)`
 
-| Reason | Meaning |
-|--------|---------|
-| `'hangup'` | You or the remote party hung up |
-| `'rejected'` | The remote party rejected the call |
-| `'remote_ended'` | The remote party ended the call |
-| `'server:<error>'` | WhatsApp server rejected the offer |
+Fires when the call terminates. The callback receives a reason string.
+
+Possible reasons:
+
+- `'hangup'` — local or remote hangup
+- `'rejected'` — call was rejected
+- `'remote_ended'` — remote party ended the call
+
+Note: Baileys may also pass other reason strings from the terminate event. Treat `'remote_ended'` as the default fallback.
 
 ```js
 call.onEnd((reason) => {
-  if (reason === 'hangup') console.log('you hung up');
-  else if (reason === 'rejected') console.log('call rejected');
-  else console.log('ended:', reason);
+  console.log('call ended:', reason);
 });
 ```
 
-### `call.onReady(fn)`
+## `call.onReady(fn)`
 
-Fired when the first inbound RTP packet is successfully decoded. This means the media pipeline is working and audio is flowing.
+Fires once — when the first inbound RTP packet is successfully decoded. This means audio is flowing in both directions.
 
 ```js
 call.onReady(() => {
-  console.log('call is active — audio flowing');
+  console.log('media is flowing');
 });
 ```
 
-### `call.onStateChange(fn)`
+## `call.onVideoState(fn)`
 
-Fired on every phase transition. The callback receives the new `CallPhase` symbol.
+Fires when video state changes. The callback receives a `VideoState` object with `Active` and `Upgrade` boolean fields.
 
-```js
-import { CallPhase } from 'meowcaller-js';
+Note: This callback is wired up on the `Call` class but is not currently invoked by the engine. Video state detection is not yet implemented.
 
-call.onStateChange((phase) => {
-  if (phase === CallPhase.Ringing) console.log('ringing...');
-  if (phase === CallPhase.Active) console.log('connected');
-  if (phase === CallPhase.Ended) console.log('finished');
-});
-```
+## Baileys socket events
 
-### `call.onVideoState(fn)`
+The `Client` internally listens on the Baileys `'call'` event for these event types:
 
-Fired when video state changes (e.g., video upgrade requested).
+- `offer` — incoming call offer
+- `relaylatency` / `transport` — relay server information
+- `terminate` — call termination
 
-```js
-call.onVideoState((vs) => {
-  if (vs.Active) console.log('video is active');
-  if (vs.Upgrade) console.log('video upgrade requested');
-});
-```
-
-## Player events
-
-### `player.onFinish(fn)`
-
-Fired when the audio source reaches EOF or encounters an error.
-
-```js
-const player = call.play(source);
-player.onFinish(() => {
-  console.log('audio finished playing');
-});
-```
-
-## Event ordering
-
-For an outbound call, events fire in this order:
-
-1. `onStateChange(Calling)` — offer sent
-2. `onStateChange(Ringing)` — remote phone ringing
-3. `onStateChange(Connecting)` — call answered
-4. `onReady()` — first RTP decoded
-5. `onStateChange(Active)` — same time as onReady
-6. `onEnd(reason)` — call finished
-7. `onStateChange(Ended)` — same time as onEnd
-
-For an inbound call:
-
-1. `onIncomingCall(call)` — offer received, already in Ringing phase
-2. `call.answer()` → `onStateChange(Connecting)`
-3. `onReady()` → `onStateChange(Active)`
-4. `onEnd(reason)` → `onStateChange(Ended)`
+These are handled automatically by the engine. You do not need to listen for them directly.

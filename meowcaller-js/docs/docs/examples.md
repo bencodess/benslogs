@@ -1,152 +1,124 @@
 # Examples
 
-## Receive a call and play audio
+## Basic call receiving
 
 ```js
 import { makeWASocket, useMultiFileAuthState } from '@whiskeysockets/baileys';
-import { Client, WAVFile, SinkFunc } from 'meowcaller-js';
-import pino from 'pino';
+import { Client, SinkFunc, SourceFunc } from 'meowcaller-js';
 
-const logger = pino({ level: 'info' });
-const { state, saveCreds } = await useMultiFileAuthState('auth_info');
+const { state } = await useMultiFileAuthState('auth');
+const wa = makeWASocket({ auth: state, printQRInTerminal: true });
 
-const wa = makeWASocket({ auth: state, logger, printQRInTerminal: true });
-const client = new Client(wa, { logger });
+const client = new Client(wa);
 client.connect();
 
 client.onIncomingCall(async (call) => {
-  logger.info('call from %s', call.peer());
+  console.log('Incoming:', call.peer());
 
-  // play a greeting
-  const audio = await WAVFile('greeting.wav');
-  call.play(audio);
-
-  // record incoming audio
   call.receive(SinkFunc((frame) => {
-    logger.debug('audio frame: %d samples', frame.length);
+    // frame is a Float32Array of 960 samples at 16kHz
   }));
 
-  call.onEnd((reason) => logger.info('ended: %s', reason));
-  call.answer();
-});
+  // Play silence so the other side hears something
+  call.play(SourceFunc(async () => new Float32Array(960)));
 
-wa.ev.on('creds.update', saveCreds);
+  await call.answer();
+});
 ```
 
-## Place an outbound call
+## Placing a call and playing a WAV file
 
 ```js
+import { Client, WAVFile } from 'meowcaller-js';
+
+const client = new Client(wa);
+client.connect();
+
 const call = await client.call({}, '+15551234567');
 
-call.onStateChange((phase) => logger.info('state: %s', phase));
-call.onReady(() => logger.info('connected'));
-call.onEnd((reason) => logger.info('ended: %s', reason));
+call.onReady(async () => {
+  console.log('Call is active');
+  const audio = await WAVFile('greeting.wav');
+  call.play(audio);
+});
 
-// hang up after 30 seconds
-setTimeout(() => call.hangup(), 30000);
+call.onEnd((reason) => {
+  console.log('Call ended:', reason);
+});
 ```
 
-## Generate a tone
+## Recording incoming audio to WAV
+
+This example pipes incoming frames into a custom sink. Since `SinkFunc` only provides a callback, you would accumulate frames and write them out manually:
 
 ```js
-import { SourceFunc } from 'meowcaller-js';
+import { SinkFunc } from 'meowcaller-js';
+import { writeFileSync } from 'node:fs';
 
-let phase = 0;
-const tone = SourceFunc(async () => {
-  const frame = new Float32Array(960);
-  for (let i = 0; i < 960; i++) {
-    frame[i] = Math.sin(phase) * 0.3;
-    phase += (2 * Math.PI * 440) / 16000;
+const frames = [];
+
+call.receive(SinkFunc((frame) => {
+  frames.push(new Int16Array(frame.map((s) => Math.round(s * 32767))));
+}));
+
+call.onEnd(() => {
+  // Write raw s16le PCM
+  const total = frames.reduce((n, f) => n + f.length, 0);
+  const buf = Buffer.alloc(total * 2);
+  let offset = 0;
+  for (const f of frames) {
+    for (let i = 0; i < f.length; i++) {
+      buf.writeInt16LE(f[i], offset);
+      offset += 2;
+    }
   }
-  return frame;
-});
-
-client.onIncomingCall((call) => {
-  call.play(tone);
-  call.answer();
+  writeFileSync('recording.pcm', buf);
 });
 ```
 
-## Record incoming video to file
+## Recording incoming video
 
 ```js
 import { AnnexBRecorder } from 'meowcaller-js';
 
-client.onIncomingCall(async (call) => {
-  if (!call.isVideo()) {
-    call.answer();
-    return;
-  }
+const recorder = await AnnexBRecorder('call.h264');
+call.receiveVideo(recorder);
 
-  const recorder = await AnnexBRecorder('call.h264');
-  call.receiveVideo(recorder);
-
-  call.onEnd(async () => {
-    await recorder.close();
-    logger.info('video saved to call.h264');
-  });
-
-  call.answer();
+call.onEnd(async () => {
+  await recorder.close();
+  console.log('Video saved to call.h264');
 });
 ```
 
-## Pause and resume playback
+## Logging with pino
 
 ```js
-import { NewPlayer, SourceFunc } from 'meowcaller-js';
-
-client.onIncomingCall((call) => {
-  const player = NewPlayer();
-  const source = SourceFunc(async () => new Float32Array(960));
-
-  call.subscribe(player);
-  player.play(source);
-
-  // pause after 5 seconds
-  setTimeout(() => {
-    player.pause();
-    logger.info('paused');
-  }, 5000);
-
-  // resume after 10 seconds
-  setTimeout(() => {
-    player.resume();
-    logger.info('resumed');
-  }, 10000);
-
-  call.answer();
-});
-```
-
-## Custom logger and diagnostics
-
-```js
-import { Client, WithLogger, WithDiagnostics } from 'meowcaller-js';
-import { Recorder } from 'meowcaller-js/src/diag.js';
 import pino from 'pino';
+import { Client, WithLogger, WithDiagnostics, Recorder } from 'meowcaller-js';
 
-const logger = pino({ level: 'debug', name: 'voip' });
-const recorder = new Recorder('calls.jsonl');
+const log = pino({ level: 'debug' });
+const diag = new Recorder('diagnostics.jsonl');
 
 const client = new Client(wa, [
-  WithLogger(logger),
-  WithDiagnostics(recorder),
+  WithLogger(log),
+  WithDiagnostics(diag),
 ]);
 ```
 
-## List active calls
+## Listing and managing calls
 
 ```js
 const calls = client.listCalls();
+console.log(`${calls.length} active call(s)`);
+
 for (const c of calls) {
-  console.log(`${c.id()} — ${c.state()}`);
+  // Call objects have .id() and .state() methods
+  if (typeof c.id === 'function') console.log(c.id(), c.state());
 }
-```
 
-## Reject all calls
-
-```js
-client.onIncomingCall((call) => {
-  call.reject();
-});
+// Look up by ID
+const specific = client.getCall('ABCDEF0123456789');
+if (specific) {
+  console.log('Phase:', specific.state());
+}
 ```
