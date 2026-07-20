@@ -233,6 +233,7 @@
         .stats-row { grid-template-columns: 1fr; }
         .admin-header { flex-direction: column; align-items: flex-start; }
       }
+      .admin-main { display: none; }
     </style>
   </head>
   <body class="admin-body">
@@ -247,7 +248,7 @@
       <span class="user-tag" id="userTag" style="margin-left:auto;"></span>
       <button class="btn ghost" id="signoutBtn" style="display:none;">Sign out</button>
     </header>
-    <noscript><style>.admin-main { display: none; }</style><p style="color:#fff;padding:2rem;text-align:center;">JavaScript required.</p></noscript>
+    <noscript><p style="color:#fff;padding:2rem;text-align:center;">JavaScript required.</p></noscript>
 
     <main class="admin-main">
       <div id="authView" class="active">

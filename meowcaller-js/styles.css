@@ -82,12 +82,35 @@ h1, h2, h3, h4 {
   color: var(--ink);
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
-h3 { font-size: 1.15rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-p { margin-bottom: 0.75rem; max-width: 65ch; }
-ul { padding-left: 1.5rem; margin-bottom: 0.75rem; }
-li { margin-bottom: 0.3rem; }
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+h3 {
+  font-size: 1.15rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin-bottom: 0.75rem;
+  max-width: 65ch;
+}
+
+ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+li {
+  margin-bottom: 0.3rem;
+}
 
 /* Header */
 .site-header {
