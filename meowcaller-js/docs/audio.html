@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio | meowcaller-js</title>
+    <meta name="description" content="Audio sources, sinks, and player documentation for meowcaller-js." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/png" href="../../assets/swasser-round.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <div class="docs-layout">
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-header">
+          <a href="../">meowcaller-js</a>
+        </div>
+        <nav class="docs-nav">
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Getting Started</p>
+            <a href="index.html">Introduction</a>
+            <a href="installation.html">Installation</a>
+            <a href="quick-start.html">Quick Start</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Core</p>
+            <a href="client.html">Client</a>
+            <a href="call.html">Call</a>
+            <a href="events.html">Events</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Media</p>
+            <a href="audio.html" class="active">Audio</a>
+            <a href="video.html">Video</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Reference</p>
+            <a href="api-reference.html">API Reference</a>
+            <a href="examples.html">Examples</a>
+            <a href="differences.html">Differences from Go</a>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <div class="docs-breadcrumb">
+          <a href="../">meowcaller-js</a> / <span>Docs</span> / <span>Audio</span>
+        </div>
+
+        <article>
+          <h1>Audio</h1>
+
+          <p>meowcaller-js works with 16 kHz mono float32 PCM audio. Each frame is 960 samples (60 ms).</p>
+
+          <h2>Constants</h2>
+          <pre><code>import { SampleRate, FrameSamples } from 'meowcaller-js';
+
+console.log(SampleRate);   // 16000
+console.log(FrameSamples); // 960</code></pre>
+
+          <h2>Sources</h2>
+          <p>A source provides audio frames to the player. It implements:</p>
+          <pre><code>interface AudioSource {
+  readFrame(): Promise&lt;Float32Array | null&gt;;
+  close(): Promise&lt;void&gt;;
+}</code></pre>
+          <p>Return <code>null</code> from <code>readFrame()</code> to signal end-of-stream.</p>
+
+          <h3><code>WAVFile(path)</code></h3>
+          <p>Read and play a WAV file. Handles resampling to 16 kHz and mono downmix automatically.</p>
+          <pre><code>import { WAVFile } from 'meowcaller-js';
+
+const source = await WAVFile('audio.wav');
+call.play(source);</code></pre>
+          <p>Supports:</p>
+          <ul>
+            <li>16-bit PCM WAV files</li>
+            <li>Any sample rate (auto-resampled to 16 kHz)</li>
+            <li>Mono or stereo (downmixed to mono)</li>
+          </ul>
+
+          <h3><code>PCMStream(readable)</code></h3>
+          <p>Read raw signed 16-bit little-endian PCM from a Node.js readable stream.</p>
+          <pre><code>import { createReadStream } from 'fs';
+import { PCMStream } from 'meowcaller-js';
+
+const stream = createReadStream('raw_audio.pcm');
+const source = PCMStream(stream);
+call.play(source);</code></pre>
+
+          <h3><code>SourceFunc(provider)</code></h3>
+          <p>Create a source from a simple async function. The function is called once per frame and should return a <code>Float32Array</code> of 960 samples, or <code>null</code> for EOF.</p>
+          <pre><code>import { SourceFunc } from 'meowcaller-js';
+
+// Generate silence
+const silence = SourceFunc(async () => new Float32Array(960));
+
+// Generate a sine wave
+let phase = 0;
+const tone = SourceFunc(async () => {
+  const frame = new Float32Array(960);
+  for (let i = 0; i &lt; 960; i++) {
+    frame[i] = Math.sin(phase) * 0.3;
+    phase += (2 * Math.PI * 440) / 16000;
+  }
+  return frame;
+});
+
+call.play(tone);</code></pre>
+
+          <h3><code>MP3File(path)</code> / <code>OpusFile(path)</code></h3>
+          <p>Not yet implemented. These throw an error directing you to use <code>PCMStream</code> with an external decoder.</p>
+          <pre><code>// Use a decoder like @breezystack/lamejs or opus-recorder
+// to decode to PCM, then pipe through PCMStream</code></pre>
+
+          <h2>Sinks</h2>
+          <p>A sink receives audio frames from incoming calls. It implements:</p>
+          <pre><code>interface AudioSink {
+  writeFrame(frame: Float32Array): Promise&lt;void&gt;;
+  close(): Promise&lt;void&gt;;
+}</code></pre>
+
+          <h3><code>SinkFunc(fn)</code></h3>
+          <p>Create a sink from a callback function.</p>
+          <pre><code>import { SinkFunc } from 'meowcaller-js';
+
+call.receive(SinkFunc((frame) => {
+  // frame: Float32Array of 960 samples at 16 kHz
+  // do something with the audio data
+}));</code></pre>
+
+          <h2>Player</h2>
+          <p>The <code>Player</code> manages audio playback state.</p>
+          <pre><code>import { NewPlayer, PlayerState } from 'meowcaller-js';
+
+const player = NewPlayer();
+player.play(source);</code></pre>
+
+          <h3><code>NewPlayer()</code></h3>
+          <p>Creates a new player instance.</p>
+
+          <h3>Player methods</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>player.play(source)</code></td><td>Start playing from a source. Closes any previous source.</td></tr>
+              <tr><td><code>player.pause()</code></td><td>Pause playback (state → Paused)</td></tr>
+              <tr><td><code>player.resume()</code></td><td>Resume playback (state → Playing)</td></tr>
+              <tr><td><code>player.stop()</code></td><td>Stop playback and close the source (state → Idle)</td></tr>
+              <tr><td><code>player.state()</code></td><td>Returns current <code>PlayerState</code></td></tr>
+              <tr><td><code>player.onFinish(fn)</code></td><td>Register a callback for when playback ends</td></tr>
+              <tr><td><code>player.nextFrame()</code></td><td>Get the next frame (used internally by the engine)</td></tr>
+            </tbody>
+          </table></div>
+
+          <h3>Player states</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>State</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>PlayerState.Idle</code></td><td>No source or source ended</td></tr>
+              <tr><td><code>PlayerState.Playing</code></td><td>Actively reading frames</td></tr>
+              <tr><td><code>PlayerState.Paused</code></td><td>Paused, will not read frames</td></tr>
+            </tbody>
+          </table></div>
+
+          <h3>Using <code>call.play()</code> vs manual player</h3>
+          <p><code>call.play()</code> is a convenience that creates a player, subscribes it, and starts playback:</p>
+          <pre><code>// This:
+call.play(source);
+
+// Is equivalent to:
+const player = NewPlayer();
+call.subscribe(player);
+player.play(source);</code></pre>
+          <p>Use the manual approach when you need to control playback (pause, resume, stop) later:</p>
+          <pre><code>const player = NewPlayer();
+call.subscribe(player);
+player.play(source);
+
+// Later:
+player.pause();
+// ...
+player.resume();</code></pre>
+
+          <h2>Audio format</h2>
+          <p>All audio in meowcaller-js is:</p>
+          <ul>
+            <li><strong>Sample rate:</strong> 16,000 Hz</li>
+            <li><strong>Channels:</strong> Mono</li>
+            <li><strong>Bit depth:</strong> 32-bit float</li>
+            <li><strong>Frame size:</strong> 960 samples (60 ms at 16 kHz)</li>
+            <li><strong>Encoding:</strong> Float32Array where 1.0 = maximum amplitude</li>
+          </ul>
+          <p>The MLow codec (WhatsApp's default) operates on this format. The encoder/decoder is currently a passthrough stub — the raw PCM bytes are sent as-is until a WASM port of the Go MLow codec is available.</p>
+        </article>
+      </main>
+    </div>
+
+    <button class="docs-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+
+    <script>
+      const sidebar = document.querySelector('.docs-sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+          sidebar.classList.remove('open');
+        }
+      });
+    </script>
+  </body>
+</html>

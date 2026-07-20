@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Call | meowcaller-js</title>
+    <meta name="description" content="Call class API reference for meowcaller-js." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/png" href="../../assets/swasser-round.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <div class="docs-layout">
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-header">
+          <a href="../">meowcaller-js</a>
+        </div>
+        <nav class="docs-nav">
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Getting Started</p>
+            <a href="index.html">Introduction</a>
+            <a href="installation.html">Installation</a>
+            <a href="quick-start.html">Quick Start</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Core</p>
+            <a href="client.html">Client</a>
+            <a href="call.html" class="active">Call</a>
+            <a href="events.html">Events</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Media</p>
+            <a href="audio.html">Audio</a>
+            <a href="video.html">Video</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Reference</p>
+            <a href="api-reference.html">API Reference</a>
+            <a href="examples.html">Examples</a>
+            <a href="differences.html">Differences from Go</a>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <div class="docs-breadcrumb">
+          <a href="../">meowcaller-js</a> / <span>Docs</span> / <span>Call</span>
+        </div>
+
+        <article>
+          <h1>Call</h1>
+
+          <p>A <code>Call</code> represents an active voice or video call. You get one from <code>client.call()</code> (outbound) or from the <code>onIncomingCall</code> callback (inbound).</p>
+
+          <h2>Properties</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>call.id</code></td><td><code>string</code></td><td>Unique call identifier (32-char hex)</td></tr>
+              <tr><td><code>call.peer</code></td><td><code>string</code></td><td>Peer's JID or phone number</td></tr>
+            </tbody>
+          </table></div>
+
+          <h2>Methods</h2>
+
+          <h3>Identity</h3>
+
+          <h4><code>call.id()</code></h4>
+          <p>Returns the call's unique ID.</p>
+
+          <h4><code>call.peer()</code></h4>
+          <p>Returns the peer's identifier (JID).</p>
+
+          <h4><code>call.state()</code></h4>
+          <p>Returns the current <code>CallPhase</code> symbol.</p>
+          <pre><code>if (call.state() === CallPhase.Active) {
+  console.log('call is active');
+}</code></pre>
+
+          <h4><code>call.isVideo()</code></h4>
+          <p>Returns <code>true</code> if the call has video.</p>
+
+          <h3>Lifecycle</h3>
+
+          <h4><code>call.answer()</code></h4>
+          <p>Answer an incoming call. Sends a preaccept and starts the media pipeline.</p>
+          <pre><code>client.onIncomingCall((call) => {
+  call.answer();
+});</code></pre>
+
+          <h4><code>call.reject()</code></h4>
+          <p>Reject an incoming call. Sends a reject stanza and cleans up.</p>
+          <pre><code>client.onIncomingCall((call) => {
+  call.reject();
+});</code></pre>
+
+          <h4><code>call.hangup()</code></h4>
+          <p>Hang up any active call (inbound or outbound). Sends a terminate stanza and cleans up.</p>
+          <pre><code>call.hangup();</code></pre>
+
+          <h3>Audio</h3>
+
+          <h4><code>call.play(source)</code></h4>
+          <p>Play audio into the call. Creates a new <code>Player</code>, subscribes it, and starts playback.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>source</code></td><td><code>AudioSource</code></td><td>Audio source (WAVFile, PCMStream, SourceFunc)</td></tr>
+            </tbody>
+          </table></div>
+          <p>Returns the <code>Player</code> instance.</p>
+          <pre><code>import { WAVFile } from 'meowcaller-js';
+
+const player = call.play(await WAVFile('music.wav'));
+player.onFinish(() => console.log('done playing'));</code></pre>
+
+          <h4><code>call.subscribe(player)</code></h4>
+          <p>Attach an existing <code>Player</code> to the call.</p>
+          <pre><code>import { NewPlayer, SourceFunc } from 'meowcaller-js';
+
+const player = NewPlayer();
+player.play(SourceFunc(async () => new Float32Array(960)));
+call.subscribe(player);</code></pre>
+
+          <h4><code>call.receive(sink)</code></h4>
+          <p>Set the audio sink for incoming audio. The sink's <code>writeFrame</code> is called with each decoded audio frame.</p>
+          <pre><code>import { SinkFunc } from 'meowcaller-js';
+
+call.receive(SinkFunc((frame) => {
+  // frame: Float32Array of 960 samples at 16 kHz
+  processAudio(frame);
+}));</code></pre>
+
+          <h3>Video</h3>
+
+          <h4><code>call.receiveVideo(sink)</code></h4>
+          <p>Set the video sink for incoming video.</p>
+          <pre><code>import { VideoSinkFunc } from 'meowcaller-js';
+
+call.receiveVideo(VideoSinkFunc((au) => {
+  // au: Uint8Array containing H.264 Annex B data
+  processVideo(au);
+}));</code></pre>
+
+          <h4><code>call.sendVideo(accessUnit)</code></h4>
+          <p>Send a video frame (H.264 Annex B access unit).</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>accessUnit</code></td><td><code>Uint8Array</code></td><td>H.264 Annex B data</td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>call.sendVideo(h264Frame);</code></pre>
+
+          <div class="callout callout-warn">
+            <span class="callout-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm1 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+            </span>
+            <span>Video TX is not yet wired up in the media pipeline. This will throw until the video send path is implemented.</span>
+          </div>
+
+          <h3>Events</h3>
+
+          <h4><code>call.onReady(fn)</code></h4>
+          <p>Fired when the first inbound RTP packet is decoded — the call is active and media is flowing.</p>
+          <pre><code>call.onReady(() => {
+  console.log('media flowing');
+});</code></pre>
+
+          <h4><code>call.onEnd(fn)</code></h4>
+          <p>Fired when the call ends for any reason.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Callback arg</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>reason</code></td><td><code>string</code></td><td><code>'hangup'</code>, <code>'rejected'</code>, <code>'remote_ended'</code>, or <code>'server:&lt;error&gt;'</code></td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>call.onEnd((reason) => {
+  console.log('call ended:', reason);
+});</code></pre>
+
+          <h4><code>call.onStateChange(fn)</code></h4>
+          <p>Fired on every phase transition.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Callback arg</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>phase</code></td><td><code>symbol</code></td><td>The new <code>CallPhase</code></td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>import { CallPhase } from 'meowcaller-js';
+
+call.onStateChange((phase) => {
+  if (phase === CallPhase.Active) console.log('connected');
+  if (phase === CallPhase.Ended) console.log('done');
+});</code></pre>
+
+          <h4><code>call.onVideoState(fn)</code></h4>
+          <p>Fired when video state changes.</p>
+          <pre><code>call.onVideoState((vs) => {
+  console.log('video active:', vs.Active);
+});</code></pre>
+
+          <h2>Call phases</h2>
+          <p>A call progresses through these states:</p>
+          <pre><code>Idle → Calling → Ringing → Connecting → Active → Ended</code></pre>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>Phase</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>CallPhase.Idle</code></td><td>Outbound call created, not yet sent</td></tr>
+              <tr><td><code>CallPhase.Calling</code></td><td>Offer sent, waiting for response</td></tr>
+              <tr><td><code>CallPhase.Ringing</code></td><td>Remote phone ringing (inbound calls start here)</td></tr>
+              <tr><td><code>CallPhase.Connecting</code></td><td>Call accepted, media starting</td></tr>
+              <tr><td><code>CallPhase.Active</code></td><td>First RTP decoded, media flowing</td></tr>
+              <tr><td><code>CallPhase.Ended</code></td><td>Call finished (any reason)</td></tr>
+            </tbody>
+          </table></div>
+
+          <p>Invalid transitions are silently ignored and return <code>false</code>.</p>
+        </article>
+      </main>
+    </div>
+
+    <button class="docs-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+
+    <script>
+      const sidebar = document.querySelector('.docs-sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+          sidebar.classList.remove('open');
+        }
+      });
+    </script>
+  </body>
+</html>

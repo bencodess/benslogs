@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video | meowcaller-js</title>
+    <meta name="description" content="Video support documentation for meowcaller-js." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/png" href="../../assets/swasser-round.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <div class="docs-layout">
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-header">
+          <a href="../">meowcaller-js</a>
+        </div>
+        <nav class="docs-nav">
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Getting Started</p>
+            <a href="index.html">Introduction</a>
+            <a href="installation.html">Installation</a>
+            <a href="quick-start.html">Quick Start</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Core</p>
+            <a href="client.html">Client</a>
+            <a href="call.html">Call</a>
+            <a href="events.html">Events</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Media</p>
+            <a href="audio.html">Audio</a>
+            <a href="video.html" class="active">Video</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Reference</p>
+            <a href="api-reference.html">API Reference</a>
+            <a href="examples.html">Examples</a>
+            <a href="differences.html">Differences from Go</a>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <div class="docs-breadcrumb">
+          <a href="../">meowcaller-js</a> / <span>Docs</span> / <span>Video</span>
+        </div>
+
+        <article>
+          <h1>Video</h1>
+
+          <p>meowcaller-js supports H.264 video in Annex B format. Video support is less mature than audio — signaling works but the media send path is not fully wired.</p>
+
+          <h2>Sending video</h2>
+
+          <h3><code>call.sendVideo(accessUnit)</code></h3>
+          <p>Send an H.264 access unit (one or more NAL units in Annex B format) to the remote peer.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>accessUnit</code></td><td><code>Uint8Array</code></td><td>H.264 Annex B data</td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>// Send a raw H.264 frame
+call.sendVideo(h264Frame);</code></pre>
+
+          <div class="callout callout-warn">
+            <span class="callout-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm1 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+            </span>
+            <span>The video send pipeline is not yet initialized in the media layer. This method will throw until video TX support is added.</span>
+          </div>
+
+          <h2>Receiving video</h2>
+
+          <h3><code>call.receiveVideo(sink)</code></h3>
+          <p>Set a sink to receive incoming video frames.</p>
+          <pre><code>import { VideoSinkFunc } from 'meowcaller-js';
+
+call.receiveVideo(VideoSinkFunc((au) => {
+  // au: Uint8Array containing H.264 Annex B data
+  console.log('video frame:', au.length, 'bytes');
+}));</code></pre>
+
+          <h2>Video sink adapters</h2>
+
+          <h3><code>VideoSinkFunc(fn)</code></h3>
+          <p>Create a video sink from a callback.</p>
+          <pre><code>import { VideoSinkFunc } from 'meowcaller-js';
+
+const sink = VideoSinkFunc((au) => {
+  // au is a Uint8Array with H.264 Annex B data
+  processFrame(au);
+});
+
+call.receiveVideo(sink);</code></pre>
+
+          <h3><code>AnnexBRecorder(path)</code></h3>
+          <p>Record incoming H.264 video to a <code>.h264</code> file in Annex B format. The file can be played with ffplay or muxed with ffmpeg.</p>
+          <pre><code>import { AnnexBRecorder } from 'meowcaller-js';
+
+const recorder = await AnnexBRecorder('output.h264');
+call.receiveVideo(recorder);
+
+// When the call ends:
+await recorder.close();</code></pre>
+          <p>The recorder returns an object with:</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>recorder.writeVideo(au)</code></td><td>Write an Annex B access unit</td></tr>
+              <tr><td><code>recorder.close()</code></td><td>Close the file</td></tr>
+            </tbody>
+          </table></div>
+
+          <h2>H.264 depacketizer</h2>
+          <p>The <code>H264Depacketizer</code> class parses Annex B byte streams into individual NAL units.</p>
+          <pre><code>import { H264Depacketizer } from 'meowcaller-js/src/rtp.js';
+
+const depacketizer = new H264Depacketizer();
+const nalus = depacketizer.Depacketize(annexBData);
+
+for (const nalu of nalus) {
+  // each nalu is a Uint8Array containing one NAL unit (without start code)
+  const naluType = nalu[0] &amp; 0x1F;
+  console.log('NALU type:', naluType);
+}</code></pre>
+
+          <h2>NAL unit types</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Type</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Non-IDR slice (P-frame)</td></tr>
+              <tr><td>5</td><td>IDR slice (I-frame)</td></tr>
+              <tr><td>6</td><td>SEI</td></tr>
+              <tr><td>7</td><td>SPS</td></tr>
+              <tr><td>8</td><td>PPS</td></tr>
+            </tbody>
+          </table></div>
+
+          <h2>Video state events</h2>
+          <pre><code>call.onVideoState((vs) => {
+  console.log('video active:', vs.Active);
+  console.log('upgrade requested:', vs.Upgrade);
+});</code></pre>
+
+          <h2>Limitations</h2>
+          <ul>
+            <li>Video TX is not wired up in the media pipeline — <code>sendVideo</code> will throw</li>
+            <li>No VP8/VP9 support, only H.264</li>
+            <li>No simulcast or SVC</li>
+            <li>The depacketizer handles single NALU and FU-A fragmentation only</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+
+    <button class="docs-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+
+    <script>
+      const sidebar = document.querySelector('.docs-sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+          sidebar.classList.remove('open');
+        }
+      });
+    </script>
+  </body>
+</html>

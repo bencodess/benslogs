@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events | meowcaller-js</title>
+    <meta name="description" content="Event system documentation for meowcaller-js." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/png" href="../../assets/swasser-round.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <div class="docs-layout">
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-header">
+          <a href="../">meowcaller-js</a>
+        </div>
+        <nav class="docs-nav">
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Getting Started</p>
+            <a href="index.html">Introduction</a>
+            <a href="installation.html">Installation</a>
+            <a href="quick-start.html">Quick Start</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Core</p>
+            <a href="client.html">Client</a>
+            <a href="call.html">Call</a>
+            <a href="events.html" class="active">Events</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Media</p>
+            <a href="audio.html">Audio</a>
+            <a href="video.html">Video</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Reference</p>
+            <a href="api-reference.html">API Reference</a>
+            <a href="examples.html">Examples</a>
+            <a href="differences.html">Differences from Go</a>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <div class="docs-breadcrumb">
+          <a href="../">meowcaller-js</a> / <span>Docs</span> / <span>Events</span>
+        </div>
+
+        <article>
+          <h1>Events</h1>
+
+          <p>meowcaller-js uses callback-based events rather than EventEmitter. You register handlers on <code>Call</code> and <code>Client</code> objects.</p>
+
+          <h2>Client events</h2>
+
+          <h3><code>client.onIncomingCall(fn)</code></h3>
+          <p>Fired when a call offer arrives from WhatsApp.</p>
+          <pre><code>client.onIncomingCall((call) => {
+  console.log('call from', call.peer());
+  call.answer();
+});</code></pre>
+          <p>The callback receives a <code>Call</code> object already in the <code>Ringing</code> phase. A preaccept is sent automatically before the callback fires.</p>
+
+          <h2>Call events</h2>
+
+          <h3><code>call.onEnd(fn)</code></h3>
+          <p>Fired when the call ends. The reason string indicates why:</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Reason</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>'hangup'</code></td><td>You or the remote party hung up</td></tr>
+              <tr><td><code>'rejected'</code></td><td>The remote party rejected the call</td></tr>
+              <tr><td><code>'remote_ended'</code></td><td>The remote party ended the call</td></tr>
+              <tr><td><code>'server:&lt;error&gt;'</code></td><td>WhatsApp server rejected the offer</td></tr>
+            </tbody>
+          </table></div>
+          <pre><code>call.onEnd((reason) => {
+  if (reason === 'hangup') console.log('you hung up');
+  else if (reason === 'rejected') console.log('call rejected');
+  else console.log('ended:', reason);
+});</code></pre>
+
+          <h3><code>call.onReady(fn)</code></h3>
+          <p>Fired when the first inbound RTP packet is successfully decoded. This means the media pipeline is working and audio is flowing.</p>
+          <pre><code>call.onReady(() => {
+  console.log('call is active — audio flowing');
+});</code></pre>
+
+          <h3><code>call.onStateChange(fn)</code></h3>
+          <p>Fired on every phase transition. The callback receives the new <code>CallPhase</code> symbol.</p>
+          <pre><code>import { CallPhase } from 'meowcaller-js';
+
+call.onStateChange((phase) => {
+  if (phase === CallPhase.Ringing) console.log('ringing...');
+  if (phase === CallPhase.Active) console.log('connected');
+  if (phase === CallPhase.Ended) console.log('finished');
+});</code></pre>
+
+          <h3><code>call.onVideoState(fn)</code></h3>
+          <p>Fired when video state changes (e.g., video upgrade requested).</p>
+          <pre><code>call.onVideoState((vs) => {
+  if (vs.Active) console.log('video is active');
+  if (vs.Upgrade) console.log('video upgrade requested');
+});</code></pre>
+
+          <h2>Player events</h2>
+
+          <h3><code>player.onFinish(fn)</code></h3>
+          <p>Fired when the audio source reaches EOF or encounters an error.</p>
+          <pre><code>const player = call.play(source);
+player.onFinish(() => {
+  console.log('audio finished playing');
+});</code></pre>
+
+          <h2>Event ordering</h2>
+
+          <p>For an outbound call, events fire in this order:</p>
+          <ol>
+            <li><code>onStateChange(Calling)</code> — offer sent</li>
+            <li><code>onStateChange(Ringing)</code> — remote phone ringing</li>
+            <li><code>onStateChange(Connecting)</code> — call answered</li>
+            <li><code>onReady()</code> — first RTP decoded</li>
+            <li><code>onStateChange(Active)</code> — same time as onReady</li>
+            <li><code>onEnd(reason)</code> — call finished</li>
+            <li><code>onStateChange(Ended)</code> — same time as onEnd</li>
+          </ol>
+
+          <p>For an inbound call:</p>
+          <ol>
+            <li><code>onIncomingCall(call)</code> — offer received, already in Ringing phase</li>
+            <li><code>call.answer()</code> → <code>onStateChange(Connecting)</code></li>
+            <li><code>onReady()</code> → <code>onStateChange(Active)</code></li>
+            <li><code>onEnd(reason)</code> → <code>onStateChange(Ended)</code></li>
+          </ol>
+        </article>
+      </main>
+    </div>
+
+    <button class="docs-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+
+    <script>
+      const sidebar = document.querySelector('.docs-sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+          sidebar.classList.remove('open');
+        }
+      });
+    </script>
+  </body>
+</html>

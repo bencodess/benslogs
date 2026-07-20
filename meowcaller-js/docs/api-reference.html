@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Reference | meowcaller-js</title>
+    <meta name="description" content="Complete API reference for meowcaller-js." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/png" href="../../assets/swasser-round.png?v=2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <div class="docs-layout">
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-header">
+          <a href="../">meowcaller-js</a>
+        </div>
+        <nav class="docs-nav">
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Getting Started</p>
+            <a href="index.html">Introduction</a>
+            <a href="installation.html">Installation</a>
+            <a href="quick-start.html">Quick Start</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Core</p>
+            <a href="client.html">Client</a>
+            <a href="call.html">Call</a>
+            <a href="events.html">Events</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Media</p>
+            <a href="audio.html">Audio</a>
+            <a href="video.html">Video</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Reference</p>
+            <a href="api-reference.html" class="active">API Reference</a>
+            <a href="examples.html">Examples</a>
+            <a href="differences.html">Differences from Go</a>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <div class="docs-breadcrumb">
+          <a href="../">meowcaller-js</a> / <span>Docs</span> / <span>API Reference</span>
+        </div>
+
+        <article>
+          <h1>API Reference</h1>
+
+          <h2>Exports</h2>
+          <pre><code>import {
+  Client,
+  Call,
+  CallSession, CallDirection, CallPhase,
+  NewPlayer, PlayerState,
+  PCMStream, WAVFile, SinkFunc, SourceFunc,
+  AnnexBRecorder, VideoSinkFunc,
+  CallRegistry,
+  AudioCodec,
+  WithLogger, WithDiagnostics,
+} from 'meowcaller-js';</code></pre>
+
+          <hr />
+
+          <h2>Client</h2>
+          <pre><code>new Client(wa, opts?)</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>connect()</code></td><td><code>this</code></td><td>Install event handlers on the Baileys socket</td></tr>
+              <tr><td><code>call(ctx, target)</code></td><td><code>Promise&lt;Call&gt;</code></td><td>Place an outbound call</td></tr>
+              <tr><td><code>onIncomingCall(fn)</code></td><td><code>void</code></td><td>Register incoming call handler</td></tr>
+              <tr><td><code>listCalls()</code></td><td><code>(Call|CallSession)[]</code></td><td>List all active calls</td></tr>
+              <tr><td><code>getCall(callID)</code></td><td><code>Call|CallSession|null</code></td><td>Look up a call by ID</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>Call</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>id()</code></td><td><code>string</code></td><td>Call identifier</td></tr>
+              <tr><td><code>peer()</code></td><td><code>string</code></td><td>Peer JID</td></tr>
+              <tr><td><code>state()</code></td><td><code>symbol</code></td><td>Current <code>CallPhase</code></td></tr>
+              <tr><td><code>isVideo()</code></td><td><code>boolean</code></td><td>Whether the call has video</td></tr>
+              <tr><td><code>answer()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Answer an incoming call</td></tr>
+              <tr><td><code>reject()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Reject an incoming call</td></tr>
+              <tr><td><code>hangup()</code></td><td><code>Promise&lt;void&gt;</code></td><td>Hang up the call</td></tr>
+              <tr><td><code>play(source)</code></td><td><code>Player</code></td><td>Play audio into the call</td></tr>
+              <tr><td><code>subscribe(player)</code></td><td><code>void</code></td><td>Attach a player to the call</td></tr>
+              <tr><td><code>receive(sink)</code></td><td><code>void</code></td><td>Set the incoming audio sink</td></tr>
+              <tr><td><code>receiveVideo(sink)</code></td><td><code>void</code></td><td>Set the incoming video sink</td></tr>
+              <tr><td><code>sendVideo(au)</code></td><td><code>void</code></td><td>Send H.264 Annex B data</td></tr>
+              <tr><td><code>onReady(fn)</code></td><td><code>void</code></td><td>First RTP decoded callback</td></tr>
+              <tr><td><code>onEnd(fn)</code></td><td><code>void</code></td><td>Call ended callback</td></tr>
+              <tr><td><code>onStateChange(fn)</code></td><td><code>void</code></td><td>Phase transition callback</td></tr>
+              <tr><td><code>onVideoState(fn)</code></td><td><code>void</code></td><td>Video state change callback</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>CallSession</h2>
+          <p>Internal session object tracking call state.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>callID</code></td><td><code>string</code></td><td>Call identifier</td></tr>
+              <tr><td><code>peerJID</code></td><td><code>string</code></td><td>Peer JID</td></tr>
+              <tr><td><code>callCreator</code></td><td><code>string</code></td><td>Creator JID</td></tr>
+              <tr><td><code>direction</code></td><td><code>symbol</code></td><td><code>CallDirection.Incoming</code> or <code>Outgoing</code></td></tr>
+              <tr><td><code>isVideo</code></td><td><code>boolean</code></td><td>Whether video is present</td></tr>
+              <tr><td><code>phase_()</code></td><td><code>symbol</code></td><td>Current phase (note the underscore — avoids conflict with <code>phase</code> property)</td></tr>
+              <tr><td><code>isActive()</code></td><td><code>boolean</code></td><td><code>true</code> if phase is Active</td></tr>
+              <tr><td><code>isEnded()</code></td><td><code>boolean</code></td><td><code>true</code> if phase is Ended</td></tr>
+              <tr><td><code>description()</code></td><td><code>string</code></td><td>Human-readable description</td></tr>
+              <tr><td><code>transitionTo(next)</code></td><td><code>boolean</code></td><td>Attempt a phase transition</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>CallPhase</h2>
+          <pre><code>CallPhase.Idle      // Outbound call created
+CallPhase.Calling   // Offer sent
+CallPhase.Ringing   // Remote ringing (inbound starts here)
+CallPhase.Connecting // Call accepted
+CallPhase.Active    // Media flowing
+CallPhase.Ended     // Call finished</code></pre>
+
+          <h2>CallDirection</h2>
+          <pre><code>CallDirection.Outgoing
+CallDirection.Incoming</code></pre>
+
+          <hr />
+
+          <h2>Player</h2>
+          <pre><code>NewPlayer()</code></pre>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>play(source)</code></td><td>Start playing a source</td></tr>
+              <tr><td><code>pause()</code></td><td>Pause playback</td></tr>
+              <tr><td><code>resume()</code></td><td>Resume playback</td></tr>
+              <tr><td><code>stop()</code></td><td>Stop and close source</td></tr>
+              <tr><td><code>state()</code></td><td>Current <code>PlayerState</code></td></tr>
+              <tr><td><code>onFinish(fn)</code></td><td>Register finish callback</td></tr>
+              <tr><td><code>nextFrame()</code></td><td>Get next frame (internal)</td></tr>
+            </tbody>
+          </table></div>
+
+          <h2>PlayerState</h2>
+          <pre><code>PlayerState.Idle
+PlayerState.Playing
+PlayerState.Paused</code></pre>
+
+          <hr />
+
+          <h2>Audio</h2>
+
+          <h3>Constants</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Name</th><th>Value</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>SampleRate</code></td><td><code>16000</code></td><td>Audio sample rate in Hz</td></tr>
+              <tr><td><code>FrameSamples</code></td><td><code>960</code></td><td>Samples per frame (60 ms)</td></tr>
+            </tbody>
+          </table></div>
+
+          <h3>Functions</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Function</th><th>Returns</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>WAVFile(path)</code></td><td><code>Promise&lt;AudioSource&gt;</code></td><td>Read a WAV file</td></tr>
+              <tr><td><code>PCMStream(r)</code></td><td><code>AudioSource</code></td><td>Read raw PCM from a stream</td></tr>
+              <tr><td><code>SourceFunc(provider)</code></td><td><code>AudioSource</code></td><td>Create source from callback</td></tr>
+              <tr><td><code>SinkFunc(fn)</code></td><td><code>AudioSink</code></td><td>Create sink from callback</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>Video</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Function</th><th>Returns</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>AnnexBRecorder(path)</code></td><td><code>Promise&lt;VideoSink&gt;</code></td><td>Record H.264 to file</td></tr>
+              <tr><td><code>VideoSinkFunc(fn)</code></td><td><code>VideoSink</code></td><td>Create video sink from callback</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>CallRegistry</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>insert(session, call?)</code></td><td><code>boolean</code></td><td>Register a call</td></tr>
+              <tr><td><code>get(callID)</code></td><td><code>entry|null</code></td><td>Look up an entry</td></tr>
+              <tr><td><code>has(callID)</code></td><td><code>boolean</code></td><td>Check if call exists</td></tr>
+              <tr><td><code>list()</code></td><td><code>(Call|CallSession)[]</code></td><td>List all calls</td></tr>
+              <tr><td><code>remove(callID)</code></td><td><code>boolean</code></td><td>Remove and abort a call</td></tr>
+              <tr><td><code>abortAll()</code></td><td><code>number</code></td><td>Remove all calls, returns count</td></tr>
+              <tr><td><code>activeCount()</code></td><td><code>number</code></td><td>Number of active calls</td></tr>
+              <tr><td><code>phase(callID)</code></td><td><code>[symbol, boolean]</code></td><td>Get call phase</td></tr>
+              <tr><td><code>transition(callID, next)</code></td><td><code>boolean</code></td><td>Transition a call</td></tr>
+              <tr><td><code>snapshot(callID)</code></td><td><code>[obj, boolean]</code></td><td>Get session snapshot</td></tr>
+              <tr><td><code>setMediaTask(callID, cancel)</code></td><td><code>void</code></td><td>Set media abort function</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>Configuration</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Function</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>WithLogger(logger)</code></td><td>Set a pino-compatible logger</td></tr>
+              <tr><td><code>WithDiagnostics(rec)</code></td><td>Set a <code>Recorder</code> for call diagnostics</td></tr>
+            </tbody>
+          </table></div>
+
+          <hr />
+
+          <h2>Codec</h2>
+          <pre><code>AudioCodec.Mlow  // WhatsApp's MLow codec (default)
+AudioCodec.Opus  // Opus codec (alternative)</code></pre>
+          <pre><code>selectAudioCodec(vs) // Returns AudioCodec.Mlow or AudioCodec.Opus</code></pre>
+        </article>
+      </main>
+    </div>
+
+    <button class="docs-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+
+    <script>
+      const sidebar = document.querySelector('.docs-sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+          sidebar.classList.remove('open');
+        }
+      });
+    </script>
+  </body>
+</html>

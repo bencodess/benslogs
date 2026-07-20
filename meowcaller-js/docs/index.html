@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation | meowcaller-js</title>
+    <meta name="description" content="Documentation and API reference for meowcaller-js — WhatsApp VoIP library for Baileys." />
+    <meta name="author" content="bencodess" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/png" href="../../assets/swasser-round.png?v=2" />
+    <meta property="og:title" content="Documentation | meowcaller-js" />
+    <meta property="og:description" content="Documentation and API reference for meowcaller-js." />
+    <meta property="og:image" content="https://benslogs.dev/assets/swasser.png" />
+    <meta property="og:url" content="https://benslogs.dev/meowcaller-js/docs/" />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <div class="docs-layout">
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-header">
+          <a href="../">meowcaller-js</a>
+        </div>
+        <nav class="docs-nav">
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Getting Started</p>
+            <a href="index.html" class="active">Introduction</a>
+            <a href="installation.html">Installation</a>
+            <a href="quick-start.html">Quick Start</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Core</p>
+            <a href="client.html">Client</a>
+            <a href="call.html">Call</a>
+            <a href="events.html">Events</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Media</p>
+            <a href="audio.html">Audio</a>
+            <a href="video.html">Video</a>
+          </div>
+          <div class="docs-nav-group">
+            <p class="docs-nav-group-title">Reference</p>
+            <a href="api-reference.html">API Reference</a>
+            <a href="examples.html">Examples</a>
+            <a href="differences.html">Differences from Go</a>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <div class="docs-breadcrumb">
+          <a href="../">meowcaller-js</a> / <span>Docs</span> / <span>Introduction</span>
+        </div>
+
+        <article>
+          <h1>Introduction</h1>
+
+          <p>
+            meowcaller-js is a JavaScript port of <a href="https://github.com/purpshell/meowcaller">meowcaller</a>
+            — a WhatsApp VoIP library built on top of <a href="https://github.com/WhiskeySockets/Baileys">Baileys</a>.
+          </p>
+          <p>
+            It lets you place and receive WhatsApp voice and video calls from Node.js using the WhatsApp Web protocol.
+            No native bindings, no CGO, no WebRTC dependency — pure JavaScript.
+          </p>
+
+          <h2>What it does</h2>
+          <ul>
+            <li><strong>Call signaling</strong> — offer, accept, reject, terminate, preaccept</li>
+            <li><strong>Call lifecycle</strong> — state machine tracking idle → calling → ringing → connecting → active → ended</li>
+            <li><strong>Media pipeline</strong> — STUN allocation, SRTP key derivation, RTP packetization</li>
+            <li><strong>Audio adapters</strong> — play PCM streams, WAV files, or custom frame generators into calls; receive audio via sinks</li>
+            <li><strong>Video adapters</strong> — send H.264 Annex B access units; record incoming video</li>
+            <li><strong>Call registry</strong> — track active calls, clean up media tasks on hangup</li>
+          </ul>
+
+          <h2>What it doesn't do (yet)</h2>
+          <ul>
+            <li><strong>MLow codec</strong> — the encoder/decoder is a passthrough stub. Needs a WASM port from the Go original.</li>
+            <li><strong>DTLS transport</strong> — the relay layer currently communicates directly via STUN + SRTP over UDP. A proper DTLS layer needs a native addon or WebRTC bridge.</li>
+            <li><strong>Signal Protocol encryption</strong> — call key encryption is simplified. Production use requires encrypting via Signal sessions.</li>
+          </ul>
+
+          <h2>Status</h2>
+          <p>
+            <strong>Experimental.</strong> Signaling is fully ported. Media relay works partially depending on WhatsApp's relay server acceptance policies.
+          </p>
+
+          <h2>Requirements</h2>
+          <ul>
+            <li>Node.js 20+</li>
+            <li>A Baileys socket connected to WhatsApp</li>
+            <li><code>@whiskeysockets/baileys</code> ^7.0.0</li>
+          </ul>
+        </article>
+      </main>
+    </div>
+
+    <button class="docs-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+
+    <script>
+      const sidebar = document.querySelector('.docs-sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+          sidebar.classList.remove('open');
+        }
+      });
+    </script>
+  </body>
+</html>
