@@ -94,12 +94,17 @@
       }
 
       .drop {
-        width: var(--drop-w, 11px);
-        height: var(--drop-h, 17px);
-        margin-left: calc(var(--drop-w, 11px) / -2);
-        margin-top: calc(var(--drop-h, 17px) / -2);
-        border-radius: 50% 50% 50% 0;
-        background: linear-gradient(165deg, var(--drop-core), var(--drop-fade));
+        width: 11px;
+        height: 17px;
+        margin-left: -5.5px;
+        margin-top: -8px;
+        border-radius: var(--br-tl, 50%) var(--br-tr, 50%) var(--br-br, 50%)
+          var(--br-bl, 0);
+        background: linear-gradient(
+          var(--grad, 165deg),
+          var(--drop-core),
+          var(--drop-fade)
+        );
         box-shadow: 0 0 10px var(--drop-fade);
         filter: blur(var(--drop-blur, 0px));
         animation: fall var(--dur) var(--delay) ease-in infinite;
@@ -108,12 +113,12 @@
       .drop::after {
         content: "";
         position: absolute;
-        top: 14%;
-        left: 18%;
-        width: 26%;
-        height: 26%;
+        top: var(--hl-top, 14%);
+        left: var(--hl-left, 18%);
+        width: var(--hl-size, 26%);
+        height: var(--hl-size, 26%);
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, var(--hl-alpha, 0.85));
       }
 
       .ripple {
@@ -127,10 +132,10 @@
       }
 
       .splash {
-        width: calc(var(--drop-w, 10px) * 1.4);
-        height: calc(var(--drop-w, 10px) * 1.4);
-        margin-left: calc(var(--drop-w, 10px) * -0.7);
-        margin-top: calc(var(--drop-w, 10px) * -0.7);
+        width: 10px;
+        height: 10px;
+        margin-left: -5px;
+        margin-top: -5px;
         border-radius: 50%;
         background: var(--ripple);
         animation: splash var(--dur) var(--delay) ease-out infinite;
@@ -151,12 +156,19 @@
         --x: 16%;
         --dur: 7.5s;
         --delay: 2.4s;
-        --drop-w: 7px;
-        --drop-h: 11px;
-        --drop-alpha: 0.55;
-        --drop-blur: 0.7px;
+        --br-tl: 50%;
+        --br-tr: 50%;
+        --br-br: 50%;
+        --br-bl: 0%;
+        --grad: 165deg;
+        --hl-top: 14%;
+        --hl-left: 18%;
+        --hl-size: 26%;
+        --hl-alpha: 0.85;
         --rot: -38deg;
         --fall-dist: 38vh;
+        --drop-alpha: 0.55;
+        --drop-blur: 0.7px;
         --rip-alpha: 0.35;
         --rip-scale: 1.2;
       }
@@ -165,12 +177,19 @@
         --x: 78%;
         --dur: 9.2s;
         --delay: 4.9s;
-        --drop-w: 15px;
-        --drop-h: 23px;
-        --drop-alpha: 1;
-        --drop-blur: 0px;
+        --br-tl: 50%;
+        --br-tr: 50%;
+        --br-br: 50%;
+        --br-bl: 16%;
+        --grad: 200deg;
+        --hl-top: 22%;
+        --hl-left: 24%;
+        --hl-size: 30%;
+        --hl-alpha: 0.7;
         --rot: -50deg;
         --fall-dist: 54vh;
+        --drop-alpha: 1;
+        --drop-blur: 0px;
         --rip-alpha: 0.75;
         --rip-scale: 2.3;
       }
@@ -179,12 +198,19 @@
         --x: 38%;
         --dur: 8.1s;
         --delay: 7.2s;
-        --drop-w: 11px;
-        --drop-h: 17px;
-        --drop-alpha: 0.8;
-        --drop-blur: 0.3px;
+        --br-tl: 56%;
+        --br-tr: 56%;
+        --br-br: 44%;
+        --br-bl: 0%;
+        --grad: 150deg;
+        --hl-top: 10%;
+        --hl-left: 16%;
+        --hl-size: 24%;
+        --hl-alpha: 0.9;
         --rot: -45deg;
         --fall-dist: 46vh;
+        --drop-alpha: 0.8;
+        --drop-blur: 0.3px;
         --rip-alpha: 0.5;
         --rip-scale: 1.8;
       }
@@ -193,12 +219,19 @@
         --x: 61%;
         --dur: 8.8s;
         --delay: 9s;
-        --drop-w: 6px;
-        --drop-h: 9px;
-        --drop-alpha: 0.5;
-        --drop-blur: 1px;
+        --br-tl: 50%;
+        --br-tr: 64%;
+        --br-br: 38%;
+        --br-bl: 0%;
+        --grad: 180deg;
+        --hl-top: 16%;
+        --hl-left: 26%;
+        --hl-size: 22%;
+        --hl-alpha: 0.75;
         --rot: -58deg;
         --fall-dist: 30vh;
+        --drop-alpha: 0.5;
+        --drop-blur: 1px;
         --rip-alpha: 0.3;
         --rip-scale: 1.1;
       }
