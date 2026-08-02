@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "supabase/functions/**"
-      - "supabase/config.toml"
+      - "old/supabase/functions/**"
+      - "old/supabase/config.toml"
   workflow_dispatch:
 
 jobs:
@@ -20,3 +20,4 @@ jobs:
         with:
           version: latest
       - run: supabase functions deploy --project-ref $PROJECT_ID
+        working-directory: old
