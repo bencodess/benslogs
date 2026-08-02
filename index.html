@@ -32,14 +32,17 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      .spline {
+      .halo {
         position: fixed;
         inset: 0;
-        width: 100%;
-        height: 100%;
         z-index: 0;
-        opacity: 0.28;
-        pointer-events: none;
+        background:
+          radial-gradient(
+            58% 58% at 50% 44%,
+            rgba(17, 17, 17, 0.07),
+            transparent 70%
+          );
+        animation: breathe 9s ease-in-out infinite;
       }
 
       main {
@@ -97,6 +100,18 @@
         }
       }
 
+      @keyframes breathe {
+        0%,
+        100% {
+          opacity: 0.6;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.07);
+        }
+      }
+
       @media (prefers-color-scheme: dark) {
         body {
           background: #0b0b0b;
@@ -106,10 +121,19 @@
         p {
           color: #777;
         }
+
+        .halo {
+          background:
+            radial-gradient(
+              58% 58% at 50% 44%,
+              rgba(255, 255, 255, 0.08),
+              transparent 70%
+            );
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .spline {
+        .halo {
           display: none;
         }
 
@@ -120,7 +144,7 @@
     </style>
   </head>
   <body>
-    <canvas id="spline" class="spline" aria-hidden="true"></canvas>
+    <div class="halo" aria-hidden="true"></div>
     <main>
       <h1>BensLogs</h1>
       <p>Building.</p>
@@ -128,25 +152,5 @@
         <a href="/old/">Previous site</a>
       </p>
     </main>
-
-    <script type="module">
-      const SCENE_URL =
-        "https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode";
-      const canvas = document.getElementById("spline");
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-      if (canvas && !reduced.matches) {
-        import("https://unpkg.com/@splinetool/runtime@1.0.93/build/runtime.js")
-          .then(({ Application }) => {
-            const spline = new Application(canvas);
-            spline.load(SCENE_URL).catch(() => {
-              canvas.hidden = true;
-            });
-          })
-          .catch(() => {
-            canvas.hidden = true;
-          });
-      }
-    </script>
   </body>
 </html>
