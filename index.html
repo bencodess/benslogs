@@ -45,6 +45,62 @@
         animation: breathe 9s ease-in-out infinite;
       }
 
+      .water {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        color: #111;
+        pointer-events: none;
+      }
+
+      .drop,
+      .ripple {
+        position: absolute;
+        left: var(--x);
+        top: 72vh;
+      }
+
+      .drop {
+        width: 8px;
+        height: 11px;
+        margin-left: -4px;
+        margin-top: -5px;
+        border-radius: 50% 50% 50% 0;
+        background: currentColor;
+        animation: fall var(--dur) var(--delay) ease-in infinite;
+      }
+
+      .ripple {
+        width: 80px;
+        height: 80px;
+        margin-left: -40px;
+        margin-top: -40px;
+        border: 1px solid currentColor;
+        border-radius: 50%;
+        animation: ripple var(--dur) var(--delay) ease-out infinite;
+      }
+
+      .d1,
+      .r1 {
+        --x: 18%;
+        --dur: 7.5s;
+        --delay: 0s;
+      }
+
+      .d2,
+      .r2 {
+        --x: 74%;
+        --dur: 9s;
+        --delay: 2.6s;
+      }
+
+      .d3,
+      .r3 {
+        --x: 46%;
+        --dur: 8.4s;
+        --delay: 5.2s;
+      }
+
       main {
         position: relative;
         z-index: 1;
@@ -112,6 +168,43 @@
         }
       }
 
+      @keyframes fall {
+        0% {
+          transform: translateY(-45vh) rotate(-45deg);
+          opacity: 0;
+        }
+        4% {
+          opacity: 0.55;
+        }
+        28% {
+          transform: translateY(0) rotate(-45deg);
+          opacity: 0.55;
+        }
+        34% {
+          transform: translateY(0) rotate(-45deg);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0) rotate(-45deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: scale(0.05);
+          opacity: 0;
+        }
+        28% {
+          transform: scale(0.15);
+          opacity: 0.35;
+        }
+        100% {
+          transform: scale(1.6);
+          opacity: 0;
+        }
+      }
+
       @media (prefers-color-scheme: dark) {
         body {
           background: #0b0b0b;
@@ -130,10 +223,15 @@
               transparent 70%
             );
         }
+
+        .water {
+          color: #fff;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .halo {
+        .halo,
+        .water {
           display: none;
         }
 
@@ -145,6 +243,14 @@
   </head>
   <body>
     <div class="halo" aria-hidden="true"></div>
+    <div class="water" aria-hidden="true">
+      <span class="drop d1"></span>
+      <span class="drop d2"></span>
+      <span class="drop d3"></span>
+      <span class="ripple r1"></span>
+      <span class="ripple r2"></span>
+      <span class="ripple r3"></span>
+    </div>
     <main>
       <h1>BensLogs</h1>
       <p>Building.</p>
