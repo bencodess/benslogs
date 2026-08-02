@@ -94,13 +94,14 @@
       }
 
       .drop {
-        width: 11px;
-        height: 17px;
-        margin-left: -5.5px;
-        margin-top: -8px;
+        width: var(--drop-w, 11px);
+        height: var(--drop-h, 17px);
+        margin-left: calc(var(--drop-w, 11px) / -2);
+        margin-top: calc(var(--drop-h, 17px) / -2);
         border-radius: 50% 50% 50% 0;
         background: linear-gradient(165deg, var(--drop-core), var(--drop-fade));
         box-shadow: 0 0 10px var(--drop-fade);
+        filter: blur(var(--drop-blur, 0px));
         animation: fall var(--dur) var(--delay) ease-in infinite;
       }
 
@@ -126,10 +127,10 @@
       }
 
       .splash {
-        width: 10px;
-        height: 10px;
-        margin-left: -5px;
-        margin-top: -5px;
+        width: calc(var(--drop-w, 10px) * 1.4);
+        height: calc(var(--drop-w, 10px) * 1.4);
+        margin-left: calc(var(--drop-w, 10px) * -0.7);
+        margin-top: calc(var(--drop-w, 10px) * -0.7);
         border-radius: 50%;
         background: var(--ripple);
         animation: splash var(--dur) var(--delay) ease-out infinite;
@@ -150,24 +151,56 @@
         --x: 16%;
         --dur: 7.5s;
         --delay: 2.4s;
+        --drop-w: 7px;
+        --drop-h: 11px;
+        --drop-alpha: 0.55;
+        --drop-blur: 0.7px;
+        --rot: -38deg;
+        --fall-dist: 38vh;
+        --rip-alpha: 0.35;
+        --rip-scale: 1.2;
       }
 
       .e2 {
         --x: 78%;
         --dur: 9.2s;
         --delay: 4.9s;
+        --drop-w: 15px;
+        --drop-h: 23px;
+        --drop-alpha: 1;
+        --drop-blur: 0px;
+        --rot: -50deg;
+        --fall-dist: 54vh;
+        --rip-alpha: 0.75;
+        --rip-scale: 2.3;
       }
 
       .e3 {
         --x: 38%;
         --dur: 8.1s;
         --delay: 7.2s;
+        --drop-w: 11px;
+        --drop-h: 17px;
+        --drop-alpha: 0.8;
+        --drop-blur: 0.3px;
+        --rot: -45deg;
+        --fall-dist: 46vh;
+        --rip-alpha: 0.5;
+        --rip-scale: 1.8;
       }
 
       .e4 {
         --x: 61%;
         --dur: 8.8s;
         --delay: 9s;
+        --drop-w: 6px;
+        --drop-h: 9px;
+        --drop-alpha: 0.5;
+        --drop-blur: 1px;
+        --rot: -58deg;
+        --fall-dist: 30vh;
+        --rip-alpha: 0.3;
+        --rip-scale: 1.1;
       }
 
       .intro {
@@ -340,22 +373,23 @@
 
       @keyframes fall {
         0% {
-          transform: translateY(-46vh) rotate(-45deg);
+          transform: translateY(calc(var(--fall-dist, 46vh) * -1))
+            rotate(var(--rot, -45deg));
           opacity: 0;
         }
         5% {
-          opacity: 1;
+          opacity: var(--drop-alpha, 1);
         }
         26% {
-          transform: translateY(0) rotate(-45deg);
-          opacity: 1;
+          transform: translateY(0) rotate(var(--rot, -45deg));
+          opacity: var(--drop-alpha, 1);
         }
         30% {
-          transform: translateY(0) rotate(-45deg);
+          transform: translateY(0) rotate(var(--rot, -45deg));
           opacity: 0;
         }
         100% {
-          transform: translateY(0) rotate(-45deg);
+          transform: translateY(0) rotate(var(--rot, -45deg));
           opacity: 0;
         }
       }
@@ -367,10 +401,10 @@
         }
         26% {
           transform: scale(0.16);
-          opacity: 0.6;
+          opacity: var(--rip-alpha, 0.6);
         }
         100% {
-          transform: scale(1.8);
+          transform: scale(var(--rip-scale, 1.8));
           opacity: 0;
         }
       }
