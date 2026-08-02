@@ -3,165 +3,150 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BensLogs — Building</title>
-    <meta
-      name="description"
-      content="BensLogs is under construction. The site is being rebuilt."
-    >
-    <meta name="theme-color" content="#07030f">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    >
+    <title>BensLogs</title>
+    <meta name="description" content="BensLogs. New site in progress.">
     <style>
       * {
         margin: 0;
-        padding: 0;
         box-sizing: border-box;
       }
 
       :root {
-        color-scheme: dark;
-        --bg: #07030f;
-        --fg: #f5ecff;
-        --muted: rgba(245, 236, 255, 0.45);
-        --accent: #b06dff;
-      }
-
-      html,
-      body {
-        height: 100%;
+        color-scheme: light dark;
       }
 
       body {
-        background: var(--bg);
-        color: var(--fg);
-        font-family: "Outfit", system-ui, sans-serif;
+        min-height: 100vh;
         display: grid;
         place-items: center;
+        padding: 2rem;
         overflow: hidden;
+        background: #fff;
+        color: #111;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
       }
 
-      .orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(90px);
+      .spline {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.28;
         pointer-events: none;
       }
 
-      .orb-a {
-        width: 420px;
-        height: 420px;
-        top: -140px;
-        left: -140px;
-        background: rgba(176, 109, 255, 0.22);
-      }
-
-      .orb-b {
-        width: 380px;
-        height: 380px;
-        bottom: -160px;
-        right: -120px;
-        background: rgba(140, 200, 255, 0.14);
-      }
-
-      .wrap {
+      main {
         position: relative;
+        z-index: 1;
         text-align: center;
-        padding: 2rem;
       }
 
-      .logo {
-        font-size: clamp(2rem, 7vw, 3.25rem);
+      main > * {
+        animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      h1 {
+        font-size: clamp(1.75rem, 6vw, 2.5rem);
         font-weight: 600;
         letter-spacing: -0.02em;
-        margin-bottom: 1.1rem;
       }
 
-      .logo span {
-        background: linear-gradient(120deg, #d2a9ff, #b06dff 60%, #7fd4ff);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+      p {
+        margin-top: 0.9rem;
+        font-size: 0.95rem;
+        color: #888;
       }
 
-      .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.55rem 1.1rem;
-        border-radius: 999px;
-        border: 0.5px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.04);
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: var(--muted);
-        margin-bottom: 2.2rem;
+      p:nth-of-type(1) {
+        animation-delay: 90ms;
       }
 
-      .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--accent);
-        animation: pulse 1.6s ease-in-out infinite;
+      p:nth-of-type(2) {
+        animation-delay: 180ms;
       }
 
-      .tagline {
-        font-size: 0.98rem;
-        font-weight: 300;
-        color: var(--muted);
-        line-height: 1.6;
-        max-width: 32rem;
-        margin: 0 auto;
-      }
-
-      .tagline a {
-        color: #d2a9ff;
+      a {
+        color: inherit;
         text-decoration: none;
-        border-bottom: 0.5px solid rgba(176, 109, 255, 0.4);
-        transition: color 200ms ease;
+        background-image: linear-gradient(currentColor, currentColor);
+        background-size: 0% 1px;
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        transition: background-size 220ms ease;
       }
 
-      .tagline a:hover {
-        color: var(--accent);
+      a:hover {
+        background-size: 100% 1px;
       }
 
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 0.35;
-          transform: scale(0.85);
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-        50% {
+        to {
           opacity: 1;
-          transform: scale(1.1);
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #0b0b0b;
+          color: #f2f2f2;
+        }
+
+        p {
+          color: #777;
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .dot {
+        .spline {
+          display: none;
+        }
+
+        main > * {
           animation: none;
         }
       }
     </style>
   </head>
   <body>
-    <div class="orb orb-a" aria-hidden="true"></div>
-    <div class="orb orb-b" aria-hidden="true"></div>
-
-    <main class="wrap">
-      <h1 class="logo">Bens<span>Logs</span></h1>
-      <div class="status">
-        <span class="dot" aria-hidden="true"></span>
-        Building
-      </div>
-      <p class="tagline">
-        The site is being rebuilt. The previous one lives at
-        <a href="/old/">/old/</a>.
+    <canvas id="spline" class="spline" aria-hidden="true"></canvas>
+    <main>
+      <h1>BensLogs</h1>
+      <p>Building.</p>
+      <p>
+        <a href="/old/">Previous site</a>
       </p>
     </main>
+
+    <script type="module">
+      const SCENE_URL =
+        "https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode";
+      const canvas = document.getElementById("spline");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if (canvas && !reduced.matches) {
+        import("https://unpkg.com/@splinetool/runtime@1.0.93/build/runtime.js")
+          .then(({ Application }) => {
+            const spline = new Application(canvas);
+            spline.load(SCENE_URL).catch(() => {
+              canvas.hidden = true;
+            });
+          })
+          .catch(() => {
+            canvas.hidden = true;
+          });
+      }
+    </script>
   </body>
 </html>
