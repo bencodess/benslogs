@@ -345,65 +345,6 @@
         animation-delay: 1600ms;
       }
 
-      .signup {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-top: 1.6rem;
-        animation-delay: 1800ms;
-      }
-
-      .signup input {
-        width: min(240px, 55vw);
-        font: inherit;
-        font-size: 0.9rem;
-        color: var(--ink);
-        background: transparent;
-        border: 1px solid var(--line-strong);
-        border-radius: 999px;
-        padding: 0.55rem 1.1rem;
-        outline: none;
-        transition: border-color 200ms ease;
-      }
-
-      .signup input::placeholder {
-        color: var(--muted);
-      }
-
-      .signup input:focus {
-        border-color: var(--ink);
-      }
-
-      .signup button {
-        font: inherit;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: var(--bg);
-        background: var(--ink);
-        border: 1px solid var(--ink);
-        border-radius: 999px;
-        padding: 0.55rem 1.2rem;
-        cursor: pointer;
-        transition: opacity 150ms ease;
-      }
-
-      .signup button:hover {
-        opacity: 0.8;
-      }
-
-      .signup button:disabled {
-        opacity: 0.4;
-        cursor: wait;
-      }
-
-      .signup-msg {
-        margin-top: 0.9rem;
-        min-height: 1.2em;
-        font-size: 0.85rem;
-        color: var(--muted);
-        animation-delay: 2000ms;
-      }
-
       @keyframes rise {
         from {
           opacity: 0;
@@ -594,48 +535,6 @@
       <p class="eyebrow">benslogs.dev</p>
       <h1 class="title">Bens<em>Logs</em></h1>
       <p class="sub">New site in progress.</p>
-      <form class="signup" id="signup" novalidate>
-        <input type="email" id="signup-email" name="email" placeholder="you@example.com" aria-label="Email address" required>
-        <button type="submit">Subscribe</button>
-      </form>
-      <p class="signup-msg" id="signup-msg" role="status"></p>
     </main>
-
-    <script type="module">
-      const SUBSCRIBE_URL = "https://admin-sage-nine-39.vercel.app/api/subscribe";
-
-      const form = document.getElementById("signup");
-      const email = document.getElementById("signup-email");
-      const msg = document.getElementById("signup-msg");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const value = email.value.trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          msg.textContent = "Enter a valid email address.";
-          email.focus();
-          return;
-        }
-        const btn = form.querySelector("button");
-        btn.disabled = true;
-        msg.textContent = "";
-        try {
-          const res = await fetch(SUBSCRIBE_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: value }),
-          });
-          const data = await res.json().catch(() => ({}));
-          msg.textContent = res.ok
-            ? "You're on the list."
-            : data.error || "Couldn't subscribe — try again.";
-          if (res.ok) form.reset();
-        } catch {
-          msg.textContent = "Couldn't subscribe — try again.";
-        } finally {
-          btn.disabled = false;
-        }
-      });
-    </script>
   </body>
 </html>
